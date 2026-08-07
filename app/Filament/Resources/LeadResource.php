@@ -5,58 +5,50 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Enums\CreationSource;
-use App\Filament\Exports\CompanyExporter;
-use App\Filament\Resources\CompanyResource\Pages\ListCompanies;
-use App\Filament\Resources\CompanyResource\Pages\ViewCompany;
-use App\Models\Company;
+use App\Filament\Resources\LeadResource\Forms\LeadForm;
+use App\Filament\Resources\LeadResource\Pages\LeadsBoard;
+use App\Filament\Resources\LeadResource\Pages\ListLeads;
+use App\Filament\Resources\LeadResource\Pages\ViewLead;
+use App\Filament\Resources\LeadResource\RelationManagers\NotesRelationManager;
+use App\Filament\Resources\LeadResource\RelationManagers\TasksRelationManager;
+use App\Models\Lead;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Relaticle\CustomFields\Facades\CustomFields;
+use Override;
+use Relaticle\ActivityLog\Filament\RelationManagers\ActivityLogRelationManager;
 
-final class CompanyResource extends Resource
+final class LeadResource extends Resource
 {
-    protected static ?string $model = Company::class;
+    protected static ?string $model = Lead::class;
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-home-modern';
+    protected static ?string $modelLabel = null;
 
-    protected static ?int $navigationSort = 5;
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-funnel';
+
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                Select::make('account_owner_id')
-                    ->relationship('accountOwner', 'name')
-                    ->label(__('filament/resources/company.fields.account_owner_id.label'))
-                    ->nullable()
-                    ->preload()
-                    ->searchable(),
-
-                CustomFields::form()->build()->columnSpanFull()->columns(1),
-            ]);
+        return LeadForm::get($schema);
     }
 
     public static function table(Table $table): Table
@@ -64,43 +56,42 @@ final class CompanyResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('name')
-                    ->label(__('filament/resources/company.fields.name.label'))
-                    ->searchable()
-                    ->sortable()
-                    ->view('filament.tables.columns.logo-name-column'),
-                TextColumn::make('accountOwner.name')
-                    ->label(__('filament/resources/company.fields.account_owner.label'))
-                    ->searchable()
-                    ->sortable()
+                    ->searchable(),
+                TextColumn::make('stage')
+                    ->label(__('pipelines.fields.stage.label'))
+                    ->badge()
+                    // The enum exposes a hex accent (also used for board column
+                    // headers); Color::hex expands it into the shade array a
+                    // Filament badge expects.
+                    ->color(fn (Lead $record): array => Color::hex($record->stage->getColor()))
+                    ->sortable(),
+                TextColumn::make('sub_stage')
+                    ->label(__('pipelines.fields.sub_stage.label'))
+                    ->placeholder(__('pipelines.fields.sub_stage.empty'))
                     ->toggleable(),
                 TextColumn::make('creator.name')
-                    ->label(__('filament/resources/company.fields.created_by.label'))
+                    ->label(__('filament/resources/lead.fields.creator.label'))
                     ->searchable()
                     ->sortable()
                     ->toggleable()
-                    ->getStateUsing(fn (Company $record): string => $record->created_by),
+                    ->getStateUsing(fn (Lead $record): string => $record->created_by),
                 TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable()
-                    ->toggledHiddenByDefault(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
-                    ->label(__('filament/resources/company.fields.created_at.label'))
                     ->dateTime()
-                    ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
-                    ->label(__('filament/resources/company.fields.updated_at.label'))
-                    ->since()
-                    ->searchable()
+                    ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
                 SelectFilter::make('creation_source')
-                    ->label(__('filament/resources/company.fields.creation_source.label'))
+                    ->label(__('filament/resources/lead.fields.creation_source.label'))
                     ->options(CreationSource::class)
                     ->multiple(),
                 TrashedFilter::make(),
@@ -116,41 +107,45 @@ final class CompanyResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ExportBulkAction::make()
-                        ->exporter(CompanyExporter::class),
+                    RestoreBulkAction::make(),
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
                 ]),
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            TasksRelationManager::class,
+            NotesRelationManager::class,
+            ActivityLogRelationManager::class,
+        ];
+    }
+
+    #[Override]
     public static function getPages(): array
     {
         return [
-            'index' => ListCompanies::route('/'),
-            'view' => ViewCompany::route('/{record}'),
+            'index' => ListLeads::route('/'),
+            'board' => LeadsBoard::route('/board'),
+            'view' => ViewLead::route('/{record}'),
         ];
     }
 
     public static function getModelLabel(): string
     {
-        return __('filament/resources/company.label');
+        return __('filament/resources/lead.label');
     }
 
     public static function getPluralModelLabel(): string
     {
-        return __('filament/resources/company.plural_label');
+        return __('filament/resources/lead.plural_label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('filament/resources/company.navigation_label');
-    }
-
-    public static function getGloballySearchableAttributes(): array
-    {
-        return ['name'];
+        return __('filament/resources/lead.navigation_label');
     }
 
     public static function getEloquentQuery(): Builder

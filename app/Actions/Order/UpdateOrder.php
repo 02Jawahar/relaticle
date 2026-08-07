@@ -2,25 +2,25 @@
 
 declare(strict_types=1);
 
-namespace App\Actions\Deal;
+namespace App\Actions\Order;
 
-use App\Enums\CreationSource;
 use App\Models\Company;
-use App\Models\Deal;
+use App\Models\Order;
 use App\Models\People;
 use App\Models\User;
+use App\Support\CustomFieldMerger;
 use App\Support\TenantFkValidator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
-final readonly class CreateDeal
+final readonly class UpdateOrder
 {
     /**
      * @param  array<string, mixed>  $data
      */
-    public function execute(User $user, array $data, CreationSource $source = CreationSource::WEB): Deal
+    public function execute(User $user, Order $order, array $data): Order
     {
-        abort_unless($user->can('create', Deal::class), 403);
+        abort_unless($user->can('update', $order), 403);
 
         TenantFkValidator::assertOwned($user, $data, [
             'company_id' => Company::class,
@@ -28,10 +28,13 @@ final readonly class CreateDeal
         ]);
 
         $attributes = Arr::only($data, ['name', 'company_id', 'contact_id', 'stage', 'sub_stage', 'custom_fields']);
-        $attributes['creation_source'] = $source;
 
-        $deal = DB::transaction(fn (): Deal => Deal::query()->create($attributes));
+        $attributes = CustomFieldMerger::merge($order, $attributes);
 
-        return $deal->load('customFieldValues.customField.options');
+        return DB::transaction(function () use ($order, $attributes): Order {
+            $order->update($attributes);
+
+            return $order->refresh()->load('customFieldValues.customField.options');
+        });
     }
 }

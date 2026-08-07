@@ -283,6 +283,22 @@ final class Team extends JetstreamTeam implements HasAvatar
     }
 
     /**
+     * @return HasMany<Lead, $this>
+     */
+    public function leads(): HasMany
+    {
+        return $this->hasMany(Lead::class);
+    }
+
+    /**
+     * @return HasMany<Order, $this>
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    /**
      * @return HasMany<Note, $this>
      */
     public function notes(): HasMany

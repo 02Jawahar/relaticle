@@ -22,7 +22,9 @@ use App\Models\CustomFieldSection;
 use App\Models\CustomFieldValue;
 use App\Models\Deal;
 use App\Models\Export;
+use App\Models\Lead;
 use App\Models\Note;
+use App\Models\Order;
 use App\Models\People;
 use App\Models\PersonalAccessToken;
 use App\Models\Task;
@@ -332,7 +334,9 @@ final class AppServiceProvider extends ServiceProvider
             'user' => User::class,
             'people' => People::class,
             'company' => Company::class,
+            'lead' => Lead::class,
             'deal' => Deal::class,
+            'order' => Order::class,
             'task' => Task::class,
             'note' => Note::class,
             'system_administrator' => SystemAdministrator::class,

@@ -9,6 +9,22 @@ return [
         'board' => 'Board',
     ],
 
+    'leads' => [
+        'title' => 'Leads',
+        'actions' => [
+            'add' => 'Add Lead',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+        ],
+        'filters' => [
+            'company' => 'Company',
+            'contact' => 'Contact',
+        ],
+        'form' => [
+            'name_placeholder' => 'Enter lead title',
+        ],
+    ],
+
     'deals' => [
         'title' => 'Deals',
         'actions' => [
@@ -22,6 +38,22 @@ return [
         ],
         'form' => [
             'name_placeholder' => 'Enter deal title',
+        ],
+    ],
+
+    'orders' => [
+        'title' => 'Orders',
+        'actions' => [
+            'add' => 'Add Order',
+            'edit' => 'Edit',
+            'delete' => 'Delete',
+        ],
+        'filters' => [
+            'company' => 'Company',
+            'contact' => 'Contact',
+        ],
+        'form' => [
+            'name_placeholder' => 'Enter order reference',
         ],
     ],
 

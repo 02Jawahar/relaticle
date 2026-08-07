@@ -27,7 +27,7 @@ final readonly class UpdateDeal
             'contact_id' => People::class,
         ]);
 
-        $attributes = Arr::only($data, ['name', 'company_id', 'contact_id', 'custom_fields']);
+        $attributes = Arr::only($data, ['name', 'company_id', 'contact_id', 'stage', 'sub_stage', 'custom_fields']);
 
         $attributes = CustomFieldMerger::merge($deal, $attributes);
 

@@ -50,7 +50,7 @@ final class PeopleResource extends Resource
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {
