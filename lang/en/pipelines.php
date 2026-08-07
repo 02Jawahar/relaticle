@@ -3,6 +3,16 @@
 declare(strict_types=1);
 
 return [
+    'card' => [
+        'view' => 'View',
+        'company' => 'Company',
+        'contact' => 'Point of Contact',
+        'created_at' => 'Created',
+        'updated_at' => 'Last updated',
+        'open_full_page' => 'Open full page',
+        'close' => 'Close',
+    ],
+
     'conversion' => [
         'lead_to_deal' => [
             'label' => 'Convert to Deal',

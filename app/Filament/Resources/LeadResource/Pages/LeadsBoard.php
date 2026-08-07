@@ -11,6 +11,7 @@ use App\Actions\Lead\UpdateLead;
 use App\Enums\CustomFields\LeadField as LeadCustomField;
 use App\Enums\Pipeline\LeadStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
+use App\Filament\Infolists\PipelineCardPanel;
 use App\Filament\Resources\LeadResource;
 use App\Filament\Resources\LeadResource\Forms\LeadForm;
 use App\Models\Lead;
@@ -158,7 +159,25 @@ final class LeadsBoard extends BoardResourcePage
                         return $createLead->execute($user, $data);
                     }),
             ])
+            ->cardAction('view')
             ->cardActions([
+                Action::make('view')
+                    ->label(__('pipelines.card.view'))
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading(fn (Lead $record): string => $record->name)
+                    ->schema(PipelineCardPanel::get(...))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('pipelines.card.close'))
+                    // Styled by .fi-pipeline-card-panel: a left-anchored
+                    // full-height panel spanning three quarters of the viewport.
+                    ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
+                    ->extraModalFooterActions([
+                        Action::make('openFullPage')
+                            ->label(__('pipelines.card.open_full_page'))
+                            ->icon('heroicon-o-arrow-top-right-on-square')
+                            ->color('gray')
+                            ->url(fn (Lead $record): string => LeadResource::getUrl('view', [$record])),
+                    ]),
                 Action::make('edit')
                     ->label(__('filament/pages/boards.leads.actions.edit'))
                     ->slideOver()

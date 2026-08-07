@@ -560,3 +560,73 @@
         color: #9ca3af;
     }
 }
+/* ===================================
+   Pipeline shell: centred search, snug sidebar, card panel
+   =================================== */
+
+/* Centre the global search in the topbar.
+   It lives inside .fi-topbar-end (right-aligned) and cannot be reparented from
+   CSS, so it is taken out of flow and pinned to the centre of the bar instead. */
+.fi-topbar nav {
+    @apply relative;
+}
+
+.fi-topbar-end .fi-global-search-ctn {
+    @apply absolute left-1/2 -translate-x-1/2;
+
+    width: min(30rem, 42vw);
+}
+
+.fi-topbar-end .fi-global-search-ctn .fi-input-wrp {
+    @apply rounded-full;
+}
+
+/* Keep the results dropdown anchored under the centred field. */
+.fi-topbar .fi-global-search-results-ctn {
+    @apply left-0 right-0;
+}
+
+/* Below the sidebar breakpoint there is no room to centre; return it to flow. */
+@media (max-width: 1023px) {
+    .fi-topbar-end .fi-global-search-ctn {
+        @apply static translate-x-0 w-auto;
+    }
+}
+
+/* Sidebar: fit the labels instead of a fixed wide column. Width comes from the
+   panel's sidebarWidth()/collapsedSidebarWidth(); this stops the nav text from
+   forcing it wider and keeps the collapsed rail centred. */
+.fi-main-sidebar .fi-sidebar-item-label {
+    @apply truncate;
+}
+
+.fi-main-sidebar:not(.fi-open) {
+    .fi-sidebar-item-btn {
+        @apply justify-center px-0;
+    }
+
+    .fi-sidebar-group-label,
+    .fi-sidebar-item-label {
+        @apply hidden;
+    }
+}
+
+/* Card panel: a left-anchored, full-height sheet covering three quarters of the
+   viewport, opened by clicking a kanban card. */
+.fi-modal-window.fi-pipeline-card-panel {
+    @apply fixed bottom-0 left-0 top-0 m-0 h-screen w-3/4 max-w-none rounded-none;
+
+    /* Filament centres modals with auto margins; override both axes. */
+    margin-inline: 0;
+    margin-block: 0;
+}
+
+.fi-modal-window.fi-pipeline-card-panel > .fi-modal-content {
+    @apply flex-1 overflow-y-auto;
+}
+
+@media (max-width: 1023px) {
+    .fi-modal-window.fi-pipeline-card-panel {
+        @apply w-full;
+    }
+}

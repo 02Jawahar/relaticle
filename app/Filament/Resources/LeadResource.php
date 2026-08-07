@@ -143,6 +143,17 @@ final class LeadResource extends Resource
         return __('filament/resources/lead.plural_label');
     }
 
+    /**
+     * Pipelines open on the board by default; the list stays reachable from the
+     * view switcher and keeps its own URL, so existing links still resolve.
+     *
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function getNavigationUrl(array $parameters = []): string
+    {
+        return self::getUrl('board', $parameters);
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/lead.navigation_label');

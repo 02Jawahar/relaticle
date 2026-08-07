@@ -8,6 +8,7 @@ use App\Actions\Deal\ConvertDealToOrder;
 use App\Enums\CustomFields\DealField as DealCustomField;
 use App\Enums\Pipeline\DealStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
+use App\Filament\Infolists\PipelineCardPanel;
 use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Forms\DealForm;
 use App\Models\Deal;
@@ -155,7 +156,25 @@ final class DealsBoard extends BoardResourcePage
                         return $deal;
                     }),
             ])
+            ->cardAction('view')
             ->cardActions([
+                Action::make('view')
+                    ->label(__('pipelines.card.view'))
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading(fn (Deal $record): string => $record->name)
+                    ->schema(PipelineCardPanel::get(...))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel(__('pipelines.card.close'))
+                    // Styled by .fi-pipeline-card-panel: a left-anchored
+                    // full-height panel spanning three quarters of the viewport.
+                    ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
+                    ->extraModalFooterActions([
+                        Action::make('openFullPage')
+                            ->label(__('pipelines.card.open_full_page'))
+                            ->icon('heroicon-o-arrow-top-right-on-square')
+                            ->color('gray')
+                            ->url(fn (Deal $record): string => DealResource::getUrl('view', [$record])),
+                    ]),
                 Action::make('edit')
                     ->label(__('filament/pages/boards.deals.actions.edit'))
                     ->slideOver()

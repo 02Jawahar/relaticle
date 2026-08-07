@@ -165,6 +165,27 @@ final class AppPanelProvider extends PanelProvider
             })
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop()
+            // Expanded sidebar is sized to its labels rather than Filament's
+            // default 20rem, which ate a fifth of the viewport; collapsed is an
+            // icon rail with tooltips.
+            ->sidebarWidth('14rem')
+            ->collapsedSidebarWidth('4.5rem')
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                // Alpine's $persist keeps the user's own choice, so this only
+                // seeds the very first visit: start on the icon rail.
+                fn (): string => <<<'HTML'
+                    <script>
+                        (() => {
+                            for (const key of ['_x_isOpen', '_x_isOpenDesktop']) {
+                                if (localStorage.getItem(key) === null) {
+                                    localStorage.setItem(key, 'false');
+                                }
+                            }
+                        })();
+                    </script>
+                    HTML,
+            )
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label(__('filament/panel.navigation_groups.tasks'))
