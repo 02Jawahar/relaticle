@@ -600,7 +600,7 @@
     @apply truncate;
 }
 
-.fi-main-sidebar:not(.fi-open) {
+.fi-main-sidebar:not(.fi-sidebar-open) {
     .fi-sidebar-item-btn {
         @apply justify-center px-0;
     }
@@ -614,7 +614,7 @@
 /* Card panel: a left-anchored, full-height sheet covering three quarters of the
    viewport, opened by clicking a kanban card. */
 .fi-modal-window.fi-pipeline-card-panel {
-    @apply fixed bottom-0 left-0 top-0 m-0 h-screen w-3/4 max-w-none rounded-none;
+    @apply fixed bottom-0 right-0 top-0 m-0 h-screen w-3/4 max-w-none rounded-none;
 
     /* Filament centres modals with auto margins; override both axes. */
     margin-inline: 0;
@@ -629,4 +629,12 @@
     .fi-modal-window.fi-pipeline-card-panel {
         @apply w-full;
     }
+}
+
+/* The kanban card's per-card dropdown holds only "View", which the card itself
+   already does on click — Edit, Convert and Delete now live inside the card
+   panel. The action stays registered because Flowforge binds the clicked record
+   through it, so only the trigger is hidden. */
+.flowforge-card .fi-dropdown {
+    @apply hidden;
 }

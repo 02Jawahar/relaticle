@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Filament\Resources\DealResource\Pages;
 
 use App\Actions\Deal\ConvertDealToOrder;
+use App\Actions\Deal\CreateDeal;
+use App\Actions\Deal\DeleteDeal;
+use App\Actions\Deal\UpdateDeal;
 use App\Enums\CustomFields\DealField as DealCustomField;
 use App\Enums\Pipeline\DealStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
@@ -12,7 +15,6 @@ use App\Filament\Infolists\PipelineCardPanel;
 use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Forms\DealForm;
 use App\Models\Deal;
-use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -41,6 +43,94 @@ final class DealsBoard extends BoardResourcePage
     use HasBoardViewSwitcher;
 
     protected static string $resource = DealResource::class;
+
+    /**
+     * Boards read left-to-right across every stage, so they use the full
+     * viewport instead of Filament's default 7xl content column, which left
+     * dead margins either side of the pipeline.
+     */
+    /**
+     * The panel opened by clicking a card. Resolved by name through
+     * mountAction('view'), which is why it lives on the page rather than in
+     * cardActions() — the board no longer renders a per-card menu, so Edit,
+     * Convert and Delete are reached from inside this panel instead.
+     */
+    public function viewAction(): Action
+    {
+        return Action::make('view')
+            ->label(__('pipelines.card.view'))
+            ->icon('heroicon-o-eye')
+            ->modalHeading(fn (Deal $record): string => $record->name)
+            ->schema(PipelineCardPanel::get(...))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel(__('pipelines.card.close'))
+            // Styled by .fi-pipeline-card-panel: a right-anchored full-height
+            // sheet spanning three quarters of the viewport.
+            ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
+            ->extraModalFooterActions([
+                Action::make('edit')
+                    ->label(__('filament/pages/boards.deals.actions.edit'))
+                    ->icon('heroicon-o-pencil-square')
+                    ->slideOver()
+                    ->modalWidth(Width::ExtraLarge)
+                    ->schema(DealForm::get(...))
+                    ->fillForm(fn (Deal $record): array => [
+                        'name' => $record->name,
+                        'company_id' => $record->company_id,
+                        'contact_id' => $record->contact_id,
+                        'stage' => $record->stage->value,
+                        'sub_stage' => $record->sub_stage?->value,
+                    ])
+                    ->action(function (Deal $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(UpdateDeal::class)->execute($user, $record, $data);
+                    }),
+                Action::make('convert')
+                    ->label(__('pipelines.conversion.deal_to_order.label'))
+                    ->icon('heroicon-o-cube')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('pipelines.conversion.deal_to_order.heading'))
+                    ->modalDescription(__('pipelines.conversion.deal_to_order.description'))
+                    ->visible(fn (Deal $record): bool => $record->stage->isWon())
+                    ->action(function (Deal $record): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(ConvertDealToOrder::class)->execute($user, $record);
+
+                        Notification::make()
+                            ->title(__('pipelines.conversion.deal_to_order.success'))
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('openFullPage')
+                    ->label(__('pipelines.card.open_full_page'))
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('gray')
+                    ->url(fn (Deal $record): string => DealResource::getUrl('view', [$record])),
+                Action::make('delete')
+                    ->label(__('filament/pages/boards.deals.actions.delete'))
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function (Deal $record): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(DeleteDeal::class)->execute($user, $record);
+
+                        $this->unmountAction();
+                    }),
+            ]);
+    }
+
+    public function getMaxContentWidth(): Width
+    {
+        return Width::Full;
+    }
 
     public function getTitle(): string
     {
@@ -138,87 +228,26 @@ final class DealsBoard extends BoardResourcePage
                         ])
                         ->columns(2))
                     ->using(function (array $data, CreateAction $action): Deal {
-                        /** @var Team $currentTeam */
-                        $currentTeam = Auth::guard('web')->user()->currentTeam;
-
-                        /** @var Deal $deal */
-                        $deal = $currentTeam->deals()->create($data);
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
 
                         $columnId = $action->getArguments()['column'] ?? null;
                         $stage = is_string($columnId) ? DealStage::tryFrom($columnId) : null;
 
                         if ($stage instanceof DealStage) {
-                            $deal->stage = $stage;
-                            $deal->order_column = (float) $this->getBoardPositionInColumn($stage->value);
-                            $deal->saveQuietly();
+                            $data['stage'] = $stage;
+                            $data['order_column'] = (float) $this->getBoardPositionInColumn($stage->value);
                         }
 
-                        return $deal;
+                        return resolve(CreateDeal::class)->execute($user, $data);
                     }),
             ])
             ->cardAction('view')
-            ->cardActions([
-                Action::make('view')
-                    ->label(__('pipelines.card.view'))
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading(fn (Deal $record): string => $record->name)
-                    ->schema(PipelineCardPanel::get(...))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel(__('pipelines.card.close'))
-                    // Styled by .fi-pipeline-card-panel: a left-anchored
-                    // full-height panel spanning three quarters of the viewport.
-                    ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
-                    ->extraModalFooterActions([
-                        Action::make('openFullPage')
-                            ->label(__('pipelines.card.open_full_page'))
-                            ->icon('heroicon-o-arrow-top-right-on-square')
-                            ->color('gray')
-                            ->url(fn (Deal $record): string => DealResource::getUrl('view', [$record])),
-                    ]),
-                Action::make('edit')
-                    ->label(__('filament/pages/boards.deals.actions.edit'))
-                    ->slideOver()
-                    ->modalWidth(Width::ExtraLarge)
-                    ->icon('heroicon-o-pencil-square')
-                    ->schema(DealForm::get(...))
-                    ->fillForm(fn (Deal $record): array => [
-                        'name' => $record->name,
-                        'company_id' => $record->company_id,
-                        'contact_id' => $record->contact_id,
-                        'stage' => $record->stage->value,
-                        'sub_stage' => $record->sub_stage?->value,
-                    ])
-                    ->action(function (Deal $record, array $data): void {
-                        $record->update($data);
-                    }),
-                Action::make('convert')
-                    ->label(__('pipelines.conversion.deal_to_order.label'))
-                    ->icon('heroicon-o-cube')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading(__('pipelines.conversion.deal_to_order.heading'))
-                    ->modalDescription(__('pipelines.conversion.deal_to_order.description'))
-                    ->visible(fn (Deal $record): bool => $record->stage->isWon())
-                    ->action(function (Deal $record) use ($convertDealToOrder): void {
-                        /** @var User $user */
-                        $user = Auth::guard('web')->user();
-
-                        $convertDealToOrder->execute($user, $record);
-
-                        Notification::make()
-                            ->title(__('pipelines.conversion.deal_to_order.success'))
-                            ->success()
-                            ->send();
-                    }),
-                Action::make('delete')
-                    ->label(__('filament/pages/boards.deals.actions.delete'))
-                    ->icon('heroicon-o-trash')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->action(function (Deal $record): void {
-                        $record->delete();
-                    }),
-            ])
+            // Registered on the board, not as a page method: Flowforge's
+            // resolveAction() only looks in the board's own actions, and that is
+            // what binds the clicked record. Its dropdown trigger is hidden by
+            // CSS because the whole card already opens this panel.
+            ->cardActions([$this->viewAction()])
             ->filters([
                 SelectFilter::make('companies')
                     ->label(__('filament/pages/boards.deals.filters.company'))

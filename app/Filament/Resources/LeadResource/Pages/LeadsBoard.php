@@ -44,6 +44,94 @@ final class LeadsBoard extends BoardResourcePage
 
     protected static string $resource = LeadResource::class;
 
+    /**
+     * Boards read left-to-right across every stage, so they use the full
+     * viewport instead of Filament's default 7xl content column, which left
+     * dead margins either side of the pipeline.
+     */
+    /**
+     * The panel opened by clicking a card. Resolved by name through
+     * mountAction('view'), which is why it lives on the page rather than in
+     * cardActions() — the board no longer renders a per-card menu, so Edit,
+     * Convert and Delete are reached from inside this panel instead.
+     */
+    public function viewAction(): Action
+    {
+        return Action::make('view')
+            ->label(__('pipelines.card.view'))
+            ->icon('heroicon-o-eye')
+            ->modalHeading(fn (Lead $record): string => $record->name)
+            ->schema(PipelineCardPanel::get(...))
+            ->modalSubmitAction(false)
+            ->modalCancelActionLabel(__('pipelines.card.close'))
+            // Styled by .fi-pipeline-card-panel: a right-anchored full-height
+            // sheet spanning three quarters of the viewport.
+            ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
+            ->extraModalFooterActions([
+                Action::make('edit')
+                    ->label(__('filament/pages/boards.leads.actions.edit'))
+                    ->icon('heroicon-o-pencil-square')
+                    ->slideOver()
+                    ->modalWidth(Width::ExtraLarge)
+                    ->schema(LeadForm::get(...))
+                    ->fillForm(fn (Lead $record): array => [
+                        'name' => $record->name,
+                        'company_id' => $record->company_id,
+                        'contact_id' => $record->contact_id,
+                        'stage' => $record->stage->value,
+                        'sub_stage' => $record->sub_stage?->value,
+                    ])
+                    ->action(function (Lead $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(UpdateLead::class)->execute($user, $record, $data);
+                    }),
+                Action::make('convert')
+                    ->label(__('pipelines.conversion.lead_to_deal.label'))
+                    ->icon('heroicon-o-arrow-right-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('pipelines.conversion.lead_to_deal.heading'))
+                    ->modalDescription(__('pipelines.conversion.lead_to_deal.description'))
+                    ->visible(fn (Lead $record): bool => $record->stage->isWon())
+                    ->action(function (Lead $record): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(ConvertLeadToDeal::class)->execute($user, $record);
+
+                        Notification::make()
+                            ->title(__('pipelines.conversion.lead_to_deal.success'))
+                            ->success()
+                            ->send();
+                    }),
+                Action::make('openFullPage')
+                    ->label(__('pipelines.card.open_full_page'))
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('gray')
+                    ->url(fn (Lead $record): string => LeadResource::getUrl('view', [$record])),
+                Action::make('delete')
+                    ->label(__('filament/pages/boards.leads.actions.delete'))
+                    ->icon('heroicon-o-trash')
+                    ->color('danger')
+                    ->requiresConfirmation()
+                    ->action(function (Lead $record): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(DeleteLead::class)->execute($user, $record);
+
+                        $this->unmountAction();
+                    }),
+            ]);
+    }
+
+    public function getMaxContentWidth(): Width
+    {
+        return Width::Full;
+    }
+
     public function getTitle(): string
     {
         return __('filament/pages/boards.leads.title');
@@ -160,74 +248,11 @@ final class LeadsBoard extends BoardResourcePage
                     }),
             ])
             ->cardAction('view')
-            ->cardActions([
-                Action::make('view')
-                    ->label(__('pipelines.card.view'))
-                    ->icon('heroicon-o-eye')
-                    ->modalHeading(fn (Lead $record): string => $record->name)
-                    ->schema(PipelineCardPanel::get(...))
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel(__('pipelines.card.close'))
-                    // Styled by .fi-pipeline-card-panel: a left-anchored
-                    // full-height panel spanning three quarters of the viewport.
-                    ->extraModalWindowAttributes(['class' => 'fi-pipeline-card-panel'])
-                    ->extraModalFooterActions([
-                        Action::make('openFullPage')
-                            ->label(__('pipelines.card.open_full_page'))
-                            ->icon('heroicon-o-arrow-top-right-on-square')
-                            ->color('gray')
-                            ->url(fn (Lead $record): string => LeadResource::getUrl('view', [$record])),
-                    ]),
-                Action::make('edit')
-                    ->label(__('filament/pages/boards.leads.actions.edit'))
-                    ->slideOver()
-                    ->modalWidth(Width::ExtraLarge)
-                    ->icon('heroicon-o-pencil-square')
-                    ->schema(LeadForm::get(...))
-                    ->fillForm(fn (Lead $record): array => [
-                        'name' => $record->name,
-                        'company_id' => $record->company_id,
-                        'contact_id' => $record->contact_id,
-                        'stage' => $record->stage->value,
-                        'sub_stage' => $record->sub_stage?->value,
-                    ])
-                    ->action(function (Lead $record, array $data) use ($updateLead): void {
-                        /** @var User $user */
-                        $user = Auth::guard('web')->user();
-
-                        $updateLead->execute($user, $record, $data);
-                    }),
-                Action::make('convert')
-                    ->label(__('pipelines.conversion.lead_to_deal.label'))
-                    ->icon('heroicon-o-arrow-right-circle')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalHeading(__('pipelines.conversion.lead_to_deal.heading'))
-                    ->modalDescription(__('pipelines.conversion.lead_to_deal.description'))
-                    ->visible(fn (Lead $record): bool => $record->stage->isWon())
-                    ->action(function (Lead $record) use ($convertLeadToDeal): void {
-                        /** @var User $user */
-                        $user = Auth::guard('web')->user();
-
-                        $convertLeadToDeal->execute($user, $record);
-
-                        Notification::make()
-                            ->title(__('pipelines.conversion.lead_to_deal.success'))
-                            ->success()
-                            ->send();
-                    }),
-                Action::make('delete')
-                    ->label(__('filament/pages/boards.leads.actions.delete'))
-                    ->icon('heroicon-o-trash')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->action(function (Lead $record) use ($deleteLead): void {
-                        /** @var User $user */
-                        $user = Auth::guard('web')->user();
-
-                        $deleteLead->execute($user, $record);
-                    }),
-            ])
+            // Registered on the board, not as a page method: Flowforge's
+            // resolveAction() only looks in the board's own actions, and that is
+            // what binds the clicked record. Its dropdown trigger is hidden by
+            // CSS because the whole card already opens this panel.
+            ->cardActions([$this->viewAction()])
             ->filters([
                 SelectFilter::make('companies')
                     ->label(__('filament/pages/boards.leads.filters.company'))
