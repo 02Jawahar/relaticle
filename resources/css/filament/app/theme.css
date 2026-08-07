@@ -73,13 +73,13 @@
     }
 
     .fi-sidebar-item-icon {
-        width: calc(var(--spacing) * 5);
-        height: calc(var(--spacing) * 5);
+        width: calc(var(--spacing) * 5.5);
+        height: calc(var(--spacing) * 5.5);
     }
 
     .fi-sidebar-item-grouped-border {
-        width: calc(var(--spacing) * 5);
-        height: calc(var(--spacing) * 5);
+        width: calc(var(--spacing) * 5.5);
+        height: calc(var(--spacing) * 5.5);
     }
 }
 
@@ -607,6 +607,27 @@
     .fi-tenant-menu,
     .fi-tenant-menu-trigger {
         @apply min-w-0 max-w-full overflow-hidden;
+    }
+
+    /* Filament pads the nav for labels (px-6) and separates groups far more
+       widely than items (gap-y-7 vs gap-y-1). In an icon rail that reads as
+       cramped icons with arbitrary gaps, so items and groups share one rhythm
+       and the padding shrinks to fit the rail. */
+    .fi-sidebar-nav {
+        @apply gap-y-1.5 px-2 py-4;
+    }
+
+    .fi-sidebar-nav-groups,
+    .fi-sidebar-group,
+    .fi-sidebar-group-items {
+        @apply mx-0 gap-y-1.5;
+    }
+
+    /* Square, evenly sized hit areas centred in the rail. */
+    .fi-sidebar-item-btn {
+        @apply mx-auto h-10 w-10 justify-center rounded-xl p-0;
+
+        padding-block: 0;
     }
 }
 
