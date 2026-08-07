@@ -200,10 +200,9 @@ final class LeadsBoard extends BoardResourcePage
     {
         // Resolved here rather than injected: the parent fixes this
         // method's signature, and writes must still go through actions.
+        // Update, delete and convert are resolved at their call sites now that
+        // those actions moved onto the card panel.
         $createLead = resolve(CreateLead::class);
-        $updateLead = resolve(UpdateLead::class);
-        $deleteLead = resolve(DeleteLead::class);
-        $convertLeadToDeal = resolve(ConvertLeadToDeal::class);
 
         $customFields = CustomFields::infolist()
             ->forModel(Lead::class)

@@ -27,6 +27,7 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -90,6 +91,19 @@ final class Dashboard extends Page
     public function isDashboardView(): bool
     {
         return $this->homeView === self::VIEW_DASHBOARD;
+    }
+
+    /**
+     * The dashboard's widgets tile the viewport, so the panel's default content
+     * width only left a dead band down either side. The chat half is a single
+     * centred column and keeps the panel default, where a full-width line
+     * length would be unreadable.
+     */
+    public function getMaxContentWidth(): Width|string|null
+    {
+        return $this->isDashboardView()
+            ? Width::Full
+            : parent::getMaxContentWidth();
     }
 
     /**

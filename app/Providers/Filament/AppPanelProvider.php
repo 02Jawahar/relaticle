@@ -147,6 +147,12 @@ final class AppPanelProvider extends PanelProvider
                 PanelsRenderHook::TOPBAR_START,
                 fn (): View => view('filament.app.topbar-logo'),
             )
+            // The collapse control belongs on the rail it collapses; Filament
+            // puts it in the topbar whenever a panel has one.
+            ->renderHook(
+                PanelsRenderHook::SIDEBAR_START,
+                fn (): View => view('filament.app.sidebar-toggle'),
+            )
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): View => view('filament.app.help-menu', ['items' => $this->supportMenuItems()]),

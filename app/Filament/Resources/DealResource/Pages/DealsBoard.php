@@ -199,8 +199,6 @@ final class DealsBoard extends BoardResourcePage
 
     public function board(Board $board): Board
     {
-        $convertDealToOrder = resolve(ConvertDealToOrder::class);
-
         $customFields = CustomFields::infolist()
             ->forModel(Deal::class)
             ->only([DealCustomField::AMOUNT, DealCustomField::CLOSE_DATE])

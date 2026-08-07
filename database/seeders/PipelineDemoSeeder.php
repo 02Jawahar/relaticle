@@ -20,8 +20,8 @@ use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Relaticle\CustomFields\Services\TenantContextService;
 
 /**
@@ -206,7 +206,7 @@ final class PipelineDemoSeeder extends Seeder
                 $field,
                 $kind === 'value'
                     ? $value
-                    : Carbon::now()->addDays(7 + ($index * 5))->toDateString(),
+                    : Date::now()->addDays(7 + ($index * 5))->toDateString(),
             );
         }
     }

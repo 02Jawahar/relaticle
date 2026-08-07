@@ -14,6 +14,7 @@ use App\Models\User;
 use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Database\Query\Builder;
 use Throwable;
 
 /**
@@ -38,7 +39,7 @@ final class BackfillPipelineConversionsCommand extends Command
 
         $deals = Deal::query()->withoutGlobalScopes()
             ->where('stage', DealStage::WON->value)
-            ->whereNotExists(fn ($query) => $query->selectRaw('1')->from('orders')
+            ->whereNotExists(fn (Builder $query): Builder => $query->selectRaw('1')->from('orders')
                 ->whereColumn('orders.deal_id', 'deals.id')
                 ->whereNull('orders.deleted_at'))
             ->with(['creator', 'team.owner'])

@@ -178,9 +178,9 @@ final class OrdersBoard extends BoardResourcePage
     {
         // Resolved here rather than injected: the parent fixes this
         // method's signature, and writes must still go through actions.
+        // Update and delete are resolved at their call sites now that those
+        // actions moved onto the card panel.
         $createOrder = resolve(CreateOrder::class);
-        $updateOrder = resolve(UpdateOrder::class);
-        $deleteOrder = resolve(DeleteOrder::class);
 
         $customFields = CustomFields::infolist()
             ->forModel(Order::class)

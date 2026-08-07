@@ -322,6 +322,15 @@
     @apply z-50;
 }
 
+/* Filament caps a dropdown at `max(14rem, 100% - 1.5rem)`, where 100% is the
+   trigger's container — in the icon rail that leaves the workspace menu's four
+   labelled items ellipsised. Pin a width that fits the labels and let the panel
+   extend over the page content, which is what a rail dropdown should do. */
+.fi-main-sidebar .fi-tenant-menu .fi-dropdown-panel {
+    width: 16rem;
+    max-width: 16rem !important;
+}
+
 /* Checkbox and Radio */
 .fi-checkbox-input {
     @apply rounded-md;
@@ -606,7 +615,14 @@
     .fi-sidebar-header,
     .fi-tenant-menu,
     .fi-tenant-menu-trigger {
-        @apply min-w-0 max-w-full overflow-hidden;
+        @apply min-w-0 max-w-full;
+    }
+
+    /* Only the trigger truncates. The menu itself must not hide its overflow —
+       it is the dropdown's ancestor, and clipping it cut the workspace menu
+       down to the width of the rail. */
+    .fi-tenant-menu-trigger {
+        @apply overflow-hidden;
     }
 
     /* Filament pads the nav for labels (px-6) and separates groups far more
@@ -981,15 +997,47 @@
    Chrome refinements: brand mark, grouped rail
    =================================== */
 
-/* Clip children to the rounded chrome so nothing squares off a corner. */
-.fi-topbar,
-.fi-main-sidebar {
-    overflow: hidden;
+/* Deliberately NOT `overflow: hidden` on the chrome, however tempting it is for
+   the rounded corners: floating-ui derives a dropdown's clipping boundary from
+   its scroll/overflow ancestors, so hiding overflow on the sidebar made it push
+   the workspace menu inwards to "fit" the sidebar and then clipped what still
+   stuck out. Every child that reaches an edge carries its own radius instead. */
+.fi-sidebar-header,
+.fi-sidebar-footer {
+    border-radius: inherit;
 }
 
 /* Brand mark keeps the topbar's left edge from looking empty. */
 .fi-topbar-brand {
     @apply me-1;
+}
+
+/* --- Sidebar collapse control ---------------------------------------------- */
+
+/* The control now lives in the sidebar (SIDEBAR_START), so the topbar's desktop
+   pair would be a second switch for the same state. The mobile hamburger is a
+   different button and stays. */
+.fi-topbar-collapse-sidebar-btn-ctn {
+    @apply hidden;
+}
+
+/* Centred in the rail, pushed to the trailing edge once labels are showing —
+   the same edge the sidebar collapses towards. Hidden below the sidebar
+   breakpoint, where the sidebar is an overlay with its own dismissal. */
+.fi-sidebar-toggle-ctn {
+    @apply hidden px-2 pt-2 lg:flex lg:items-center;
+}
+
+.fi-main-sidebar:not(.fi-sidebar-open) .fi-sidebar-toggle-ctn {
+    @apply justify-center;
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-toggle-ctn {
+    @apply justify-end pe-2;
+}
+
+.fi-sidebar-toggle-btn {
+    @apply text-gray-400 hover:text-gray-700 dark:text-gray-500 dark:hover:text-gray-200;
 }
 
 /* --- Grouped icon rail ----------------------------------------------------- */
