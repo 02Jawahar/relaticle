@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\DealResource\Forms;
 
+use App\Enums\Pipeline\DealStage;
+use App\Filament\Forms\PipelineStageFields;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Relaticle\CustomFields\Facades\CustomFields;
 
@@ -29,6 +32,10 @@ final class DealForm
                     ->searchable()
                     ->preload()
                     ->columnSpan(2),
+                ...array_map(
+                    fn (Component $component): Component => $component->columnSpan(2),
+                    PipelineStageFields::make(DealStage::class),
+                ),
                 CustomFields::form()->build()->columnSpanFull()->columns(1),
             ])
             ->columns(4);

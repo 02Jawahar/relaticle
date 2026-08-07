@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Enums\Pipeline\Contracts;
+namespace App\Contracts\Pipeline;
 
 use Filament\Support\Contracts\HasLabel;
 
@@ -15,6 +15,11 @@ use Filament\Support\Contracts\HasLabel;
  */
 interface PipelineSubStage extends HasLabel
 {
+    /**
+     * Narrowed from Filament's HasLabel: a sub-stage always has a label.
+     */
+    public function getLabel(): string;
+
     /**
      * The stage this sub-stage belongs to.
      */

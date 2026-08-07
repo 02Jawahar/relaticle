@@ -396,9 +396,11 @@ it('creates all custom fields for the first team', function (): void {
         ->get()
         ->groupBy('entity_type');
 
+    // Deals carry two custom fields (amount, close_date): stage and sub_stage
+    // are first-class columns, not custom fields.
     expect($fields->get('company'))->toHaveCount(3)
         ->and($fields->get('people'))->toHaveCount(4)
-        ->and($fields->get('deal'))->toHaveCount(3)
+        ->and($fields->get('deal'))->toHaveCount(2)
         ->and($fields->get('task'))->toHaveCount(4)
         ->and($fields->get('note'))->toHaveCount(1);
 });

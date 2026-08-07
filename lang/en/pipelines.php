@@ -3,6 +3,18 @@
 declare(strict_types=1);
 
 return [
+    'fields' => [
+        'stage' => [
+            'label' => 'Stage',
+        ],
+        'sub_stage' => [
+            'label' => 'Sub-stage',
+            'placeholder' => 'Select a stage first',
+            'helper' => 'Options depend on the selected stage.',
+            'empty' => '—',
+        ],
+    ],
+
     'lead' => [
         'stages' => [
             'new' => 'New',

@@ -27,22 +27,23 @@ it('filters by custom field equality', function (): void {
     $deal1 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal A']);
     $deal2 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal B']);
 
-    $stageField = CustomField::query()
-        ->withoutGlobalScopes()
-        ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'deal')
-        ->where('code', 'stage')
-        ->first();
+    // Owns its field rather than leaning on whichever ones happen to be seeded:
+    // this test covers the filter, not the tenant's default field set.
+    $territoryField = CustomField::factory()->create([
+        'tenant_id' => $this->team->getKey(),
+        'entity_type' => 'deal',
+        'code' => 'territory',
+        'name' => 'Territory',
+        'type' => 'text',
+    ]);
 
-    expect($stageField)->not->toBeNull('Stage custom field must exist for this test');
-
-    $deal1->saveCustomFieldValue($stageField, 'Proposal');
-    $deal2->saveCustomFieldValue($stageField, 'Prospecting');
+    $deal1->saveCustomFieldValue($territoryField, 'EMEA');
+    $deal2->saveCustomFieldValue($territoryField, 'APAC');
 
     $request = new Request([
         'filter' => [
             'custom_fields' => [
-                'stage' => ['eq' => 'Proposal'],
+                'territory' => ['eq' => 'EMEA'],
             ],
         ],
     ]);

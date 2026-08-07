@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Enums\Pipeline;
 
-use App\Enums\Pipeline\Contracts\PipelineStage;
+use App\Contracts\Pipeline\PipelineStage;
 
 enum DealStage: string implements PipelineStage
 {

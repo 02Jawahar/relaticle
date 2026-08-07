@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Enums\Pipeline\Contracts;
+namespace App\Contracts\Pipeline;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
 
@@ -16,9 +17,20 @@ use Filament\Support\Contracts\HasLabel;
 interface PipelineStage extends HasColor, HasLabel
 {
     /**
+     * Narrowed from Filament's HasLabel: a stage always has a label.
+     */
+    public function getLabel(): string;
+
+    /**
+     * The accent colour as a hex string. Used directly for kanban column
+     * headers, and expanded via Color::hex() where Filament wants a shade array.
+     */
+    public function getColor(): string;
+
+    /**
      * The sub-stages selectable while a record sits in this stage.
      *
-     * @return list<PipelineSubStage>
+     * @return list<PipelineSubStage&BackedEnum>
      */
     public function subStages(): array;
 

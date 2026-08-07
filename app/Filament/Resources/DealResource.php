@@ -7,8 +7,8 @@ namespace App\Filament\Resources;
 use App\Enums\CreationSource;
 use App\Filament\Exports\DealExporter;
 use App\Filament\Resources\DealResource\Forms\DealForm;
-use App\Filament\Resources\DealResource\Pages\ListDeals;
 use App\Filament\Resources\DealResource\Pages\DealsBoard;
+use App\Filament\Resources\DealResource\Pages\ListDeals;
 use App\Filament\Resources\DealResource\Pages\ViewDeal;
 use App\Filament\Resources\DealResource\RelationManagers\NotesRelationManager;
 use App\Filament\Resources\DealResource\RelationManagers\TasksRelationManager;
@@ -26,6 +26,7 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -58,6 +59,18 @@ final class DealResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->searchable(),
+                TextColumn::make('stage')
+                    ->label(__('pipelines.fields.stage.label'))
+                    ->badge()
+                    // The enum exposes a hex accent (also used for board column
+                    // headers); Color::hex expands it into the shade array a
+                    // Filament badge expects.
+                    ->color(fn (Deal $record): array => Color::hex($record->stage->getColor()))
+                    ->sortable(),
+                TextColumn::make('sub_stage')
+                    ->label(__('pipelines.fields.sub_stage.label'))
+                    ->placeholder(__('pipelines.fields.sub_stage.empty'))
+                    ->toggleable(),
                 TextColumn::make('creator.name')
                     ->label(__('filament/resources/deal.fields.creator.label'))
                     ->searchable()
