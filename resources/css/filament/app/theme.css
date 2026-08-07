@@ -593,21 +593,20 @@
     }
 }
 
-/* Sidebar: fit the labels instead of a fixed wide column. Width comes from the
-   panel's sidebarWidth()/collapsedSidebarWidth(); this stops the nav text from
-   forcing it wider and keeps the collapsed rail centred. */
-.fi-main-sidebar .fi-sidebar-item-label {
-    @apply truncate;
-}
+/* Sidebar width comes from the panel's sidebarWidth()/collapsedSidebarWidth().
+   Label visibility is Filament's own concern — it toggles them through Alpine on
+   $store.sidebar.isOpen, so no CSS here should hide them.
 
+   The collapsed rail only needs the workspace switcher to stop forcing the
+   sidebar wider than the rail: a long team name would otherwise keep it at the
+   expanded width with the labels hidden, which reads as a broken sidebar. */
 .fi-main-sidebar:not(.fi-sidebar-open) {
-    .fi-sidebar-item-btn {
-        @apply justify-center px-0;
-    }
+    @apply lg:w-(--collapsed-sidebar-width);
 
-    .fi-sidebar-group-label,
-    .fi-sidebar-item-label {
-        @apply hidden;
+    .fi-sidebar-header,
+    .fi-tenant-menu,
+    .fi-tenant-menu-trigger {
+        @apply min-w-0 max-w-full overflow-hidden;
     }
 }
 

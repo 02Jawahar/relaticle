@@ -170,22 +170,6 @@ final class AppPanelProvider extends PanelProvider
             // icon rail with tooltips.
             ->sidebarWidth('14rem')
             ->collapsedSidebarWidth('4.5rem')
-            ->renderHook(
-                PanelsRenderHook::HEAD_END,
-                // Alpine's $persist keeps the user's own choice, so this only
-                // seeds the very first visit: start on the icon rail.
-                fn (): string => <<<'HTML'
-                    <script>
-                        (() => {
-                            for (const key of ['_x_isOpen', '_x_isOpenDesktop']) {
-                                if (localStorage.getItem(key) === null) {
-                                    localStorage.setItem(key, 'false');
-                                }
-                            }
-                        })();
-                    </script>
-                    HTML,
-            )
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label(__('filament/panel.navigation_groups.tasks'))
