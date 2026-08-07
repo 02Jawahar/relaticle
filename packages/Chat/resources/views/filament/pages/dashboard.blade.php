@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <div
         x-data="dashboardChatInput(@js(\App\Filament\Pages\ChatConversation::getUrl()), @js(auth()->user()?->ai_preferences['default_model'] ?? 'auto'))"
-        class="mx-auto w-full max-w-3xl py-16"
+        @class(['mx-auto w-full py-16', 'max-w-3xl' => ! $this->isDashboardView(), 'max-w-7xl' => $this->isDashboardView()])
     >
         {{-- Greeting --}}
         <div class="text-center">
@@ -18,7 +18,17 @@
                     <span>Recent chat &middot; {{ \Illuminate\Support\Str::limit($recentChatTitle ?? 'Untitled', 50) }}</span>
                 </a>
             @endif
+
+            {{-- Chat / Dashboard toggle --}}
+            <div class="mt-6 flex justify-center">
+                @include('filament.app.home-switcher', ['active' => $this->isDashboardView()])
+            </div>
         </div>
+
+        {{-- Dashboard half --}}
+        @if ($this->isDashboardView())
+            @include('filament.app.home-dashboard')
+        @else
 
         {{-- Chat input --}}
         <form @submit.prevent="submit()" class="mt-10">
@@ -79,6 +89,7 @@
         </form>
 
         @include('chat::filament.pages.partials.my-tasks')
+        @endif
     </div>
 
     @script

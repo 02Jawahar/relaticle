@@ -641,8 +641,38 @@
     margin-block: 0;
 }
 
+/* Filament only grows .fi-modal-content for slide-overs and screen-width
+   modals, so a plain modal leaves its content at natural height with dead space
+   beneath. The chain below stretches schema -> grid -> columns to the full
+   height, and each column scrolls internally rather than the whole sheet. */
 .fi-modal-window.fi-pipeline-card-panel > .fi-modal-content {
-    @apply flex-1 overflow-y-auto;
+    @apply flex min-h-0 flex-1 flex-col overflow-hidden;
+
+    > .fi-sc {
+        @apply min-h-0 flex-1;
+
+        > .fi-grid {
+            @apply h-full min-h-0 items-stretch;
+        }
+    }
+
+    .fi-grid > .fi-grid-col {
+        @apply flex min-h-0 flex-col;
+    }
+
+    /* Detail card and tab panel both fill their column. */
+    .fi-sc-section,
+    .fi-section,
+    .fi-sc-tabs,
+    .fi-tabs-ctn {
+        @apply flex min-h-0 flex-1 flex-col;
+    }
+
+    /* Scrolling belongs to the inner content, so the header and footer stay put. */
+    .fi-section-content-ctn,
+    .fi-sc-tabs-tab {
+        @apply min-h-0 flex-1 overflow-y-auto;
+    }
 }
 
 @media (max-width: 1023px) {
