@@ -29,7 +29,15 @@ final readonly class ConvertLeadToDeal
         abort_unless($user->can('update', $lead), 403);
         abort_unless($user->can('create', Deal::class), 403);
 
-        if ($lead->deal !== null) {
+        // A relation query rather than $lead->deal: the attribute would lazy load,
+        // which this app disables, and the action must work from the observer and
+        // console paths too, not only where a caller remembered to eager load.
+        $alreadyConverted = Deal::query()
+            ->withoutGlobalScopes()
+            ->where('lead_id', $lead->getKey())
+            ->exists();
+
+        if ($alreadyConverted) {
             throw new ConflictHttpException(
                 __('pipelines.conversion.lead_already_converted', ['name' => $lead->name]),
             );

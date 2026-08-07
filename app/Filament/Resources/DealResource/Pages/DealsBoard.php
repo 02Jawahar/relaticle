@@ -15,6 +15,7 @@ use App\Filament\Infolists\PipelineCardPanel;
 use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Forms\DealForm;
 use App\Models\Deal;
+use App\Models\Order;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -94,7 +95,9 @@ final class DealsBoard extends BoardResourcePage
                     ->requiresConfirmation()
                     ->modalHeading(__('pipelines.conversion.deal_to_order.heading'))
                     ->modalDescription(__('pipelines.conversion.deal_to_order.description'))
-                    ->visible(fn (Deal $record): bool => $record->stage->isWon())
+                    // Conversion is automatic on reaching Won; this stays as a
+                    // manual fallback for anything that did not convert.
+                    ->visible(fn (Deal $record): bool => $record->stage->isWon() && ! Order::query()->where('deal_id', $record->getKey())->exists())
                     ->action(function (Deal $record): void {
                         /** @var User $user */
                         $user = Auth::guard('web')->user();

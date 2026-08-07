@@ -94,7 +94,9 @@ final class LeadsBoard extends BoardResourcePage
                     ->requiresConfirmation()
                     ->modalHeading(__('pipelines.conversion.lead_to_deal.heading'))
                     ->modalDescription(__('pipelines.conversion.lead_to_deal.description'))
-                    ->visible(fn (Lead $record): bool => $record->stage->isWon())
+                    // Conversion is automatic on reaching Won; this stays as a
+                    // manual fallback for anything that did not convert.
+                    ->visible(fn (Lead $record): bool => $record->stage->isWon() && $record->deal === null)
                     ->action(function (Lead $record): void {
                         /** @var User $user */
                         $user = Auth::guard('web')->user();

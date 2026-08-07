@@ -26,7 +26,7 @@ final readonly class ConvertDealToOrder
         abort_unless($user->can('update', $deal), 403);
         abort_unless($user->can('create', Order::class), 403);
 
-        $existing = Order::query()->where('deal_id', $deal->getKey())->exists();
+        $existing = Order::query()->withoutGlobalScopes()->where('deal_id', $deal->getKey())->exists();
 
         if ($existing) {
             throw new ConflictHttpException(

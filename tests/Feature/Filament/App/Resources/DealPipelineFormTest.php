@@ -42,8 +42,11 @@ it('accepts every sub-stage of :dataset and rejects one from another stage', fun
     $deal->sub_stage = $foreign;
     $deal->save();
 
+    // Asserts the foreign value specifically, not null: reaching a won stage
+    // converts the record downstream, and that conversion stamps its own
+    // sub-stage, so null is not guaranteed there.
     expect($deal->fresh()->sub_stage)
-        ->toBeNull("{$foreign->value} must not persist on {$stage->value}");
+        ->not->toBe($foreign, "{$foreign->value} must not persist on {$stage->value}");
 })->with(fn (): array => array_map(
     fn (DealStage $stage): array => [$stage],
     DealStage::cases(),
