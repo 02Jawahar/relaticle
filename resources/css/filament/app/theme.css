@@ -688,33 +688,10 @@
    Soft UI pass: seamless topbar, pastel pipeline columns, low-contrast borders
    =================================== */
 
-/* The topbar previously sat above the content behind its own border and shadow,
-   which read as a hard partition across the app. It now shares the page surface
-   so the board reads as one continuous canvas. */
-.fi-topbar,
-.fi-topbar-ctn {
-    @apply border-0 bg-transparent shadow-none ring-0;
-}
-
+/* Chrome surfaces are defined by the glass layer at the end of this file. */
 .fi-main-ctn,
 .fi-main {
     @apply bg-transparent;
-}
-
-/* One quiet page surface behind everything, in the brand cream. */
-.fi-body,
-.fi-layout {
-    background-color: var(--qbitio-surface);
-}
-
-.dark .fi-body,
-.dark .fi-layout {
-    @apply bg-gray-950;
-}
-
-/* Sidebar joins the same surface rather than being a panel with an edge. */
-.fi-main-sidebar {
-    @apply border-0 bg-transparent shadow-none;
 }
 
 /* --- Pipeline columns ------------------------------------------------------ */
@@ -797,61 +774,205 @@
 }
 
 
+
 /* ===================================
-   Qbitio brand layer
+   Glass shell: floating rounded sidebar and topbar, frosted panels, motion
    =================================== */
 
 :root {
-    /* Cream page surface and the chartreuse accent from the brand site. */
-    --qbitio-surface: oklch(0.985 0.021 116);
-    --qbitio-accent: oklch(0.884 0.204 120);
-    --qbitio-accent-hover: oklch(0.845 0.198 120.5);
-    --qbitio-ink: oklch(0.184 0.006 285);
+    /* Neutral surfaces — no warm tint. A faint two-stop wash gives the frosted
+       panels something to refract without reading as a colour. */
+    --shell-bg: oklch(0.972 0.003 286);
+    --shell-bg-accent: oklch(0.945 0.012 275);
+
+    --glass-bg: rgb(255 255 255 / 68%);
+    --glass-bg-strong: rgb(255 255 255 / 82%);
+    --glass-border: rgb(255 255 255 / 70%);
+    --glass-ring: rgb(15 23 42 / 6%);
+    --glass-shadow: 0 8px 32px rgb(15 23 42 / 8%);
+    --glass-blur: saturate(160%) blur(16px);
+
+    --shell-gap: 0.625rem;
+    --shell-radius: 1.125rem;
 }
 
 .dark {
-    --qbitio-surface: oklch(0.184 0.006 285);
+    --shell-bg: oklch(0.165 0.006 286);
+    --shell-bg-accent: oklch(0.205 0.014 276);
+
+    --glass-bg: rgb(255 255 255 / 5%);
+    --glass-bg-strong: rgb(255 255 255 / 8%);
+    --glass-border: rgb(255 255 255 / 10%);
+    --glass-ring: rgb(255 255 255 / 6%);
+    --glass-shadow: 0 8px 32px rgb(0 0 0 / 45%);
 }
 
-/* Primary buttons carry the accent with black type, as on the brand site.
-   Filament pairs primary-600 with white text, which is illegible on lime. */
-.fi-btn.fi-color-primary {
-    background-color: var(--qbitio-accent);
-    color: var(--qbitio-ink);
-
-    --tw-ring-color: transparent;
+/* Page canvas the glass sits on. */
+.fi-body,
+.fi-layout {
+    background-color: var(--shell-bg);
+    background-image:
+        radial-gradient(60rem 40rem at 12% -10%, var(--shell-bg-accent), transparent 60%),
+        radial-gradient(50rem 35rem at 100% 0%, var(--shell-bg-accent), transparent 55%);
+    background-attachment: fixed;
 }
 
-.fi-btn.fi-color-primary:hover {
-    background-color: var(--qbitio-accent-hover);
-}
+/* --- Frosted panel primitive ---------------------------------------------- */
 
-.fi-btn.fi-color-primary .fi-btn-label,
-.fi-btn.fi-color-primary .fi-icon {
-    color: var(--qbitio-ink);
-}
-
-/* Links, active nav and other primary text need the darker end of the ramp to
-   stay readable on cream; the bright accent is reserved for filled surfaces. */
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
-.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon {
-    color: var(--color-primary-800);
-}
-
+.fi-main-sidebar,
 .fi-topbar,
+.fi-section,
+.fi-ta-ctn,
+.fi-dropdown-panel,
+.fi-modal-window,
+.fi-pipeline-column {
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 40%);
+}
+
+.dark .fi-main-sidebar,
+.dark .fi-topbar,
+.dark .fi-section,
+.dark .fi-ta-ctn,
+.dark .fi-dropdown-panel,
+.dark .fi-modal-window,
+.dark .fi-pipeline-column {
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+/* --- Floating sidebar ------------------------------------------------------ */
+
+/* Inset from the viewport so it reads as a panel, not a wall. Filament pins the
+   sidebar with `fixed inset-y-0`, so the height is reduced by the gap on both
+   sides rather than adding margins that would overflow. */
+.fi-main-sidebar {
+    @apply rounded-[--shell-radius];
+
+    top: var(--shell-gap);
+    bottom: var(--shell-gap);
+    height: auto;
+    margin-inline-start: var(--shell-gap);
+}
+
+.fi-body-has-topbar .fi-main-sidebar {
+    top: calc(3.5rem + var(--shell-gap) * 2);
+}
+
+/* --- Floating topbar ------------------------------------------------------- */
+
 .fi-topbar-ctn {
-    background-color: transparent;
+    @apply border-0 bg-transparent shadow-none ring-0;
+
+    padding: var(--shell-gap) var(--shell-gap) 0;
 }
 
-/* Headings take the brand's near-black rather than Tailwind's slate. */
-.fi-header-heading,
-.fi-modal-heading,
-.fi-section-header-heading {
-    color: var(--qbitio-ink);
+.fi-topbar {
+    @apply rounded-[--shell-radius];
+
+    min-height: 3.25rem;
 }
 
-.dark .fi-header-heading,
-.dark .fi-modal-heading,
-.dark .fi-section-header-heading {
-    color: white;
+.fi-topbar nav {
+    @apply px-3 lg:px-4;
+}
+
+/* Content clears the floating chrome. */
+.fi-main {
+    padding-inline: var(--shell-gap);
+}
+
+/* --- Panels --------------------------------------------------------------- */
+
+.fi-section,
+.fi-ta-ctn,
+.fi-dropdown-panel {
+    @apply rounded-2xl;
+}
+
+.fi-pipeline-column {
+    /* Keep the stage wash, layered over the frost rather than replacing it. */
+    background-image: linear-gradient(
+        color-mix(in srgb, var(--ff-accent, #94a3b8) 9%, transparent),
+        color-mix(in srgb, var(--ff-accent, #94a3b8) 4%, transparent)
+    );
+}
+
+.flowforge-card {
+    background-color: var(--glass-bg-strong);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+@keyframes shell-rise {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Content settles in on navigation; chrome stays put so it never flickers. */
+.fi-main .fi-section,
+.fi-main .fi-ta-ctn,
+.fi-pipeline-column {
+    animation: shell-rise 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.fi-btn,
+.fi-icon-btn,
+.fi-sidebar-item-btn,
+.fi-tabs-item,
+.fi-dropdown-list-item {
+    transition:
+        background-color 160ms ease,
+        color 160ms ease,
+        box-shadow 160ms ease,
+        transform 160ms ease;
+}
+
+.fi-btn:active,
+.fi-icon-btn:active {
+    transform: scale(0.97);
+}
+
+.fi-section {
+    transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+/* Respect the OS setting: no entry animation, no lift, no scale. */
+@media (prefers-reduced-motion: reduce) {
+    .fi-main .fi-section,
+    .fi-main .fi-ta-ctn,
+    .fi-pipeline-column,
+    .flowforge-card {
+        animation: none;
+        transition: none;
+    }
+
+    .fi-btn:active,
+    .fi-icon-btn:active {
+        transform: none;
+    }
+}
+
+/* Backdrop-filter is expensive on large scroll areas; opt the board columns out
+   of the frost on low-power/older engines that do not support it. */
+@supports not (backdrop-filter: blur(1px)) {
+    .fi-main-sidebar,
+    .fi-topbar,
+    .fi-section,
+    .fi-modal-window,
+    .fi-pipeline-column,
+    .flowforge-card {
+        background-color: var(--glass-bg-strong);
+    }
 }

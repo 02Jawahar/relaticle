@@ -116,30 +116,22 @@ final class AppPanelProvider extends PanelProvider
             ->emailChangeVerification()
             ->strictAuthorization()
             ->databaseNotifications()
-            // Qbitio brand: chartreuse accent on a cream surface with black type.
-            //
-            // Lime is a light hue, so the ramp keeps 300-400 as the brand accent and
-            // darkens upwards for text and borders that still need contrast. Primary
-            // buttons are re-tinted to the bright accent with black text in
-            // theme.css, since white on lime is unreadable.
-            //
-            // No 'DEFAULT' key here: Filament types a palette as array<int, string>
-            // and Color::findShade() returns the array key, so a string key comes
-            // back as a TypeError whenever no numeric shade clears the contrast
-            // ratio — which a ramp this light does hit.
+            // Neutral indigo/violet accent. The chartreuse brand ramp read as a
+            // yellow cast across the whole UI, and a light accent also forced
+            // Color::findShade() past every numeric shade.
             ->colors([
                 'primary' => [
-                    50 => 'oklch(0.985 0.028 118)',
-                    100 => 'oklch(0.966 0.068 118.5)',
-                    200 => 'oklch(0.938 0.124 119)',
-                    300 => 'oklch(0.908 0.176 119.5)',
-                    400 => 'oklch(0.884 0.204 120)',
-                    500 => 'oklch(0.838 0.196 121)',
-                    600 => 'oklch(0.752 0.176 122)',
-                    700 => 'oklch(0.638 0.150 123)',
-                    800 => 'oklch(0.524 0.122 124)',
-                    900 => 'oklch(0.440 0.098 125)',
-                    950 => 'oklch(0.298 0.068 126)',
+                    50 => 'oklch(0.969 0.016 293.756)',
+                    100 => 'oklch(0.943 0.028 294.588)',
+                    200 => 'oklch(0.894 0.055 293.283)',
+                    300 => 'oklch(0.811 0.101 293.571)',
+                    400 => 'oklch(0.709 0.159 293.541)',
+                    500 => 'oklch(0.606 0.219 292.717)',
+                    600 => 'oklch(0.541 0.247 293.009)',
+                    700 => 'oklch(0.491 0.241 292.581)',
+                    800 => 'oklch(0.432 0.211 292.759)',
+                    900 => 'oklch(0.380 0.178 293.745)',
+                    950 => 'oklch(0.283 0.135 291.089)',
                 ],
             ])
             ->viteTheme('resources/css/filament/app/theme.css')
