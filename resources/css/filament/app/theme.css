@@ -638,3 +638,115 @@
 .flowforge-card .fi-dropdown {
     @apply hidden;
 }
+
+/* ===================================
+   Soft UI pass: seamless topbar, pastel pipeline columns, low-contrast borders
+   =================================== */
+
+/* The topbar previously sat above the content behind its own border and shadow,
+   which read as a hard partition across the app. It now shares the page surface
+   so the board reads as one continuous canvas. */
+.fi-topbar,
+.fi-topbar-ctn {
+    @apply border-0 bg-transparent shadow-none ring-0;
+}
+
+.fi-main-ctn,
+.fi-main {
+    @apply bg-transparent;
+}
+
+/* One quiet page surface behind everything. */
+.fi-body,
+.fi-layout {
+    @apply bg-gray-50;
+}
+
+.dark .fi-body,
+.dark .fi-layout {
+    @apply bg-gray-950;
+}
+
+/* Sidebar joins the same surface rather than being a panel with an edge. */
+.fi-main-sidebar {
+    @apply border-0 bg-transparent shadow-none;
+}
+
+/* --- Pipeline columns ------------------------------------------------------ */
+
+/* Each column is a soft card washed with its own stage colour. --ff-accent is
+   set per column by the Flowforge column override; the fallbacks keep columns
+   without an accent looking deliberate rather than broken. */
+.fi-pipeline-column {
+    @apply rounded-2xl;
+
+    background-color: color-mix(in srgb, var(--ff-accent, #94a3b8) 7%, white);
+    border: 1px solid color-mix(in srgb, var(--ff-accent, #94a3b8) 14%, transparent);
+    box-shadow: 0 1px 2px rgb(15 23 42 / 4%);
+}
+
+.dark .fi-pipeline-column {
+    background-color: color-mix(in srgb, var(--ff-accent, #94a3b8) 12%, #0f172a);
+    border-color: color-mix(in srgb, var(--ff-accent, #94a3b8) 22%, transparent);
+    box-shadow: none;
+}
+
+.fi-pipeline-column-dot {
+    @apply me-2 inline-block h-2 w-2 flex-shrink-0 rounded-full;
+
+    background-color: var(--ff-accent, #94a3b8);
+}
+
+/* --- Cards ---------------------------------------------------------------- */
+
+/* Soft, low-contrast cards: a hairline instead of a grey rule, and a shadow
+   that only suggests lift. */
+.flowforge-card {
+    @apply rounded-xl border-0 shadow-none ring-0;
+
+    background-color: white;
+    box-shadow:
+        0 1px 2px rgb(15 23 42 / 5%),
+        0 0 0 1px rgb(15 23 42 / 4%);
+    transition: box-shadow 150ms ease, transform 150ms ease;
+}
+
+.flowforge-card:hover {
+    box-shadow:
+        0 4px 12px rgb(15 23 42 / 8%),
+        0 0 0 1px rgb(15 23 42 / 6%);
+    transform: translateY(-1px);
+}
+
+.dark .flowforge-card {
+    background-color: #111827;
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 6%);
+}
+
+.dark .flowforge-card:hover {
+    box-shadow:
+        0 4px 12px rgb(0 0 0 / 40%),
+        0 0 0 1px rgb(255 255 255 / 10%);
+}
+
+/* The empty-column placeholder's dashed box is visual noise at this weight. */
+.flowforge-column-content .border-dashed {
+    @apply border-transparent;
+}
+
+/* Soften the remaining chrome to match: panels get a hairline, not a grey line. */
+.fi-section,
+.fi-ta-ctn,
+.fi-dropdown-panel {
+    @apply rounded-2xl border-0;
+
+    box-shadow:
+        0 1px 2px rgb(15 23 42 / 4%),
+        0 0 0 1px rgb(15 23 42 / 5%);
+}
+
+.dark .fi-section,
+.dark .fi-ta-ctn,
+.dark .fi-dropdown-panel {
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 6%);
+}

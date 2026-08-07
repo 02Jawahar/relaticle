@@ -11,6 +11,16 @@ return [
         'updated_at' => 'Last updated',
         'open_full_page' => 'Open full page',
         'close' => 'Close',
+        'tabs' => [
+            'activity' => 'Activity',
+            'notes' => 'Notes',
+            'tasks' => 'Tasks',
+        ],
+        'empty' => [
+            'activity' => 'No activity yet.',
+            'notes' => 'No notes on this record yet.',
+            'tasks' => 'No tasks on this record yet.',
+        ],
     ],
 
     'conversion' => [
