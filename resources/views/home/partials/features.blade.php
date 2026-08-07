@@ -199,7 +199,7 @@
                         <x-ri-building-2-line class="w-3.5 h-3.5 text-primary dark:text-primary-400"/>
                         Company Management
                     </h3>
-                    <p class="{{ $cardDesc }}">Track companies with detailed profiles, linked contacts, and opportunity history. See the full picture at a glance.</p>
+                    <p class="{{ $cardDesc }}">Track companies with detailed profiles, linked contacts, and deal history. See the full picture at a glance.</p>
                 </div>
             </div>
 
@@ -212,11 +212,11 @@
                 <p class="{{ $cardDesc }}">Rich contact profiles with interaction history, notes, and linked companies. Find anyone with advanced search and filters.</p>
             </div>
 
-            {{-- Sales Opportunities --}}
+            {{-- Sales Deals --}}
             <div id="card-sales" class="{{ $cardBase }} p-6 md:col-span-2 lg:col-span-1 overflow-hidden">
                 <h3 class="{{ $cardTitle }} inline-flex items-center gap-2">
                     <x-ri-funds-line class="w-3.5 h-3.5 text-primary dark:text-primary-400"/>
-                    Sales Opportunities
+                    Sales Deals
                 </h3>
                 <p class="{{ $cardDesc }}">
                     Manage your pipeline with custom stages, lifecycle tracking, and win/loss analysis.

@@ -13,7 +13,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Mcp\Server\Attributes\Description;
 
-#[Description('Detach a note from companies, people, or opportunities. Removes specified links.')]
+#[Description('Detach a note from companies, people, or deals. Removes specified links.')]
 final class DetachNoteFromEntitiesTool extends BaseDetachTool
 {
     protected function modelClass(): string
@@ -34,7 +34,7 @@ final class DetachNoteFromEntitiesTool extends BaseDetachTool
     /** @return array<int, string> */
     protected function relationshipsToLoad(): array
     {
-        return ['companies', 'people', 'opportunities'];
+        return ['companies', 'people', 'deals'];
     }
 
     public function relationshipSchema(JsonSchema $schema): array
@@ -42,7 +42,7 @@ final class DetachNoteFromEntitiesTool extends BaseDetachTool
         return [
             'company_ids' => $schema->array()->description('Company IDs to detach from this note.'),
             'people_ids' => $schema->array()->description('People IDs to detach from this note.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity IDs to detach from this note.'),
+            'deal_ids' => $schema->array()->description('Deal IDs to detach from this note.'),
         ];
     }
 
@@ -55,8 +55,8 @@ final class DetachNoteFromEntitiesTool extends BaseDetachTool
             'company_ids.*' => ['string', new ArrayExistsForTeam('companies', 'company_ids', $teamId)],
             'people_ids' => ['sometimes', 'array'],
             'people_ids.*' => ['string', new ArrayExistsForTeam('people', 'people_ids', $teamId)],
-            'opportunity_ids' => ['sometimes', 'array'],
-            'opportunity_ids.*' => ['string', new ArrayExistsForTeam('opportunities', 'opportunity_ids', $teamId)],
+            'deal_ids' => ['sometimes', 'array'],
+            'deal_ids.*' => ['string', new ArrayExistsForTeam('deals', 'deal_ids', $teamId)],
         ];
     }
 
@@ -71,8 +71,8 @@ final class DetachNoteFromEntitiesTool extends BaseDetachTool
             $model->people()->detach($data['people_ids']);
         }
 
-        if (isset($data['opportunity_ids'])) {
-            $model->opportunities()->detach($data['opportunity_ids']);
+        if (isset($data['deal_ids'])) {
+            $model->deals()->detach($data['deal_ids']);
         }
     }
 }

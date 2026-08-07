@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -49,16 +49,16 @@ test('team has many tasks', function () {
         ->and($teamTask?->id)->toBe($task->id);
 });
 
-test('team has many opportunities', function () {
+test('team has many deals', function () {
     $team = Team::factory()->create();
-    $opportunity = Opportunity::factory()->create([
+    $deal = Deal::factory()->create([
         'team_id' => $team->id,
     ]);
 
-    $teamOpportunity = $team->opportunities()->firstWhere('id', $opportunity->id);
+    $teamDeal = $team->deals()->firstWhere('id', $deal->id);
 
-    expect($teamOpportunity)->toBeInstanceOf(Opportunity::class)
-        ->and($teamOpportunity?->id)->toBe($opportunity->id);
+    expect($teamDeal)->toBeInstanceOf(Deal::class)
+        ->and($teamDeal?->id)->toBe($deal->id);
 });
 
 test('team has many notes', function () {

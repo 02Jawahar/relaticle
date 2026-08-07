@@ -6,8 +6,8 @@ namespace Relaticle\Chat\Tools\Note;
 
 use App\Actions\Note\UpdateNote;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Team;
 use App\Models\User;
@@ -52,7 +52,7 @@ final class UpdateNoteTool extends BaseWriteUpdateTool
             'title' => $schema->string()->description('The new note title.'),
             'people_ids' => $schema->array()->description('People ULIDs to link. Pass [] to clear linked people.'),
             'company_ids' => $schema->array()->description('Company ULIDs to link. Pass [] to clear linked companies.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity ULIDs to link. Pass [] to clear linked opportunities.'),
+            'deal_ids' => $schema->array()->description('Deal ULIDs to link. Pass [] to clear linked deals.'),
         ];
     }
 
@@ -63,7 +63,7 @@ final class UpdateNoteTool extends BaseWriteUpdateTool
         if (array_key_exists('title', $request->all())) {
             $data['title'] = $request['title'];
         }
-        foreach (['people_ids', 'company_ids', 'opportunity_ids'] as $key) {
+        foreach (['people_ids', 'company_ids', 'deal_ids'] as $key) {
             if (! array_key_exists($key, $request->all())) {
                 continue;
             }
@@ -95,9 +95,9 @@ final class UpdateNoteTool extends BaseWriteUpdateTool
             $fields[] = ['label' => 'Linked companies', 'value' => $this->namesForIds($companyIds, Company::class, 'name', $team)];
         }
 
-        $opportunityIds = $this->idListOrNull($request, 'opportunity_ids');
-        if ($opportunityIds !== null) {
-            $fields[] = ['label' => 'Linked opportunities', 'value' => $this->namesForIds($opportunityIds, Opportunity::class, 'name', $team)];
+        $dealIds = $this->idListOrNull($request, 'deal_ids');
+        if ($dealIds !== null) {
+            $fields[] = ['label' => 'Linked deals', 'value' => $this->namesForIds($dealIds, Deal::class, 'name', $team)];
         }
 
         return [

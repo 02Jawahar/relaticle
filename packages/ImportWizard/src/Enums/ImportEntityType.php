@@ -6,8 +6,8 @@ namespace Relaticle\ImportWizard\Enums;
 
 use Relaticle\ImportWizard\Importers\BaseImporter;
 use Relaticle\ImportWizard\Importers\CompanyImporter;
+use Relaticle\ImportWizard\Importers\DealImporter;
 use Relaticle\ImportWizard\Importers\NoteImporter;
-use Relaticle\ImportWizard\Importers\OpportunityImporter;
 use Relaticle\ImportWizard\Importers\PeopleImporter;
 use Relaticle\ImportWizard\Importers\TaskImporter;
 
@@ -15,7 +15,7 @@ enum ImportEntityType: string
 {
     case Company = 'company';
     case People = 'people';
-    case Opportunity = 'opportunity';
+    case Deal = 'deal';
     case Task = 'task';
     case Note = 'note';
 
@@ -24,7 +24,7 @@ enum ImportEntityType: string
         return match ($this) {
             self::Company => 'Companies',
             self::People => 'People',
-            self::Opportunity => 'Opportunities',
+            self::Deal => 'Deals',
             self::Task => 'Tasks',
             self::Note => 'Notes',
         };
@@ -35,7 +35,7 @@ enum ImportEntityType: string
         return match ($this) {
             self::Company => 'Company',
             self::People => 'Person',
-            self::Opportunity => 'Opportunity',
+            self::Deal => 'Deal',
             self::Task => 'Task',
             self::Note => 'Note',
         };
@@ -51,7 +51,7 @@ enum ImportEntityType: string
         return match ($this) {
             self::Company => CompanyImporter::class,
             self::People => PeopleImporter::class,
-            self::Opportunity => OpportunityImporter::class,
+            self::Deal => DealImporter::class,
             self::Task => TaskImporter::class,
             self::Note => NoteImporter::class,
         };
@@ -62,7 +62,7 @@ enum ImportEntityType: string
         return match ($this) {
             self::Company => 'heroicon-o-building-office',
             self::People => 'heroicon-o-users',
-            self::Opportunity => 'heroicon-o-currency-dollar',
+            self::Deal => 'heroicon-o-currency-dollar',
             self::Task => 'heroicon-o-clipboard-document-check',
             self::Note => 'heroicon-o-document-text',
         };

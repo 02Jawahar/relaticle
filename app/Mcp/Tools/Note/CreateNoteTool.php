@@ -36,7 +36,7 @@ final class CreateNoteTool extends BaseCreateTool
             'title' => $schema->string()->description('The note title.')->required(),
             'company_ids' => $schema->array()->description('Company IDs to link this note to.'),
             'people_ids' => $schema->array()->description('People IDs to link this note to.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity IDs to link this note to.'),
+            'deal_ids' => $schema->array()->description('Deal IDs to link this note to.'),
         ];
     }
 
@@ -50,8 +50,8 @@ final class CreateNoteTool extends BaseCreateTool
             'company_ids.*' => ['string', new ArrayExistsForTeam('companies', 'company_ids', $teamId)],
             'people_ids' => ['sometimes', 'array'],
             'people_ids.*' => ['string', new ArrayExistsForTeam('people', 'people_ids', $teamId)],
-            'opportunity_ids' => ['sometimes', 'array'],
-            'opportunity_ids.*' => ['string', new ArrayExistsForTeam('opportunities', 'opportunity_ids', $teamId)],
+            'deal_ids' => ['sometimes', 'array'],
+            'deal_ids.*' => ['string', new ArrayExistsForTeam('deals', 'deal_ids', $teamId)],
         ];
     }
 }

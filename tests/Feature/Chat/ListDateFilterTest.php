@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 use App\Actions\Company\ListCompanies;
-use App\Actions\Opportunity\ListOpportunities;
+use App\Actions\Deal\ListDeals;
 use App\Actions\People\ListPeople;
 use App\Features\OnboardSeed;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Ai\Tools\Request;
 use Laravel\Pennant\Feature;
 use Relaticle\Chat\Tools\Company\ListCompaniesTool;
-use Relaticle\Chat\Tools\Opportunity\ListOpportunitiesTool;
+use Relaticle\Chat\Tools\Deal\ListDealsTool;
 use Relaticle\Chat\Tools\People\ListPeopleTool;
 
-mutates(ListOpportunities::class, ListCompanies::class, ListPeople::class);
+mutates(ListDeals::class, ListCompanies::class, ListPeople::class);
 
 beforeEach(function (): void {
     Feature::define(OnboardSeed::class, false);
@@ -26,14 +26,14 @@ beforeEach(function (): void {
     Auth::guard('web')->setUser($this->user);
 });
 
-it('filters opportunities by created_after', function (): void {
+it('filters deals by created_after', function (): void {
     $this->travelTo(now()->subDays(10));
-    Opportunity::factory()->for($this->team)->create(['name' => 'Old Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'Old Deal']);
 
     $this->travelBack();
-    Opportunity::factory()->for($this->team)->create(['name' => 'New Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'New Deal']);
 
-    $tool = new ListOpportunitiesTool;
+    $tool = new ListDealsTool;
     $response = $tool->handle(new Request([
         'created_after' => now()->subDays(1)->toDateString(),
     ]));
@@ -45,14 +45,14 @@ it('filters opportunities by created_after', function (): void {
         ->and($items[0]['attributes']['name'])->toBe('New Deal');
 });
 
-it('filters opportunities by created_before', function (): void {
+it('filters deals by created_before', function (): void {
     $this->travelTo(now()->subDays(10));
-    Opportunity::factory()->for($this->team)->create(['name' => 'Old Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'Old Deal']);
 
     $this->travelBack();
-    Opportunity::factory()->for($this->team)->create(['name' => 'New Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'New Deal']);
 
-    $tool = new ListOpportunitiesTool;
+    $tool = new ListDealsTool;
     $response = $tool->handle(new Request([
         'created_before' => now()->subDays(5)->toDateString(),
     ]));
@@ -64,19 +64,19 @@ it('filters opportunities by created_before', function (): void {
         ->and($items[0]['attributes']['name'])->toBe('Old Deal');
 });
 
-it('filters opportunities by both created_after and created_before', function (): void {
+it('filters deals by both created_after and created_before', function (): void {
     $now = now();
 
     $this->travelTo($now->copy()->subDays(20));
-    Opportunity::factory()->for($this->team)->create(['name' => 'Very Old']);
+    Deal::factory()->for($this->team)->create(['name' => 'Very Old']);
 
     $this->travelTo($now->copy()->subDays(7));
-    Opportunity::factory()->for($this->team)->create(['name' => 'Mid Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'Mid Deal']);
 
     $this->travelTo($now);
-    Opportunity::factory()->for($this->team)->create(['name' => 'Fresh Deal']);
+    Deal::factory()->for($this->team)->create(['name' => 'Fresh Deal']);
 
-    $tool = new ListOpportunitiesTool;
+    $tool = new ListDealsTool;
     $response = $tool->handle(new Request([
         'created_after' => $now->copy()->subDays(14)->toDateString(),
         'created_before' => $now->copy()->subDays(3)->toDateString(),

@@ -29,7 +29,7 @@ final class NoteResource extends JsonApiResource
             'custom_fields' => $this->formatCustomFields($this->resource),
             'companies_count' => $this->whenHas('companies_count'),
             'people_count' => $this->whenHas('people_count'),
-            'opportunities_count' => $this->whenHas('opportunities_count'),
+            'deals_count' => $this->whenHas('deals_count'),
         ];
     }
 
@@ -42,7 +42,7 @@ final class NoteResource extends JsonApiResource
             'creator' => UserResource::class,
             'companies' => CompanyResource::class,
             'people' => PeopleResource::class,
-            'opportunities' => OpportunityResource::class,
+            'deals' => DealResource::class,
         ];
     }
 }

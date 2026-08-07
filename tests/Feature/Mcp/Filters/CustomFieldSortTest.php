@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Mcp\Filters\CustomFieldSort;
 use App\Models\CustomField;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\Scopes\TeamScope;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,21 +15,21 @@ beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->personalTeam();
     $this->actingAs($this->user);
-    Opportunity::addGlobalScope(new TeamScope);
+    Deal::addGlobalScope(new TeamScope);
 });
 
 afterEach(function (): void {
-    Opportunity::clearBootedModels();
+    Deal::clearBootedModels();
 });
 
-it('sorts opportunities by custom field value ascending', function (): void {
-    $opp1 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'A']);
-    $opp2 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'B']);
+it('sorts deals by custom field value ascending', function (): void {
+    $opp1 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'A']);
+    $opp2 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'B']);
 
     $amountField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'amount')
         ->first();
 
@@ -41,11 +41,11 @@ it('sorts opportunities by custom field value ascending', function (): void {
     $request = new Request(['sort' => 'amount']);
 
     $results = QueryBuilder::for(
-        Opportunity::query()->where('team_id', $this->team->getKey())->withCustomFieldValues(),
+        Deal::query()->where('team_id', $this->team->getKey())->withCustomFieldValues(),
         $request,
     )
         ->allowedSorts(
-            AllowedSort::custom('amount', new CustomFieldSort('opportunity')),
+            AllowedSort::custom('amount', new CustomFieldSort('deal')),
         )
         ->get();
 
@@ -56,14 +56,14 @@ it('sorts opportunities by custom field value ascending', function (): void {
     expect($indexA)->toBeLessThan($indexB);
 });
 
-it('sorts opportunities by custom field value descending', function (): void {
-    $opp1 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'A']);
-    $opp2 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'B']);
+it('sorts deals by custom field value descending', function (): void {
+    $opp1 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'A']);
+    $opp2 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'B']);
 
     $amountField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'amount')
         ->first();
 
@@ -75,11 +75,11 @@ it('sorts opportunities by custom field value descending', function (): void {
     $request = new Request(['sort' => '-amount']);
 
     $results = QueryBuilder::for(
-        Opportunity::query()->where('team_id', $this->team->getKey())->withCustomFieldValues(),
+        Deal::query()->where('team_id', $this->team->getKey())->withCustomFieldValues(),
         $request,
     )
         ->allowedSorts(
-            AllowedSort::custom('amount', new CustomFieldSort('opportunity')),
+            AllowedSort::custom('amount', new CustomFieldSort('deal')),
         )
         ->get();
 

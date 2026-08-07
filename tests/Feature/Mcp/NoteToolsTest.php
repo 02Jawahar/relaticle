@@ -11,8 +11,8 @@ use App\Mcp\Tools\Note\GetNoteTool;
 use App\Mcp\Tools\Note\ListNotesTool;
 use App\Mcp\Tools\Note\UpdateNoteTool;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\Scopes\TeamScope;
 use App\Models\Team;
 use App\Models\User;
@@ -76,18 +76,18 @@ it('validates large arrays in bounded queries via MCP', function (): void {
     expect($lookups)->toBeLessThanOrEqual(2);
 });
 
-it('can update a note to link to an opportunity', function (): void {
+it('can update a note to link to an deal', function (): void {
     $note = Note::factory()->recycle([$this->user, $this->team])->create();
-    $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
     RelaticleServer::actingAs($this->user)
         ->tool(UpdateNoteTool::class, [
             'id' => $note->id,
-            'opportunity_ids' => [$opportunity->id],
+            'deal_ids' => [$deal->id],
         ])
         ->assertOk();
 
-    expect($note->refresh()->opportunities)->toHaveCount(1);
+    expect($note->refresh()->deals)->toHaveCount(1);
 });
 
 it('can detach all companies from a note via empty array', function (): void {

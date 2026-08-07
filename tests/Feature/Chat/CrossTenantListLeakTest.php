@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
 use Laravel\Ai\Tools\Request;
 use Relaticle\Chat\Tools\Company\ListCompaniesTool;
+use Relaticle\Chat\Tools\Deal\ListDealsTool;
 use Relaticle\Chat\Tools\Note\ListNotesTool;
-use Relaticle\Chat\Tools\Opportunity\ListOpportunitiesTool;
 use Relaticle\Chat\Tools\People\ListPeopleTool;
 use Relaticle\Chat\Tools\Task\ListTasksTool;
 
@@ -47,20 +47,20 @@ it('list people tool does not leak rows from other teams', function (): void {
     expect($payload)->not->toContain('TEAM-B-PERSON');
 });
 
-it('list opportunities tool does not leak rows from other teams', function (): void {
+it('list deals tool does not leak rows from other teams', function (): void {
     $userA = User::factory()->withPersonalTeam()->create();
     $userB = User::factory()->withPersonalTeam()->create();
 
-    Opportunity::factory()->for($userA->currentTeam)->create(['name' => 'TEAM-A-OPPORTUNITY']);
-    Opportunity::factory()->for($userB->currentTeam)->create(['name' => 'TEAM-B-OPPORTUNITY']);
+    Deal::factory()->for($userA->currentTeam)->create(['name' => 'TEAM-A-DEAL']);
+    Deal::factory()->for($userB->currentTeam)->create(['name' => 'TEAM-B-DEAL']);
 
     $this->actingAs($userA);
 
-    $tool = app(ListOpportunitiesTool::class);
+    $tool = app(ListDealsTool::class);
     $payload = $tool->handle(new Request([]));
 
-    expect($payload)->toContain('TEAM-A-OPPORTUNITY');
-    expect($payload)->not->toContain('TEAM-B-OPPORTUNITY');
+    expect($payload)->toContain('TEAM-A-DEAL');
+    expect($payload)->not->toContain('TEAM-B-DEAL');
 });
 
 it('list tasks tool does not leak rows from other teams', function (): void {

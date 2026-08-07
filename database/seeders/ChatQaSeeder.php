@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -41,7 +41,7 @@ final class ChatQaSeeder extends Seeder
             'account_owner_id' => $user->getKey(),
         ]);
         People::factory()->count(20)->for($team)->create();
-        Opportunity::factory()->count(8)->for($team)->create();
+        Deal::factory()->count(8)->for($team)->create();
         Task::factory()->count(15)->for($team)->create();
 
         // Cross-tenant isolation fixtures

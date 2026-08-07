@@ -21,7 +21,7 @@ return [
     'title' => 'Relaticle API',
 
     // A short description of your API. Will be included in the docs webpage, Postman collection and OpenAPI spec.
-    'description' => 'REST API for managing CRM entities including companies, people, opportunities, tasks, and notes.',
+    'description' => 'REST API for managing CRM entities including companies, people, deals, tasks, and notes.',
 
     // Text to place in the "Introduction" section, right after the `description`. Markdown and HTML are supported.
     'intro_text' => <<<'INTRO'
@@ -185,7 +185,7 @@ return [
         'order' => [
             'Companies',
             'People',
-            'Opportunities',
+            'Deals',
             'Tasks',
             'Notes',
             'Custom Fields',

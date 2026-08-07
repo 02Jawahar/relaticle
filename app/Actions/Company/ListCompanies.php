@@ -47,9 +47,9 @@ final readonly class ListCompanies
             )
             ->allowedFields('id', 'name', 'creator_id', 'account_owner_id', 'created_at', 'updated_at')
             ->allowedIncludes(
-                'creator', 'accountOwner', 'people', 'opportunities',
+                'creator', 'accountOwner', 'people', 'deals',
                 AllowedInclude::count('peopleCount', 'people'),
-                AllowedInclude::count('opportunitiesCount', 'opportunities'),
+                AllowedInclude::count('dealsCount', 'deals'),
                 AllowedInclude::count('tasksCount', 'tasks'),
                 AllowedInclude::count('notesCount', 'notes'),
             )

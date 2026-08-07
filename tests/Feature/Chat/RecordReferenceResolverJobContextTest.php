@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\User;
 use Relaticle\Chat\Support\RecordReferenceResolver;
@@ -38,13 +38,13 @@ it('resolves a people URL without Filament tenant bound', function (): void {
         ->and($ref['url'])->toContain('/people/');
 });
 
-it('resolves an opportunity URL without Filament tenant bound', function (): void {
-    $opportunity = Opportunity::factory()->for($this->user->currentTeam)->create(['name' => 'Big Deal']);
+it('resolves an deal URL without Filament tenant bound', function (): void {
+    $deal = Deal::factory()->for($this->user->currentTeam)->create(['name' => 'Big Deal']);
 
-    $ref = resolve(RecordReferenceResolver::class)->resolve('opportunity', (string) $opportunity->getKey());
+    $ref = resolve(RecordReferenceResolver::class)->resolve('deal', (string) $deal->getKey());
 
     expect($ref)->not->toBeNull()
-        ->and($ref['url'])->toContain('/opportunities/');
+        ->and($ref['url'])->toContain('/deals/');
 });
 
 it('resolves task to a record edit deep-link without Filament tenant bound', function (): void {

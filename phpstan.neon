@@ -91,7 +91,7 @@ parameters:
             path: app/Filament/Pages/CreateTeam.php
         -
             identifier: app.architecture.eloquentWriteOutsideAction
-            path: app/Filament/Resources/OpportunityResource/Pages/OpportunitiesBoard.php
+            path: app/Filament/Resources/DealResource/Pages/DealsBoard.php
         -
             identifier: app.architecture.eloquentWriteOutsideAction
             path: app/Filament/Resources/PeopleResource.php

@@ -39,9 +39,9 @@ Visit `http://localhost:8000` to access the application.
 ```
 Team ─┬─ User (via Membership)
       ├─ Company ─┬─ People
-      │           └─ Opportunity ─── People
-      ├─ Task (many-to-many with Company, People, Opportunity)
-      └─ Note (many-to-many with Company, People, Opportunity)
+      │           └─ Deal ─── People
+      ├─ Task (many-to-many with Company, People, Deal)
+      └─ Note (many-to-many with Company, People, Deal)
 ```
 
 ### Multi-Tenancy

@@ -14,7 +14,7 @@ use Relaticle\ImportWizard\Data\MatchableField;
 /**
  * Importer for Note entities.
  *
- * Notes have polymorphic relationships with companies, people, and opportunities.
+ * Notes have polymorphic relationships with companies, people, and deals.
  * Notes cannot be matched to existing records (always create new).
  */
 final class NoteImporter extends BaseImporter
@@ -55,7 +55,7 @@ final class NoteImporter extends BaseImporter
         return [
             'companies' => EntityLink::polymorphicCompanies(),
             'people' => EntityLink::polymorphicPeople(),
-            'opportunities' => EntityLink::polymorphicOpportunities(),
+            'deals' => EntityLink::polymorphicDeals(),
         ];
     }
 

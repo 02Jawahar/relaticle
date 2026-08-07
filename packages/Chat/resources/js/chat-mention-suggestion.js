@@ -22,7 +22,7 @@ export function createMentionSuggestion() {
     }
 
     function typeLabel(t) {
-        return ({ company: 'Company', people: 'Person', opportunity: 'Deal', task: 'Task', note: 'Note' })[t] || t;
+        return ({ company: 'Company', people: 'Person', deal: 'Deal', task: 'Task', note: 'Note' })[t] || t;
     }
 
     function renderPopup({ query, fetching, error, results, activeIdx, onPick }) {

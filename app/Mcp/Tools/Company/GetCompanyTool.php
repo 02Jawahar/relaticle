@@ -32,6 +32,6 @@ final class GetCompanyTool extends BaseShowTool
     /** @return array<int, string> */
     protected function allowedIncludes(): array
     {
-        return ['creator', 'accountOwner', 'people', 'opportunities', 'peopleCount', 'opportunitiesCount', 'tasksCount', 'notesCount'];
+        return ['creator', 'accountOwner', 'people', 'deals', 'peopleCount', 'dealsCount', 'tasksCount', 'notesCount'];
     }
 }

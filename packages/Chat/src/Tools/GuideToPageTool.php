@@ -32,7 +32,7 @@ final readonly class GuideToPageTool implements Tool
                 ->description(
                     'Where to send the user. One of: '
                     .'"custom_fields" (create/edit/delete custom field definitions); '
-                    .'"import_companies", "import_people", "import_opportunities", "import_tasks", "import_notes" '
+                    .'"import_companies", "import_people", "import_deals", "import_tasks", "import_notes" '
                     .'(bulk-import many records of that type from a file); '
                     .'"team_members" (invite or manage team members).',
                 ),

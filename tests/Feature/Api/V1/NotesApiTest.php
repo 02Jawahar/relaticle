@@ -9,8 +9,8 @@ use App\Actions\Note\UpdateNote;
 use App\Enums\CreationSource;
 use App\Http\Controllers\Api\V1\NotesController;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Team;
 use App\Models\User;
@@ -515,20 +515,20 @@ it('can create a note with relationship ids', function (): void {
 
     $company = Company::factory()->recycle([$this->user, $this->team])->create();
     $person = People::factory()->recycle([$this->user, $this->team])->create();
-    $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
     $this->postJson('/api/v1/notes', [
         'title' => 'Linked note',
         'company_ids' => [$company->id],
         'people_ids' => [$person->id],
-        'opportunity_ids' => [$opportunity->id],
+        'deal_ids' => [$deal->id],
     ])
         ->assertCreated();
 
     $note = Note::query()->where('title', 'Linked note')->first();
     expect($note->companies)->toHaveCount(1)
         ->and($note->people)->toHaveCount(1)
-        ->and($note->opportunities)->toHaveCount(1);
+        ->and($note->deals)->toHaveCount(1);
 });
 
 it('rejects cross-tenant relationship ids on note create', function (): void {
@@ -566,7 +566,7 @@ it('validates large arrays of relationship ids in a bounded number of queries', 
 
     $companies = Company::factory()->count(10)->recycle([$this->user, $this->team])->create();
     $people = People::factory()->count(10)->recycle([$this->user, $this->team])->create();
-    $opportunities = Opportunity::factory()->count(10)->recycle([$this->user, $this->team])->create();
+    $deals = Deal::factory()->count(10)->recycle([$this->user, $this->team])->create();
 
     DB::enableQueryLog();
     DB::flushQueryLog();
@@ -575,16 +575,16 @@ it('validates large arrays of relationship ids in a bounded number of queries', 
         'title' => 'Large note',
         'company_ids' => $companies->pluck('id')->all(),
         'people_ids' => $people->pluck('id')->all(),
-        'opportunity_ids' => $opportunities->pluck('id')->all(),
+        'deal_ids' => $deals->pluck('id')->all(),
     ])->assertCreated();
 
     $log = DB::getQueryLog();
 
     $companyLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "companies"') && str_contains($q['query'], 'team_id'))->count();
     $peopleLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "people"') && str_contains($q['query'], 'team_id'))->count();
-    $opportunityLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "opportunities"') && str_contains($q['query'], 'team_id'))->count();
+    $dealLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "deals"') && str_contains($q['query'], 'team_id'))->count();
 
     expect($companyLookupCount)->toBeLessThanOrEqual(3, 'company validation should not be N+1');
     expect($peopleLookupCount)->toBeLessThanOrEqual(3, 'people validation should not be N+1');
-    expect($opportunityLookupCount)->toBeLessThanOrEqual(3, 'opportunity validation should not be N+1');
+    expect($dealLookupCount)->toBeLessThanOrEqual(3, 'deal validation should not be N+1');
 });

@@ -25,7 +25,7 @@ final readonly class ProposalDisplayBuilder
     private const array ENTITY_MAP = [
         'company' => ['title' => 'Create Company', 'nameKey' => 'name', 'label' => 'Name', 'summaryPrefix' => 'Create company'],
         'people' => ['title' => 'Create Person', 'nameKey' => 'name', 'label' => 'Name', 'summaryPrefix' => 'Create person'],
-        'opportunity' => ['title' => 'Create Opportunity', 'nameKey' => 'name', 'label' => 'Name', 'summaryPrefix' => 'Create opportunity'],
+        'deal' => ['title' => 'Create Deal', 'nameKey' => 'name', 'label' => 'Name', 'summaryPrefix' => 'Create deal'],
         'task' => ['title' => 'Create Task', 'nameKey' => 'title', 'label' => 'Title', 'summaryPrefix' => 'Create task'],
         'note' => ['title' => 'Create Note', 'nameKey' => 'title', 'label' => 'Title', 'summaryPrefix' => 'Create note'],
     ];

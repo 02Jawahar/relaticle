@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\CompaniesController;
 use App\Http\Controllers\Api\V1\CustomFieldsController;
+use App\Http\Controllers\Api\V1\DealsController;
 use App\Http\Controllers\Api\V1\NotesController;
-use App\Http\Controllers\Api\V1\OpportunitiesController;
 use App\Http\Controllers\Api\V1\PeopleController;
 use App\Http\Controllers\Api\V1\TasksController;
 use App\Http\Middleware\EnsureHostedWorkspaceAccess;
@@ -25,7 +25,7 @@ Route::prefix('v1')
 
         Route::apiResource('companies', CompaniesController::class);
         Route::apiResource('people', PeopleController::class);
-        Route::apiResource('opportunities', OpportunitiesController::class);
+        Route::apiResource('deals', DealsController::class);
         Route::apiResource('tasks', TasksController::class);
         Route::apiResource('notes', NotesController::class);
 

@@ -6,15 +6,15 @@ use App\Filament\Resources\CompanyResource\Pages\ViewCompany;
 use App\Filament\Resources\CompanyResource\RelationManagers\NotesRelationManager as CompanyNotesRelationManager;
 use App\Filament\Resources\CompanyResource\RelationManagers\PeopleRelationManager;
 use App\Filament\Resources\CompanyResource\RelationManagers\TasksRelationManager as CompanyTasksRelationManager;
-use App\Filament\Resources\OpportunityResource\Pages\ViewOpportunity;
-use App\Filament\Resources\OpportunityResource\RelationManagers\NotesRelationManager as OpportunityNotesRelationManager;
-use App\Filament\Resources\OpportunityResource\RelationManagers\TasksRelationManager as OpportunityTasksRelationManager;
+use App\Filament\Resources\DealResource\Pages\ViewDeal;
+use App\Filament\Resources\DealResource\RelationManagers\NotesRelationManager as DealNotesRelationManager;
+use App\Filament\Resources\DealResource\RelationManagers\TasksRelationManager as DealTasksRelationManager;
 use App\Filament\Resources\PeopleResource\Pages\ViewPeople;
 use App\Filament\Resources\PeopleResource\RelationManagers\NotesRelationManager as PeopleNotesRelationManager;
 use App\Filament\Resources\PeopleResource\RelationManagers\TasksRelationManager as PeopleTasksRelationManager;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -70,22 +70,22 @@ it('renders the :dataset relation manager with multiple records', function (stri
             return [$company, ViewCompany::class];
         },
     ],
-    'opportunity notes' => [
-        OpportunityNotesRelationManager::class,
+    'deal notes' => [
+        DealNotesRelationManager::class,
         function (User $user, $team): array {
-            $opportunity = Opportunity::factory()->recycle([$user, $team])->create();
-            $opportunity->notes()->saveMany(Note::factory(4)->recycle([$user, $team])->make());
+            $deal = Deal::factory()->recycle([$user, $team])->create();
+            $deal->notes()->saveMany(Note::factory(4)->recycle([$user, $team])->make());
 
-            return [$opportunity, ViewOpportunity::class];
+            return [$deal, ViewDeal::class];
         },
     ],
-    'opportunity tasks' => [
-        OpportunityTasksRelationManager::class,
+    'deal tasks' => [
+        DealTasksRelationManager::class,
         function (User $user, $team): array {
-            $opportunity = Opportunity::factory()->recycle([$user, $team])->create();
-            $opportunity->tasks()->saveMany(Task::factory(4)->recycle([$user, $team])->make());
+            $deal = Deal::factory()->recycle([$user, $team])->create();
+            $deal->tasks()->saveMany(Task::factory(4)->recycle([$user, $team])->make());
 
-            return [$opportunity, ViewOpportunity::class];
+            return [$deal, ViewDeal::class];
         },
     ],
     'people notes' => [

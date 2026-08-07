@@ -39,7 +39,7 @@ final class ListTasksTool extends BaseListTool
             'assigned_to_me' => $schema->boolean()->description('Filter tasks assigned to the current user.'),
             'company_id' => $schema->string()->description('Filter tasks linked to a specific company.'),
             'people_id' => $schema->string()->description('Filter tasks linked to a specific person.'),
-            'opportunity_id' => $schema->string()->description('Filter tasks linked to a specific opportunity.'),
+            'deal_id' => $schema->string()->description('Filter tasks linked to a specific deal.'),
         ];
     }
 
@@ -49,7 +49,7 @@ final class ListTasksTool extends BaseListTool
             'assigned_to_me' => $request->get('assigned_to_me') ? '1' : null,
             'company_id' => $request->get('company_id'),
             'people_id' => $request->get('people_id'),
-            'opportunity_id' => $request->get('opportunity_id'),
+            'deal_id' => $request->get('deal_id'),
         ];
     }
 }

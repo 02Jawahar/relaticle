@@ -36,7 +36,7 @@ final class ListNotesTool extends BaseListTool
     protected function additionalSchema(JsonSchema $schema): array
     {
         return [
-            'notable_type' => $schema->string()->description('Filter by related entity type: company, people, or opportunity.'),
+            'notable_type' => $schema->string()->description('Filter by related entity type: company, people, or deal.'),
             'notable_id' => $schema->string()->description('Filter by related entity ID (use with notable_type for best results).'),
         ];
     }

@@ -100,7 +100,7 @@
                     class="font-medium text-gray-900 dark:text-white"
                     x-text="(() => {
                         const labels = {{ Js::from($useCaseLabels) }};
-                        return labels[$wire.data?.onboarding_use_case] || 'Opportunities';
+                        return labels[$wire.data?.onboarding_use_case] || 'Deals';
                     })()"
                 ></span>
             </div>

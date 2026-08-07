@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Mcp\Resources;
 
-use App\Enums\CustomFields\OpportunityField;
+use App\Enums\CustomFields\DealField;
 use App\Enums\CustomFields\TaskField;
+use App\Enums\Pipeline\DealStage;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\PersonalAccessToken;
 use App\Models\Task;
@@ -52,7 +53,7 @@ final class CrmSummaryResource extends Resource
         $summary = Cache::remember($cacheKey, 60, fn (): array => [
             'companies' => ['total' => Company::query()->where('team_id', $teamId)->count()],
             'people' => ['total' => People::query()->where('team_id', $teamId)->count()],
-            'opportunities' => $this->opportunitySummary($teamId),
+            'deals' => $this->dealSummary($teamId),
             'tasks' => $this->taskSummary($teamId),
             'notes' => ['total' => Note::query()->where('team_id', $teamId)->count()],
         ]);
@@ -63,19 +64,14 @@ final class CrmSummaryResource extends Resource
     /**
      * @return array<string, mixed>
      */
-    private function opportunitySummary(mixed $teamId): array
+    private function dealSummary(mixed $teamId): array
     {
-        $total = Opportunity::query()->where('team_id', $teamId)->count();
+        $total = Deal::query()->where('team_id', $teamId)->count();
 
-        $stageFieldId = $this->resolveFieldId($teamId, 'opportunity', OpportunityField::STAGE->value);
-        $amountFieldId = $this->resolveFieldId($teamId, 'opportunity', OpportunityField::AMOUNT->value);
-
-        if ($stageFieldId === null) {
-            return ['total' => $total];
-        }
+        $amountFieldId = $this->resolveFieldId($teamId, 'deal', DealField::AMOUNT->value);
 
         $amountJoin = $amountFieldId !== null
-            ? "LEFT JOIN custom_field_values amount_cfv ON amount_cfv.entity_id = o.id AND amount_cfv.entity_type = 'opportunity' AND amount_cfv.custom_field_id = ?"
+            ? "LEFT JOIN custom_field_values amount_cfv ON amount_cfv.entity_id = o.id AND amount_cfv.entity_type = 'deal' AND amount_cfv.custom_field_id = ?"
             : '';
         $amountSelect = $amountFieldId !== null
             ? 'COALESCE(SUM(amount_cfv.float_value), 0) as total_amount'
@@ -83,31 +79,26 @@ final class CrmSummaryResource extends Resource
         $amountBindings = $amountFieldId !== null ? [$amountFieldId] : [];
 
         $rows = DB::select(
-            "SELECT stage_cfv.string_value as stage, COUNT(*) as count, {$amountSelect}
-             FROM opportunities o
-             LEFT JOIN custom_field_values stage_cfv ON stage_cfv.entity_id = o.id AND stage_cfv.entity_type = 'opportunity' AND stage_cfv.custom_field_id = ?
+            "SELECT o.stage as stage, COUNT(*) as count, {$amountSelect}
+             FROM deals o
              {$amountJoin}
              WHERE o.team_id = ? AND o.deleted_at IS NULL
-             GROUP BY stage_cfv.string_value",
-            [$stageFieldId, ...$amountBindings, $teamId],
+             GROUP BY o.stage",
+            [...$amountBindings, $teamId],
         );
-
-        $stageOptions = DB::table('custom_field_options')
-            ->where('custom_field_id', $stageFieldId)
-            ->pluck('name', 'id');
 
         $byStage = [];
         $totalPipeline = 0;
         $totalWon = 0;
 
         foreach ($rows as $row) {
-            $stageId = $row->stage ?? 'Unknown';
-            $stageLabel = $stageOptions[$stageId] ?? $stageId;
+            $stage = is_string($row->stage) ? DealStage::tryFrom($row->stage) : null;
+            $stageLabel = $stage instanceof DealStage ? $stage->getLabel() : 'Unknown';
             $amount = (float) $row->total_amount;
             $byStage[$stageLabel] = ['count' => (int) $row->count, 'total_amount' => $amount];
             $totalPipeline += $amount;
 
-            if (str_contains(strtolower($stageLabel), 'won')) {
+            if ($stage instanceof DealStage && $stage->isWon()) {
                 $totalWon += $amount;
             }
         }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Actions\Opportunity\AggregateOpportunities;
-use App\Actions\Opportunity\CreateOpportunity;
+use App\Actions\Deal\AggregateDeals;
+use App\Actions\Deal\CreateDeal;
 use App\Features\OnboardSeed;
 use App\Models\Company;
 use App\Models\CustomField;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Ai\Tools\Request;
@@ -15,7 +15,7 @@ use Laravel\Pennant\Feature;
 use Relaticle\Chat\Tools\AggregateCrmTool;
 use Relaticle\CustomFields\Services\TenantContextService;
 
-mutates(AggregateCrmTool::class, AggregateOpportunities::class);
+mutates(AggregateCrmTool::class, AggregateDeals::class);
 
 beforeEach(function (): void {
     Feature::define(OnboardSeed::class, false);
@@ -29,14 +29,14 @@ afterEach(function (): void {
     TenantContextService::setTenantId(null);
 });
 
-it('groups opportunities by stage with correct count and total_amount', function (): void {
-    $createOpportunity = resolve(CreateOpportunity::class);
+it('groups deals by stage with correct count and total_amount', function (): void {
+    $createDeal = resolve(CreateDeal::class);
 
     // Resolve stage field and its first two options
     $stageField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'stage')
         ->with('options')
         ->firstOrFail();
@@ -45,16 +45,16 @@ it('groups opportunities by stage with correct count and total_amount', function
     $stage1Option = $stageOptions->first();
     $stage2Option = $stageOptions->skip(1)->first();
 
-    // Create 2 opportunities in stage 1 (amounts: 1000 + 2500 = 3500)
-    // Pass option ID (ULID) directly — CreateOpportunity stores the raw string_value
-    $createOpportunity->execute($this->user, [
+    // Create 2 deals in stage 1 (amounts: 1000 + 2500 = 3500)
+    // Pass option ID (ULID) directly — CreateDeal stores the raw string_value
+    $createDeal->execute($this->user, [
         'name' => 'Deal Alpha',
         'custom_fields' => [
             'stage' => (string) $stage1Option->getKey(),
             'amount' => 1000,
         ],
     ]);
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'Deal Beta',
         'custom_fields' => [
             'stage' => (string) $stage1Option->getKey(),
@@ -62,8 +62,8 @@ it('groups opportunities by stage with correct count and total_amount', function
         ],
     ]);
 
-    // Create 1 opportunity in stage 2 (amount: 500)
-    $createOpportunity->execute($this->user, [
+    // Create 1 deal in stage 2 (amount: 500)
+    $createDeal->execute($this->user, [
         'name' => 'Deal Gamma',
         'custom_fields' => [
             'stage' => (string) $stage2Option->getKey(),
@@ -95,22 +95,22 @@ it('groups opportunities by stage with correct count and total_amount', function
         ->and((float) $stage2Row['total_amount'])->toBe(500.0);
 });
 
-it('groups opportunities by company with correct aggregation', function (): void {
-    $createOpportunity = resolve(CreateOpportunity::class);
+it('groups deals by company with correct aggregation', function (): void {
+    $createDeal = resolve(CreateDeal::class);
 
     $company = Company::factory()->for($this->team)->create(['name' => 'Acme Corp']);
 
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'Deal 1',
         'company_id' => (string) $company->getKey(),
         'custom_fields' => ['amount' => 3000],
     ]);
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'Deal 2',
         'company_id' => (string) $company->getKey(),
         'custom_fields' => ['amount' => 2000],
     ]);
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'No company deal',
         'custom_fields' => ['amount' => 100],
     ]);
@@ -133,16 +133,16 @@ it('groups opportunities by company with correct aggregation', function (): void
 });
 
 it('applies date_from filter correctly', function (): void {
-    $createOpportunity = resolve(CreateOpportunity::class);
+    $createDeal = resolve(CreateDeal::class);
 
     $this->travelTo(now()->subDays(10));
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'Old Deal',
         'custom_fields' => ['amount' => 999],
     ]);
 
     $this->travelBack();
-    $createOpportunity->execute($this->user, [
+    $createDeal->execute($this->user, [
         'name' => 'New Deal',
         'custom_fields' => ['amount' => 1000],
     ]);
@@ -160,7 +160,7 @@ it('applies date_from filter correctly', function (): void {
 
 it('reports accurate grand totals when company groups exceed the row cap', function (): void {
     Company::factory()->count(101)->for($this->team)->create()->each(function (Company $company): void {
-        Opportunity::factory()->for($this->team)->create(['company_id' => $company->getKey()]);
+        Deal::factory()->for($this->team)->create(['company_id' => $company->getKey()]);
     });
 
     $tool = resolve(AggregateCrmTool::class);
@@ -182,7 +182,7 @@ it('returns an error for invalid group_by value', function (): void {
         ->and($data)->toHaveKey('error');
 });
 
-it('returns grand total of zero when no opportunities exist', function (): void {
+it('returns grand total of zero when no deals exist', function (): void {
     $tool = resolve(AggregateCrmTool::class);
     $response = $tool->handle(new Request(['group_by' => 'stage']));
 
@@ -197,7 +197,7 @@ it('respects tenant scope and does not leak cross-tenant data', function (): voi
 
     TenantContextService::setTenantId($otherTeam->getKey());
     Auth::guard('web')->setUser($otherUser);
-    resolve(CreateOpportunity::class)->execute($otherUser, [
+    resolve(CreateDeal::class)->execute($otherUser, [
         'name' => 'Other Team Deal',
         'custom_fields' => ['amount' => 99999],
     ]);

@@ -26,7 +26,7 @@ final class NoteSeeder extends BaseModelSeeder
     private array $entityTypeMap = [
         'company' => 'companies',
         'person' => 'people',
-        'opportunity' => 'opportunities',
+        'deal' => 'deals',
         'task' => 'tasks',
         'note' => 'notes',
     ];

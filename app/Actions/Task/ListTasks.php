@@ -48,16 +48,16 @@ final readonly class ListTasks
                 }),
                 AllowedFilter::scope('company_id', 'forCompany'),
                 AllowedFilter::scope('people_id', 'forPerson'),
-                AllowedFilter::scope('opportunity_id', 'forOpportunity'),
+                AllowedFilter::scope('deal_id', 'forDeal'),
                 AllowedFilter::custom('custom_fields', new CustomFieldFilter('task')),
             )
             ->allowedFields('id', 'title', 'creator_id', 'created_at', 'updated_at')
             ->allowedIncludes(
-                'creator', 'assignees', 'companies', 'people', 'opportunities',
+                'creator', 'assignees', 'companies', 'people', 'deals',
                 AllowedInclude::count('assigneesCount', 'assignees'),
                 AllowedInclude::count('companiesCount', 'companies'),
                 AllowedInclude::count('peopleCount', 'people'),
-                AllowedInclude::count('opportunitiesCount', 'opportunities'),
+                AllowedInclude::count('dealsCount', 'deals'),
             )
             ->allowedSorts(
                 'title', 'created_at', 'updated_at',

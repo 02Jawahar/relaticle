@@ -6,8 +6,8 @@ namespace Relaticle\SystemAdmin\Filament\Widgets;
 
 use App\Enums\CreationSource;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use Carbon\CarbonImmutable;
@@ -61,7 +61,7 @@ final class RecordDistributionChartWidget extends ChartWidget
             'People' => People::class,
             'Tasks' => Task::class,
             'Notes' => Note::class,
-            'Opportunities' => Opportunity::class,
+            'Deals' => Deal::class,
         ];
 
         $counts = [];

@@ -5,8 +5,8 @@ declare(strict_types=1);
 use App\Actions\Note\CreateNote;
 use App\Enums\CreationSource;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\User;
 use Illuminate\JsonSchema\JsonSchemaTypeFactory;
@@ -88,16 +88,16 @@ it('approving a note with company_ids creates the noteables pivot', function ():
     expect($note->companies()->pluck('companies.id')->all())->toContain((string) $acme->id);
 });
 
-it('approving a note with opportunity_ids creates the noteables pivot', function (): void {
-    $deal = Opportunity::factory()->for($this->team)->create(['name' => 'Q3 Renewal']);
+it('approving a note with deal_ids creates the noteables pivot', function (): void {
+    $deal = Deal::factory()->for($this->team)->create(['name' => 'Q3 Renewal']);
 
     $note = resolve(CreateNote::class)->execute(
         $this->user,
-        ['title' => 'Deal review', 'opportunity_ids' => [(string) $deal->id]],
+        ['title' => 'Deal review', 'deal_ids' => [(string) $deal->id]],
         CreationSource::CHAT,
     );
 
-    expect($note->opportunities()->pluck('opportunities.id')->all())->toContain((string) $deal->id);
+    expect($note->deals()->pluck('deals.id')->all())->toContain((string) $deal->id);
 });
 
 it('rejects cross-tenant people_ids at the action layer', function (): void {

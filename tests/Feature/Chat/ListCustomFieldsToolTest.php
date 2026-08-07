@@ -39,7 +39,7 @@ beforeEach(function (): void {
 
     $this->inactive = CustomField::factory()->create([
         $tenantKey => $this->team->getKey(),
-        'entity_type' => 'opportunity',
+        'entity_type' => 'deal',
         'name' => 'Legacy',
         'type' => 'text',
         'system_defined' => false,

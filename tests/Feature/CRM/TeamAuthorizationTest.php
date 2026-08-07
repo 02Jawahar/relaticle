@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 use App\Enums\TeamRole;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use App\Policies\CompanyPolicy;
+use App\Policies\DealPolicy;
 use App\Policies\NotePolicy;
-use App\Policies\OpportunityPolicy;
 use App\Policies\PeoplePolicy;
 use App\Policies\TaskPolicy;
 
-mutates(CompanyPolicy::class, NotePolicy::class, OpportunityPolicy::class, PeoplePolicy::class, TaskPolicy::class, User::class);
+mutates(CompanyPolicy::class, NotePolicy::class, DealPolicy::class, PeoplePolicy::class, TaskPolicy::class, User::class);
 
 it('authorizes :dataset by team membership and role', function (string $model): void {
     $owner = User::factory()->withTeam()->create();
@@ -103,7 +103,7 @@ it('denies a record pointing at a team that no longer exists', function (): void
     $owner = User::factory()->withTeam()->create();
     $team = $owner->currentTeam;
 
-    $dangling = Opportunity::factory()->recycle([$owner, $team])->create();
+    $dangling = Deal::factory()->recycle([$owner, $team])->create();
     $ghost = Team::factory()->create(['user_id' => $owner->getKey()]);
     $dangling->forceFill(['team_id' => $ghost->getKey()])->save();
     Team::query()->whereKey($ghost->getKey())->delete();

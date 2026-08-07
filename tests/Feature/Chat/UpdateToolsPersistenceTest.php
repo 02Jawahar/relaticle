@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Actions\Company\UpdateCompany;
+use App\Actions\Deal\UpdateDeal;
 use App\Actions\Note\UpdateNote;
-use App\Actions\Opportunity\UpdateOpportunity;
 use App\Actions\People\UpdatePeople;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -18,8 +18,8 @@ use Illuminate\Validation\ValidationException;
 use Laravel\Ai\Tools\Request;
 use Relaticle\Chat\Models\PendingAction;
 use Relaticle\Chat\Tools\Company\UpdateCompanyTool;
+use Relaticle\Chat\Tools\Deal\UpdateDealTool;
 use Relaticle\Chat\Tools\Note\UpdateNoteTool;
-use Relaticle\Chat\Tools\Opportunity\UpdateOpportunityTool;
 use Relaticle\Chat\Tools\People\UpdatePersonTool;
 use Relaticle\Chat\Tools\Task\UpdateTaskTool;
 
@@ -27,8 +27,8 @@ mutates(UpdateCompanyTool::class);
 mutates(UpdateCompany::class);
 mutates(UpdateNoteTool::class);
 mutates(UpdateNote::class);
-mutates(UpdateOpportunityTool::class);
-mutates(UpdateOpportunity::class);
+mutates(UpdateDealTool::class);
+mutates(UpdateDeal::class);
 mutates(UpdatePersonTool::class);
 mutates(UpdatePeople::class);
 
@@ -135,14 +135,14 @@ it('coerces a scalar people id into a single-element list on note update', funct
     expect($data['people_ids'] ?? null)->toBe([(string) $person->id]);
 });
 
-it('UpdateOpportunityTool proposes a name change and approval persists it', function (): void {
-    $opportunity = Opportunity::factory()->for($this->team)->create(['name' => 'Old deal']);
+it('UpdateDealTool proposes a name change and approval persists it', function (): void {
+    $deal = Deal::factory()->for($this->team)->create(['name' => 'Old deal']);
 
-    $tool = resolve(UpdateOpportunityTool::class);
+    $tool = resolve(UpdateDealTool::class);
     $tool->setConversationId('019df800-3333-7000-8000-000000000099');
 
     $tool->handle(new Request([
-        'id' => (string) $opportunity->id,
+        'id' => (string) $deal->id,
         'name' => 'New deal',
     ]));
 
@@ -153,20 +153,20 @@ it('UpdateOpportunityTool proposes a name change and approval persists it', func
 
     expect($pending->action_data)->toHaveKey('name', 'New deal');
 
-    resolve(UpdateOpportunity::class)->execute($this->user, $opportunity, $pending->action_data);
+    resolve(UpdateDeal::class)->execute($this->user, $deal, $pending->action_data);
 
-    expect($opportunity->refresh()->name)->toBe('New deal');
+    expect($deal->refresh()->name)->toBe('New deal');
 });
 
-it('UpdateOpportunityTool can repoint contact_id and persist it', function (): void {
-    $opportunity = Opportunity::factory()->for($this->team)->create(['name' => 'Deal']);
+it('UpdateDealTool can repoint contact_id and persist it', function (): void {
+    $deal = Deal::factory()->for($this->team)->create(['name' => 'Deal']);
     $contact = People::factory()->for($this->team)->create(['name' => 'Contact A']);
 
-    $tool = resolve(UpdateOpportunityTool::class);
+    $tool = resolve(UpdateDealTool::class);
     $tool->setConversationId('019df800-3333-7000-8000-000000000099');
 
     $tool->handle(new Request([
-        'id' => (string) $opportunity->id,
+        'id' => (string) $deal->id,
         'contact_id' => (string) $contact->id,
     ]));
 
@@ -177,9 +177,9 @@ it('UpdateOpportunityTool can repoint contact_id and persist it', function (): v
 
     expect($pending->action_data)->toHaveKey('contact_id', (string) $contact->id);
 
-    resolve(UpdateOpportunity::class)->execute($this->user, $opportunity, $pending->action_data);
+    resolve(UpdateDeal::class)->execute($this->user, $deal, $pending->action_data);
 
-    expect($opportunity->refresh()->contact_id)->toBe((string) $contact->id);
+    expect($deal->refresh()->contact_id)->toBe((string) $contact->id);
 });
 
 it('UpdatePersonTool proposes a name change and approval persists it', function (): void {

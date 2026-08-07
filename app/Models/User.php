@@ -166,11 +166,11 @@ final class User extends Authenticatable implements FilamentUser, HasAvatar, Has
     }
 
     /**
-     * @return HasMany<Opportunity, $this>
+     * @return HasMany<Deal, $this>
      */
-    public function opportunities(): HasMany
+    public function deals(): HasMany
     {
-        return $this->hasMany(Opportunity::class, 'creator_id');
+        return $this->hasMany(Deal::class, 'creator_id');
     }
 
     public function getDefaultTenant(Panel $panel): ?Model

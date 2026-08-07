@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Relaticle\ImportWizard\Data;
 
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -190,14 +190,14 @@ final class EntityLink extends Data
             ]);
     }
 
-    public static function polymorphicOpportunities(): self
+    public static function polymorphicDeals(): self
     {
-        return self::morphToMany('opportunities', Opportunity::class)
+        return self::morphToMany('deals', Deal::class)
             ->matchableFields([
                 MatchableField::id(),
             ])
             ->guess([
-                'opportunity', 'opportunities', 'deal', 'opportunity_id',
+                'deal', 'deals', 'deal', 'deal_id',
             ]);
     }
 
@@ -304,7 +304,7 @@ final class EntityLink extends Data
         return match ($modelClass) {
             Company::class => 'company',
             People::class => 'people',
-            Opportunity::class => 'opportunity',
+            Deal::class => 'deal',
             default => (new $modelClass)->getMorphClass(),
         };
     }

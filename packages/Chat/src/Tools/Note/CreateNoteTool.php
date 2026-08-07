@@ -6,7 +6,7 @@ namespace Relaticle\Chat\Tools\Note;
 
 use App\Actions\Note\CreateNote;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Team;
 use App\Models\User;
@@ -21,7 +21,7 @@ final class CreateNoteTool extends BaseWriteCreateTool
 
     public function description(): string
     {
-        return 'Propose creating a new note. Optionally link to people, companies, and opportunities.';
+        return 'Propose creating a new note. Optionally link to people, companies, and deals.';
     }
 
     protected function actionClass(): string
@@ -40,7 +40,7 @@ final class CreateNoteTool extends BaseWriteCreateTool
             'title' => $schema->string()->description('The note title.')->required(),
             'people_ids' => $schema->array()->description('People (contact) ULIDs to link.'),
             'company_ids' => $schema->array()->description('Company ULIDs to link.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity ULIDs to link.'),
+            'deal_ids' => $schema->array()->description('Deal ULIDs to link.'),
         ];
     }
 
@@ -50,7 +50,7 @@ final class CreateNoteTool extends BaseWriteCreateTool
             'title' => (string) ($record['title'] ?? ''),
             'people_ids' => $this->idListFromArray($record, 'people_ids'),
             'company_ids' => $this->idListFromArray($record, 'company_ids'),
-            'opportunity_ids' => $this->idListFromArray($record, 'opportunity_ids'),
+            'deal_ids' => $this->idListFromArray($record, 'deal_ids'),
         ], static fn (mixed $v): bool => ! in_array($v, [null, '', []], true));
     }
 
@@ -73,9 +73,9 @@ final class CreateNoteTool extends BaseWriteCreateTool
             $fields[] = ['label' => 'Linked companies', 'value' => $companyNames];
         }
 
-        $opportunityNames = $this->namesForIds($this->idListFromArray($record, 'opportunity_ids'), Opportunity::class, 'name', $team);
-        if ($opportunityNames !== '') {
-            $fields[] = ['label' => 'Linked opportunities', 'value' => $opportunityNames];
+        $dealNames = $this->namesForIds($this->idListFromArray($record, 'deal_ids'), Deal::class, 'name', $team);
+        if ($dealNames !== '') {
+            $fields[] = ['label' => 'Linked deals', 'value' => $dealNames];
         }
 
         return [

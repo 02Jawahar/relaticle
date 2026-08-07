@@ -56,7 +56,7 @@
         </div>
         <div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-700 dark:text-gray-300">
             <x-heroicon-o-trophy class="w-4 h-4 shrink-0"/>
-            <span>Opportunities</span>
+            <span>Deals</span>
         </div>
         <div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-gray-700 dark:text-gray-300">
             <x-heroicon-o-check-circle class="w-4 h-4 shrink-0"/>

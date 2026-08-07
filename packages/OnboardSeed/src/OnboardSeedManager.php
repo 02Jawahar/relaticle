@@ -10,8 +10,8 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Relaticle\OnboardSeed\Contracts\ModelSeederInterface;
 use Relaticle\OnboardSeed\ModelSeeders\CompanySeeder;
+use Relaticle\OnboardSeed\ModelSeeders\DealSeeder;
 use Relaticle\OnboardSeed\ModelSeeders\NoteSeeder;
-use Relaticle\OnboardSeed\ModelSeeders\OpportunitySeeder;
 use Relaticle\OnboardSeed\ModelSeeders\PeopleSeeder;
 use Relaticle\OnboardSeed\ModelSeeders\TaskSeeder;
 use Relaticle\OnboardSeed\Support\FixtureLoader;
@@ -24,7 +24,7 @@ final class OnboardSeedManager
     private array $entitySeederSequence = [
         CompanySeeder::class,
         PeopleSeeder::class,
-        OpportunitySeeder::class,
+        DealSeeder::class,
         TaskSeeder::class,
         NoteSeeder::class,
     ];

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Enums\OnboardingUseCase;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -54,7 +54,7 @@ test('non-personal teams do not get demo data seeded', function (): void {
 
     expect(Company::where('team_id', $workTeam->id)->count())->toBe(0)
         ->and(People::where('team_id', $workTeam->id)->count())->toBe(0)
-        ->and(Opportunity::where('team_id', $workTeam->id)->count())->toBe(0)
+        ->and(Deal::where('team_id', $workTeam->id)->count())->toBe(0)
         ->and(Task::where('team_id', $workTeam->id)->count())->toBe(0)
         ->and(Note::where('team_id', $workTeam->id)->count())->toBe(0);
 });

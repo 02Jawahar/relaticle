@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Relaticle\Chat\Tools\Company;
 
 use App\Http\Resources\V1\CompanyResource;
+use App\Http\Resources\V1\DealResource;
 use App\Http\Resources\V1\NoteResource;
-use App\Http\Resources\V1\OpportunityResource;
 use App\Http\Resources\V1\PeopleResource;
 use App\Http\Resources\V1\TaskResource;
 use App\Models\Company;
@@ -51,7 +51,7 @@ final class GetCompanyTool extends BaseReadShowTool
     {
         return [
             'people' => PeopleResource::class,
-            'opportunities' => OpportunityResource::class,
+            'deals' => DealResource::class,
             'notes' => NoteResource::class,
             'tasks' => TaskResource::class,
         ];

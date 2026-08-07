@@ -8,8 +8,8 @@ use App\Filament\Pages\EditTeam;
 use App\Models\Team;
 use Relaticle\CustomFields\Filament\Management\Pages\CustomFieldsManagementPage;
 use Relaticle\ImportWizard\Filament\Pages\ImportCompanies;
+use Relaticle\ImportWizard\Filament\Pages\ImportDeals;
 use Relaticle\ImportWizard\Filament\Pages\ImportNotes;
-use Relaticle\ImportWizard\Filament\Pages\ImportOpportunities;
 use Relaticle\ImportWizard\Filament\Pages\ImportPeople;
 use Relaticle\ImportWizard\Filament\Pages\ImportTasks;
 use Throwable;
@@ -21,7 +21,7 @@ final readonly class DestinationResolver
         'custom_fields',
         'import_companies',
         'import_people',
-        'import_opportunities',
+        'import_deals',
         'import_tasks',
         'import_notes',
         'team_members',
@@ -41,7 +41,7 @@ final readonly class DestinationResolver
                 'custom_fields' => CustomFieldsManagementPage::getUrl(panel: 'app', tenant: $team),
                 'import_companies' => ImportCompanies::getUrl(panel: 'app', tenant: $team),
                 'import_people' => ImportPeople::getUrl(panel: 'app', tenant: $team),
-                'import_opportunities' => ImportOpportunities::getUrl(panel: 'app', tenant: $team),
+                'import_deals' => ImportDeals::getUrl(panel: 'app', tenant: $team),
                 'import_tasks' => ImportTasks::getUrl(panel: 'app', tenant: $team),
                 'import_notes' => ImportNotes::getUrl(panel: 'app', tenant: $team),
                 'team_members' => EditTeam::getUrl(panel: 'app', tenant: $team),

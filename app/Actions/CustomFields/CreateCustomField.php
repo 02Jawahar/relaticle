@@ -48,7 +48,7 @@ final readonly class CreateCustomField
     public const array VALID_ENTITY_TYPES = [
         'company',
         'people',
-        'opportunity',
+        'deal',
         'task',
         'note',
     ];

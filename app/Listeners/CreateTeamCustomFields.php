@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Listeners;
 
 use App\Enums\CustomFields\CompanyField as CompanyCustomField;
+use App\Enums\CustomFields\DealField as DealCustomField;
 use App\Enums\CustomFields\NoteField as NoteCustomField;
-use App\Enums\CustomFields\OpportunityField as OpportunityCustomField;
 use App\Enums\CustomFields\PeopleField as PeopleCustomField;
 use App\Enums\CustomFields\TaskField as TaskCustomField;
 use App\Enums\OnboardingUseCase;
 use App\Features\OnboardSeed;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -35,7 +35,7 @@ final readonly class CreateTeamCustomFields
     /** @var array<class-string, class-string> */
     private const array MODEL_ENUM_MAP = [
         Company::class => CompanyCustomField::class,
-        Opportunity::class => OpportunityCustomField::class,
+        Deal::class => DealCustomField::class,
         Note::class => NoteCustomField::class,
         People::class => PeopleCustomField::class,
         Task::class => TaskCustomField::class,
@@ -75,7 +75,7 @@ final readonly class CreateTeamCustomFields
     }
 
     /** @param class-string $model */
-    private function createCustomField(string $model, CompanyCustomField|OpportunityCustomField|PeopleCustomField|TaskCustomField|NoteCustomField $enum): void
+    private function createCustomField(string $model, CompanyCustomField|DealCustomField|PeopleCustomField|TaskCustomField|NoteCustomField $enum): void
     {
         $fieldData = new CustomFieldData(
             name: $enum->getDisplayName(),
@@ -112,7 +112,7 @@ final readonly class CreateTeamCustomFields
         $this->applyColorsToOptions($customField, $enum);
     }
 
-    private function applyColorsToOptions(CustomField $customField, CompanyCustomField|OpportunityCustomField|PeopleCustomField|TaskCustomField|NoteCustomField $enum): void
+    private function applyColorsToOptions(CustomField $customField, CompanyCustomField|DealCustomField|PeopleCustomField|TaskCustomField|NoteCustomField $enum): void
     {
         $colorMapping = $enum->getOptionColors();
         if ($colorMapping === null) {

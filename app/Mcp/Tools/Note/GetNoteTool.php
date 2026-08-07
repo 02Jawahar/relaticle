@@ -32,6 +32,6 @@ final class GetNoteTool extends BaseShowTool
     /** @return array<int, string> */
     protected function allowedIncludes(): array
     {
-        return ['creator', 'companies', 'people', 'opportunities', 'companiesCount', 'peopleCount', 'opportunitiesCount'];
+        return ['creator', 'companies', 'people', 'deals', 'companiesCount', 'peopleCount', 'dealsCount'];
     }
 }

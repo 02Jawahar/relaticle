@@ -30,9 +30,9 @@ final class CompanyExporter extends BaseExporter
             ExportColumn::make('people_count')
                 ->label(__('filament/exports.columns.people_count'))
                 ->state(fn (Company $company): int => $company->people()->count()),
-            ExportColumn::make('opportunities_count')
-                ->label(__('filament/exports.columns.opportunities_count'))
-                ->state(fn (Company $company): int => $company->opportunities()->count()),
+            ExportColumn::make('deals_count')
+                ->label(__('filament/exports.columns.deals_count'))
+                ->state(fn (Company $company): int => $company->deals()->count()),
             ExportColumn::make('created_at')
                 ->label(__('filament/exports.columns.created_at'))
                 ->formatStateUsing(fn (Carbon $state): string => $state->format('Y-m-d H:i:s')),

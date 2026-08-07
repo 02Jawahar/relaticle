@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Schema;
 
-mutates(User::class, Team::class, Company::class, People::class, Opportunity::class, Task::class, Note::class);
+mutates(User::class, Team::class, Company::class, People::class, Deal::class, Task::class, Note::class);
 
 /**
  * Tests for the ULID migration.
@@ -61,15 +61,15 @@ describe('ULID Migration', function (): void {
             ->and(strlen($person->id))->toBe(26);
     });
 
-    it('uses ULID for opportunity primary key', function (): void {
+    it('uses ULID for deal primary key', function (): void {
         $user = User::factory()->withTeam()->create();
-        $opportunity = Opportunity::factory()->create([
+        $deal = Deal::factory()->create([
             'team_id' => $user->currentTeam->id,
             'creator_id' => $user->id,
         ]);
 
-        expect($opportunity->id)->toBeString()
-            ->and(strlen($opportunity->id))->toBe(26);
+        expect($deal->id)->toBeString()
+            ->and(strlen($deal->id))->toBe(26);
     });
 
     it('uses ULID for task primary key', function (): void {
@@ -154,7 +154,7 @@ describe('ULID Migration', function (): void {
             ->and($company->people->first()->id)->toBe($person->id);
     });
 
-    it('maintains opportunity relationships', function (): void {
+    it('maintains deal relationships', function (): void {
         $user = User::factory()->withTeam()->create();
         $company = Company::factory()->create([
             'team_id' => $user->currentTeam->id,
@@ -165,17 +165,17 @@ describe('ULID Migration', function (): void {
             'creator_id' => $user->id,
             'company_id' => $company->id,
         ]);
-        $opportunity = Opportunity::factory()->create([
+        $deal = Deal::factory()->create([
             'team_id' => $user->currentTeam->id,
             'creator_id' => $user->id,
             'company_id' => $company->id,
             'contact_id' => $person->id,
         ]);
 
-        expect($opportunity->company_id)->toBe($company->id)
-            ->and($opportunity->contact_id)->toBe($person->id)
-            ->and($opportunity->company->id)->toBe($company->id)
-            ->and($opportunity->contact->id)->toBe($person->id);
+        expect($deal->company_id)->toBe($company->id)
+            ->and($deal->contact_id)->toBe($person->id)
+            ->and($deal->company->id)->toBe($company->id)
+            ->and($deal->contact->id)->toBe($person->id);
     });
 
     it('maintains task-user pivot relationship', function (): void {
@@ -230,7 +230,7 @@ describe('ULID Migration', function (): void {
     });
 
     it('has correct column types for primary keys', function (): void {
-        $tables = ['users', 'teams', 'companies', 'people', 'opportunities', 'tasks', 'notes'];
+        $tables = ['users', 'teams', 'companies', 'people', 'deals', 'tasks', 'notes'];
 
         foreach ($tables as $table) {
             $columnType = Schema::getColumnType($table, 'id');
@@ -243,7 +243,7 @@ describe('ULID Migration', function (): void {
         $foreignKeys = [
             'companies' => ['team_id', 'creator_id', 'account_owner_id'],
             'people' => ['team_id', 'creator_id', 'company_id'],
-            'opportunities' => ['team_id', 'creator_id', 'company_id', 'contact_id'],
+            'deals' => ['team_id', 'creator_id', 'company_id', 'contact_id'],
             'tasks' => ['team_id', 'creator_id'],
             'notes' => ['team_id', 'creator_id'],
             'users' => ['current_team_id'],

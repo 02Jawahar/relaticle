@@ -13,7 +13,7 @@ use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Mcp\Server\Attributes\Description;
 
-#[Description('Attach a note to companies, people, or opportunities. Adds links without removing existing ones.')]
+#[Description('Attach a note to companies, people, or deals. Adds links without removing existing ones.')]
 final class AttachNoteToEntitiesTool extends BaseAttachTool
 {
     protected function modelClass(): string
@@ -34,7 +34,7 @@ final class AttachNoteToEntitiesTool extends BaseAttachTool
     /** @return array<int, string> */
     protected function relationshipsToLoad(): array
     {
-        return ['companies', 'people', 'opportunities'];
+        return ['companies', 'people', 'deals'];
     }
 
     public function relationshipSchema(JsonSchema $schema): array
@@ -42,7 +42,7 @@ final class AttachNoteToEntitiesTool extends BaseAttachTool
         return [
             'company_ids' => $schema->array()->description('Company IDs to attach this note to.'),
             'people_ids' => $schema->array()->description('People IDs to attach this note to.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity IDs to attach this note to.'),
+            'deal_ids' => $schema->array()->description('Deal IDs to attach this note to.'),
         ];
     }
 
@@ -55,8 +55,8 @@ final class AttachNoteToEntitiesTool extends BaseAttachTool
             'company_ids.*' => ['string', new ArrayExistsForTeam('companies', 'company_ids', $teamId)],
             'people_ids' => ['sometimes', 'array'],
             'people_ids.*' => ['string', new ArrayExistsForTeam('people', 'people_ids', $teamId)],
-            'opportunity_ids' => ['sometimes', 'array'],
-            'opportunity_ids.*' => ['string', new ArrayExistsForTeam('opportunities', 'opportunity_ids', $teamId)],
+            'deal_ids' => ['sometimes', 'array'],
+            'deal_ids.*' => ['string', new ArrayExistsForTeam('deals', 'deal_ids', $teamId)],
         ];
     }
 
@@ -71,8 +71,8 @@ final class AttachNoteToEntitiesTool extends BaseAttachTool
             $model->people()->syncWithoutDetaching($data['people_ids']);
         }
 
-        if (isset($data['opportunity_ids'])) {
-            $model->opportunities()->syncWithoutDetaching($data['opportunity_ids']);
+        if (isset($data['deal_ids'])) {
+            $model->deals()->syncWithoutDetaching($data['deal_ids']);
         }
     }
 }

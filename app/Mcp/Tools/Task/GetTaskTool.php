@@ -32,6 +32,6 @@ final class GetTaskTool extends BaseShowTool
     /** @return array<int, string> */
     protected function allowedIncludes(): array
     {
-        return ['creator', 'assignees', 'companies', 'people', 'opportunities', 'assigneesCount', 'companiesCount', 'peopleCount', 'opportunitiesCount'];
+        return ['creator', 'assignees', 'companies', 'people', 'deals', 'assigneesCount', 'companiesCount', 'peopleCount', 'dealsCount'];
     }
 }

@@ -6,7 +6,7 @@ Relaticle's import wizard lets you bulk import data from CSV files into your CRM
 
 - **Companies** - Organizations and accounts
 - **People** - Contacts linked to companies
-- **Opportunities** - Deals and sales pipeline
+- **Deals** - Deals and sales pipeline
 - **Tasks** - Action items and to-dos
 - **Notes** - Meeting notes and observations
 
@@ -32,7 +32,7 @@ Relaticle's import wizard lets you bulk import data from CSV files into your CRM
 |--------|----------|
 | Companies | Name |
 | People | Name |
-| Opportunities | Name |
+| Deals | Name |
 | Tasks | Title |
 | Notes | Title |
 
@@ -221,10 +221,10 @@ Jane Smith,acme.com,jane@acme.com,CTO
 
 **Note**: In the example above, the `company` column is mapped to the Company relationship. In Step 2, choose "Match by Domain" so `acme.com` links to the existing company. If you choose "Match by Name", a new company will always be created.
 
-### Opportunities
+### Deals
 
 **Fields**:
-- `name` (required) - Opportunity name
+- `name` (required) - Deal name
 - Custom fields (amount, stage, close_date, etc.)
 
 **Relationships** (mapped in Step 2):
@@ -248,7 +248,7 @@ Q1 Enterprise Deal,acme.com,john@acme.com,50000,Proposal
 **Relationships** (mapped in Step 2):
 - **Companies** - Link to one or more companies
 - **People** - Link to one or more people
-- **Opportunities** - Link to one or more opportunities
+- **Deals** - Link to one or more deals
 - **Assignees** - Assign to team members by email
 
 **Matching**: Record ID only
@@ -268,7 +268,7 @@ Follow up with client,assignee@yourcompany.com,acme.com,2024-03-15,High
 **Relationships** (mapped in Step 2):
 - **Companies** - Link to one or more companies
 - **People** - Link to one or more people
-- **Opportunities** - Link to one or more opportunities
+- **Deals** - Link to one or more deals
 
 **Matching**: None. Notes are always created as new records.
 
@@ -428,7 +428,7 @@ id,name,company,custom_fields_emails,custom_fields_title
 
 **Tip**: Map the `company` column to Company → Domain to link to existing companies. Choose "Match by Name" only when you want to create new companies.
 
-### Opportunity Template
+### Deal Template
 ```
 id,name,company,contact,custom_fields_amount,custom_fields_stage
 ,Q1 Enterprise Deal,acme.com,john@acme.com,50000,Proposal

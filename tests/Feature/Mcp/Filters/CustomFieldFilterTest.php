@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Mcp\Filters\CustomFieldFilter;
 use App\Models\CustomField;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\Scopes\TeamScope;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -16,28 +16,28 @@ beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->team = $this->user->personalTeam();
     $this->actingAs($this->user);
-    Opportunity::addGlobalScope(new TeamScope);
+    Deal::addGlobalScope(new TeamScope);
 });
 
 afterEach(function (): void {
-    Opportunity::clearBootedModels();
+    Deal::clearBootedModels();
 });
 
 it('filters by custom field equality', function (): void {
-    $opportunity1 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal A']);
-    $opportunity2 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal B']);
+    $deal1 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal A']);
+    $deal2 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Deal B']);
 
     $stageField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'stage')
         ->first();
 
     expect($stageField)->not->toBeNull('Stage custom field must exist for this test');
 
-    $opportunity1->saveCustomFieldValue($stageField, 'Proposal');
-    $opportunity2->saveCustomFieldValue($stageField, 'Prospecting');
+    $deal1->saveCustomFieldValue($stageField, 'Proposal');
+    $deal2->saveCustomFieldValue($stageField, 'Prospecting');
 
     $request = new Request([
         'filter' => [
@@ -47,9 +47,9 @@ it('filters by custom field equality', function (): void {
         ],
     ]);
 
-    $results = QueryBuilder::for(Opportunity::query()->withCustomFieldValues(), $request)
+    $results = QueryBuilder::for(Deal::query()->withCustomFieldValues(), $request)
         ->allowedFilters(
-            AllowedFilter::custom('custom_fields', new CustomFieldFilter('opportunity')),
+            AllowedFilter::custom('custom_fields', new CustomFieldFilter('deal')),
         )
         ->get();
 
@@ -58,20 +58,20 @@ it('filters by custom field equality', function (): void {
 });
 
 it('filters by currency field with gte operator', function (): void {
-    $opportunity1 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'Big Deal']);
-    $opportunity2 = Opportunity::factory()->recycle([$this->user, $this->team])->create(['name' => 'Small Deal']);
+    $deal1 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Big Deal']);
+    $deal2 = Deal::factory()->recycle([$this->user, $this->team])->create(['name' => 'Small Deal']);
 
     $amountField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'amount')
         ->first();
 
     expect($amountField)->not->toBeNull('Amount custom field must exist for this test');
 
-    $opportunity1->saveCustomFieldValue($amountField, 100000);
-    $opportunity2->saveCustomFieldValue($amountField, 5000);
+    $deal1->saveCustomFieldValue($amountField, 100000);
+    $deal2->saveCustomFieldValue($amountField, 5000);
 
     $request = new Request([
         'filter' => [
@@ -81,9 +81,9 @@ it('filters by currency field with gte operator', function (): void {
         ],
     ]);
 
-    $results = QueryBuilder::for(Opportunity::query()->withCustomFieldValues(), $request)
+    $results = QueryBuilder::for(Deal::query()->withCustomFieldValues(), $request)
         ->allowedFilters(
-            AllowedFilter::custom('custom_fields', new CustomFieldFilter('opportunity')),
+            AllowedFilter::custom('custom_fields', new CustomFieldFilter('deal')),
         )
         ->get();
 
@@ -92,9 +92,9 @@ it('filters by currency field with gte operator', function (): void {
 });
 
 it('silently ignores unknown field codes', function (): void {
-    $countBefore = Opportunity::query()->count();
+    $countBefore = Deal::query()->count();
 
-    Opportunity::factory()->recycle([$this->user, $this->team])->create();
+    Deal::factory()->recycle([$this->user, $this->team])->create();
 
     $request = new Request([
         'filter' => [
@@ -104,9 +104,9 @@ it('silently ignores unknown field codes', function (): void {
         ],
     ]);
 
-    $results = QueryBuilder::for(Opportunity::query()->withCustomFieldValues(), $request)
+    $results = QueryBuilder::for(Deal::query()->withCustomFieldValues(), $request)
         ->allowedFilters(
-            AllowedFilter::custom('custom_fields', new CustomFieldFilter('opportunity')),
+            AllowedFilter::custom('custom_fields', new CustomFieldFilter('deal')),
         )
         ->get();
 
@@ -124,17 +124,17 @@ it('rejects more than 10 filter conditions', function (): void {
         'filter' => ['custom_fields' => $filters],
     ]);
 
-    QueryBuilder::for(Opportunity::query()->withCustomFieldValues(), $request)
+    QueryBuilder::for(Deal::query()->withCustomFieldValues(), $request)
         ->allowedFilters(
-            AllowedFilter::custom('custom_fields', new CustomFieldFilter('opportunity')),
+            AllowedFilter::custom('custom_fields', new CustomFieldFilter('deal')),
         )
         ->get();
 })->throws(HttpException::class);
 
 it('handles empty filter object as no-op', function (): void {
-    $countBefore = Opportunity::query()->count();
+    $countBefore = Deal::query()->count();
 
-    Opportunity::factory()->recycle([$this->user, $this->team])->count(3)->create();
+    Deal::factory()->recycle([$this->user, $this->team])->count(3)->create();
 
     $request = new Request([
         'filter' => [
@@ -142,9 +142,9 @@ it('handles empty filter object as no-op', function (): void {
         ],
     ]);
 
-    $results = QueryBuilder::for(Opportunity::query()->withCustomFieldValues(), $request)
+    $results = QueryBuilder::for(Deal::query()->withCustomFieldValues(), $request)
         ->allowedFilters(
-            AllowedFilter::custom('custom_fields', new CustomFieldFilter('opportunity')),
+            AllowedFilter::custom('custom_fields', new CustomFieldFilter('deal')),
         )
         ->get();
 

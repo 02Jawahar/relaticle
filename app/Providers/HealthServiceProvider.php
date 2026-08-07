@@ -46,7 +46,7 @@ final class HealthServiceProvider extends ServiceProvider
                 ->table('notes', maxSizeInMb: 5_000)
                 ->table('companies', maxSizeInMb: 2_000)
                 ->table('people', maxSizeInMb: 2_000)
-                ->table('opportunities', maxSizeInMb: 2_000)
+                ->table('deals', maxSizeInMb: 2_000)
                 ->table('tasks', maxSizeInMb: 2_000)
                 ->table('media', maxSizeInMb: 5_000)
                 ->table('jobs', maxSizeInMb: 1_000),

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\PersonalAccessToken;
 use App\Models\Scopes\TeamScope;
@@ -39,7 +39,7 @@ final readonly class SetApiTeamContext
         User::class,
         Company::class,
         People::class,
-        Opportunity::class,
+        Deal::class,
         Task::class,
         Note::class,
     ];
@@ -118,7 +118,7 @@ final readonly class SetApiTeamContext
 
         Company::addGlobalScope(new TeamScope);
         People::addGlobalScope(new TeamScope);
-        Opportunity::addGlobalScope(new TeamScope);
+        Deal::addGlobalScope(new TeamScope);
         Task::addGlobalScope(new TeamScope);
         Note::addGlobalScope(new TeamScope);
     }

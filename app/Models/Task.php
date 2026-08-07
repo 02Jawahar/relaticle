@@ -99,11 +99,11 @@ final class Task extends Model implements HasCustomFields, HasTimeline
     }
 
     /**
-     * @return MorphToMany<Opportunity, $this>
+     * @return MorphToMany<Deal, $this>
      */
-    public function opportunities(): MorphToMany
+    public function deals(): MorphToMany
     {
-        return $this->morphedByMany(Opportunity::class, 'taskable');
+        return $this->morphedByMany(Deal::class, 'taskable');
     }
 
     /**
@@ -130,9 +130,9 @@ final class Task extends Model implements HasCustomFields, HasTimeline
 
     /** @param Builder<self> $query */
     #[Scope]
-    protected function forOpportunity(Builder $query, string $opportunityId): void
+    protected function forDeal(Builder $query, string $dealId): void
     {
-        $query->whereHas('opportunities', fn (Builder $q) => $q->where('opportunities.id', $opportunityId));
+        $query->whereHas('deals', fn (Builder $q) => $q->where('deals.id', $dealId));
     }
 
     public function getActivitylogOptions(): LogOptions

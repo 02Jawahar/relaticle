@@ -21,7 +21,7 @@ final class CustomFieldFactory extends Factory
             'code' => $this->faker->unique()->word(),
             'name' => $this->faker->name(),
             'type' => $this->faker->randomElement(['text', 'number', 'link', 'textarea', 'date', 'select']),
-            'entity_type' => $this->faker->randomElement(['company', 'people', 'opportunity', 'task', 'note']),
+            'entity_type' => $this->faker->randomElement(['company', 'people', 'deal', 'task', 'note']),
             'sort_order' => 1,
             'validation_rules' => [],
             'active' => true,

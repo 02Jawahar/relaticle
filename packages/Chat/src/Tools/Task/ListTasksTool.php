@@ -14,7 +14,7 @@ final class ListTasksTool extends BaseReadListTool
 {
     public function description(): string
     {
-        return 'List tasks with optional search, pagination, and filtering to the tasks attached to a specific company, person, or opportunity.';
+        return 'List tasks with optional search, pagination, and filtering to the tasks attached to a specific company, person, or deal.';
     }
 
     protected function actionClass(): string
@@ -33,7 +33,7 @@ final class ListTasksTool extends BaseReadListTool
         return [
             'company_id' => $schema->string()->description('Restrict to tasks attached to this company ID.'),
             'people_id' => $schema->string()->description('Restrict to tasks attached to this person ID.'),
-            'opportunity_id' => $schema->string()->description('Restrict to tasks attached to this opportunity ID.'),
+            'deal_id' => $schema->string()->description('Restrict to tasks attached to this deal ID.'),
         ];
     }
 
@@ -43,7 +43,7 @@ final class ListTasksTool extends BaseReadListTool
         return array_filter([
             'company_id' => $request['company_id'] ?? null,
             'people_id' => $request['people_id'] ?? null,
-            'opportunity_id' => $request['opportunity_id'] ?? null,
+            'deal_id' => $request['deal_id'] ?? null,
         ]);
     }
 

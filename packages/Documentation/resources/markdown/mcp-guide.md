@@ -8,12 +8,12 @@ MCP (Model Context Protocol) lets AI assistants like Claude work directly with y
 
 With the Relaticle MCP server, your AI assistant can:
 
-- **List and search** companies, people, opportunities, tasks, and notes
+- **List and search** companies, people, deals, tasks, and notes
 - **Get a single record** with full details and relationships
 - **Create new records** directly from a conversation
 - **Update existing records** -- rename a company, reassign a task
 - **Delete records** you no longer need
-- **Attach or detach** tasks and notes to companies, people, and opportunities
+- **Attach or detach** tasks and notes to companies, people, and deals
 - **Read entity schemas** to understand your custom fields
 - **Get a CRM overview** with record counts and recent activity
 
@@ -134,15 +134,15 @@ The server provides 30 tools: one account tool plus full CRUD across five CRM en
 | `update_people` | Update a contact by ID |
 | `delete_people` | Soft-delete a contact by ID |
 
-### Opportunities
+### Deals
 
 | Tool | Description |
 |------|-------------|
-| `list_opportunities` | List deals with optional search, filter by company |
-| `get_opportunity` | Get a single opportunity by ID with full details and relationships |
-| `create_opportunity` | Create a new deal (requires `name`, optional `company_id`, `contact_id`) |
-| `update_opportunity` | Update a deal by ID |
-| `delete_opportunity` | Soft-delete a deal by ID |
+| `list_deals` | List deals with optional search, filter by company |
+| `get_deal` | Get a single deal by ID with full details and relationships |
+| `create_deal` | Create a new deal (requires `name`, optional `company_id`, `contact_id`) |
+| `update_deal` | Update a deal by ID |
+| `delete_deal` | Soft-delete a deal by ID |
 
 ### Tasks
 
@@ -153,8 +153,8 @@ The server provides 30 tools: one account tool plus full CRUD across five CRM en
 | `create_task` | Create a new task (requires `title`) |
 | `update_task` | Update a task by ID |
 | `delete_task` | Soft-delete a task by ID |
-| `attach_task_to_entities` | Link a task to companies, people, opportunities, or assign users. Adds without removing existing links. |
-| `detach_task_from_entities` | Unlink a task from companies, people, opportunities, or unassign users |
+| `attach_task_to_entities` | Link a task to companies, people, deals, or assign users. Adds without removing existing links. |
+| `detach_task_from_entities` | Unlink a task from companies, people, deals, or unassign users |
 
 ### Notes
 
@@ -165,8 +165,8 @@ The server provides 30 tools: one account tool plus full CRUD across five CRM en
 | `create_note` | Create a new note (requires `title`) |
 | `update_note` | Update a note by ID |
 | `delete_note` | Soft-delete a note by ID |
-| `attach_note_to_entities` | Link a note to companies, people, or opportunities. Adds without removing existing links. |
-| `detach_note_from_entities` | Unlink a note from companies, people, or opportunities |
+| `attach_note_to_entities` | Link a note to companies, people, or deals. Adds without removing existing links. |
+| `detach_note_from_entities` | Unlink a note from companies, people, or deals |
 
 All list tools support `search`, `per_page` (default 15), and `page` parameters. Create and update tools accept `custom_fields` as key-value pairs when your team has custom fields configured.
 
@@ -180,7 +180,7 @@ The server exposes five schema resources that describe each entity's fields, inc
 |---|---|
 | `relaticle://schema/company` | Company fields and custom fields |
 | `relaticle://schema/people` | People (contact) fields and custom fields |
-| `relaticle://schema/opportunity` | Opportunity (deal) fields and custom fields |
+| `relaticle://schema/deal` | Deal (deal) fields and custom fields |
 | `relaticle://schema/task` | Task fields and custom fields |
 | `relaticle://schema/note` | Note fields and custom fields |
 

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Mcp\Resources\CompanySchemaResource;
+use App\Mcp\Resources\DealSchemaResource;
 use App\Mcp\Resources\NoteSchemaResource;
-use App\Mcp\Resources\OpportunitySchemaResource;
 use App\Mcp\Resources\PeopleSchemaResource;
 use App\Mcp\Resources\TaskSchemaResource;
 use App\Mcp\Servers\RelaticleServer;
@@ -36,11 +36,11 @@ it('returns valid people schema with correct fields', function (): void {
         ->assertSee('"company_id"');
 });
 
-it('returns valid opportunity schema with correct fields', function (): void {
+it('returns valid deal schema with correct fields', function (): void {
     RelaticleServer::actingAs($this->user)
-        ->resource(OpportunitySchemaResource::class)
+        ->resource(DealSchemaResource::class)
         ->assertOk()
-        ->assertSee('opportunity')
+        ->assertSee('deal')
         ->assertSee('"company_id"')
         ->assertSee('"contact_id"');
 });

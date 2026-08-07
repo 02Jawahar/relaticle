@@ -7,8 +7,8 @@ namespace App\Mcp\Servers;
 use App\Mcp\Prompts\CrmOverviewPrompt;
 use App\Mcp\Resources\CompanySchemaResource;
 use App\Mcp\Resources\CrmSummaryResource;
+use App\Mcp\Resources\DealSchemaResource;
 use App\Mcp\Resources\NoteSchemaResource;
-use App\Mcp\Resources\OpportunitySchemaResource;
 use App\Mcp\Resources\PeopleSchemaResource;
 use App\Mcp\Resources\TaskSchemaResource;
 use App\Mcp\Tools\Company\CreateCompanyTool;
@@ -16,6 +16,11 @@ use App\Mcp\Tools\Company\DeleteCompanyTool;
 use App\Mcp\Tools\Company\GetCompanyTool;
 use App\Mcp\Tools\Company\ListCompaniesTool;
 use App\Mcp\Tools\Company\UpdateCompanyTool;
+use App\Mcp\Tools\Deal\CreateDealTool;
+use App\Mcp\Tools\Deal\DeleteDealTool;
+use App\Mcp\Tools\Deal\GetDealTool;
+use App\Mcp\Tools\Deal\ListDealsTool;
+use App\Mcp\Tools\Deal\UpdateDealTool;
 use App\Mcp\Tools\Note\AttachNoteToEntitiesTool;
 use App\Mcp\Tools\Note\CreateNoteTool;
 use App\Mcp\Tools\Note\DeleteNoteTool;
@@ -23,11 +28,6 @@ use App\Mcp\Tools\Note\DetachNoteFromEntitiesTool;
 use App\Mcp\Tools\Note\GetNoteTool;
 use App\Mcp\Tools\Note\ListNotesTool;
 use App\Mcp\Tools\Note\UpdateNoteTool;
-use App\Mcp\Tools\Opportunity\CreateOpportunityTool;
-use App\Mcp\Tools\Opportunity\DeleteOpportunityTool;
-use App\Mcp\Tools\Opportunity\GetOpportunityTool;
-use App\Mcp\Tools\Opportunity\ListOpportunitiesTool;
-use App\Mcp\Tools\Opportunity\UpdateOpportunityTool;
 use App\Mcp\Tools\People\CreatePeopleTool;
 use App\Mcp\Tools\People\DeletePeopleTool;
 use App\Mcp\Tools\People\GetPeopleTool;
@@ -50,7 +50,7 @@ use Laravel\Mcp\Server\Tool;
 
 #[Name('Relaticle CRM')]
 #[Version('1.0.0')]
-#[Instructions('This server provides access to Relaticle CRM data including companies, people, opportunities, tasks, and notes. All operations are scoped to the authenticated user\'s current team.')]
+#[Instructions('This server provides access to Relaticle CRM data including companies, people, deals, tasks, and notes. All operations are scoped to the authenticated user\'s current team.')]
 final class RelaticleServer extends Server
 {
     public int $defaultPaginationLength = 50;
@@ -68,11 +68,11 @@ final class RelaticleServer extends Server
         CreatePeopleTool::class,
         UpdatePeopleTool::class,
         DeletePeopleTool::class,
-        ListOpportunitiesTool::class,
-        GetOpportunityTool::class,
-        CreateOpportunityTool::class,
-        UpdateOpportunityTool::class,
-        DeleteOpportunityTool::class,
+        ListDealsTool::class,
+        GetDealTool::class,
+        CreateDealTool::class,
+        UpdateDealTool::class,
+        DeleteDealTool::class,
         ListTasksTool::class,
         GetTaskTool::class,
         CreateTaskTool::class,
@@ -93,7 +93,7 @@ final class RelaticleServer extends Server
     protected array $resources = [
         CompanySchemaResource::class,
         PeopleSchemaResource::class,
-        OpportunitySchemaResource::class,
+        DealSchemaResource::class,
         TaskSchemaResource::class,
         NoteSchemaResource::class,
         CrmSummaryResource::class,

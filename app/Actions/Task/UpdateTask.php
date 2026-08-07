@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Task;
 
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -32,7 +32,7 @@ final readonly class UpdateTask
         TenantFkValidator::assertOwnedMany($user, $data, [
             'company_ids' => Company::class,
             'people_ids' => People::class,
-            'opportunity_ids' => Opportunity::class,
+            'deal_ids' => Deal::class,
         ]);
 
         TenantFkValidator::assertUsersInWorkspace($user, $data, ['assignee_ids']);
@@ -52,8 +52,8 @@ final readonly class UpdateTask
             if (array_key_exists('people_ids', $data)) {
                 $task->people()->sync($data['people_ids']);
             }
-            if (array_key_exists('opportunity_ids', $data)) {
-                $task->opportunities()->sync($data['opportunity_ids']);
+            if (array_key_exists('deal_ids', $data)) {
+                $task->deals()->sync($data['deal_ids']);
             }
             if (array_key_exists('assignee_ids', $data)) {
                 $task->assignees()->sync($data['assignee_ids']);

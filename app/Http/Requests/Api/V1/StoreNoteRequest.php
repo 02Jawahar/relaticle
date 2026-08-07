@@ -26,8 +26,8 @@ final class StoreNoteRequest extends FormRequest
             'company_ids.*' => ['string', new ArrayExistsForTeam('companies', 'company_ids', $teamId)],
             'people_ids' => ['nullable', 'array'],
             'people_ids.*' => ['string', new ArrayExistsForTeam('people', 'people_ids', $teamId)],
-            'opportunity_ids' => ['nullable', 'array'],
-            'opportunity_ids.*' => ['string', new ArrayExistsForTeam('opportunities', 'opportunity_ids', $teamId)],
+            'deal_ids' => ['nullable', 'array'],
+            'deal_ids.*' => ['string', new ArrayExistsForTeam('deals', 'deal_ids', $teamId)],
         ], new ValidCustomFields($teamId, 'note')->toRules($this->input('custom_fields')));
     }
 }

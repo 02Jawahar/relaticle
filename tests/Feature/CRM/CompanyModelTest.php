@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -56,14 +56,14 @@ test('company has many people', function () {
         ->and($company->people->first()->getKey())->toBe($people->getKey());
 });
 
-test('company has many opportunities', function () {
+test('company has many deals', function () {
     $company = Company::factory()->create();
-    $opportunity = Opportunity::factory()->create([
+    $deal = Deal::factory()->create([
         'company_id' => $company->getKey(),
     ]);
 
-    expect($company->opportunities->first())->toBeInstanceOf(Opportunity::class)
-        ->and($company->opportunities->first()->getKey())->toBe($opportunity->getKey());
+    expect($company->deals->first())->toBeInstanceOf(Deal::class)
+        ->and($company->deals->first()->getKey())->toBe($deal->getKey());
 });
 
 test('company morph to many tasks', function () {

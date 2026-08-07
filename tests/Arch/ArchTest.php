@@ -270,7 +270,7 @@ arch('UI surfaces must not use the DB facade directly')
     ])
     ->ignoring([
         // Grandfathered (2026-06-12) — move these writes into actions, then unlist:
-        'App\Filament\Resources\OpportunityResource\Pages\OpportunitiesBoard',
+        'App\Filament\Resources\DealResource\Pages\DealsBoard',
         'App\Filament\Resources\TaskResource\Pages\TasksBoard',
         'App\Livewire\App\AccessTokens\CreateAccessToken',
         // Session-table infrastructure (no Eloquent model) — legitimate DB facade use:

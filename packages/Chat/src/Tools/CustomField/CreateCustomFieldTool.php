@@ -35,7 +35,7 @@ final class CreateCustomFieldTool implements Tool
 
         return [
             'entity_type' => $schema->string()
-                ->description('The CRM entity to add the field to: company, people, opportunity, task, or note.')
+                ->description('The CRM entity to add the field to: company, people, deal, task, or note.')
                 ->required(),
             'name' => $schema->string()
                 ->description('The display name for the field (e.g. "Industry", "Priority").')

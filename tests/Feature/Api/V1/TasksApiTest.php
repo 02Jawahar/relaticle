@@ -9,7 +9,7 @@ use App\Actions\Task\UpdateTask;
 use App\Enums\CreationSource;
 use App\Http\Controllers\Api\V1\TasksController;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -159,13 +159,13 @@ it('can create a task with relationship ids', function (): void {
 
     $company = Company::factory()->recycle([$this->user, $this->team])->create();
     $person = People::factory()->recycle([$this->user, $this->team])->create();
-    $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
     $this->postJson('/api/v1/tasks', [
         'title' => 'Linked task',
         'company_ids' => [$company->id],
         'people_ids' => [$person->id],
-        'opportunity_ids' => [$opportunity->id],
+        'deal_ids' => [$deal->id],
         'assignee_ids' => [$this->user->id],
     ])
         ->assertCreated();
@@ -173,7 +173,7 @@ it('can create a task with relationship ids', function (): void {
     $task = Task::query()->where('title', 'Linked task')->first();
     expect($task->companies)->toHaveCount(1)
         ->and($task->people)->toHaveCount(1)
-        ->and($task->opportunities)->toHaveCount(1)
+        ->and($task->deals)->toHaveCount(1)
         ->and($task->assignees)->toHaveCount(1);
 });
 
@@ -579,7 +579,7 @@ it('validates large arrays of relationship ids in a bounded number of queries', 
 
     $companies = Company::factory()->count(10)->recycle([$this->user, $this->team])->create();
     $people = People::factory()->count(10)->recycle([$this->user, $this->team])->create();
-    $opportunities = Opportunity::factory()->count(10)->recycle([$this->user, $this->team])->create();
+    $deals = Deal::factory()->count(10)->recycle([$this->user, $this->team])->create();
 
     DB::enableQueryLog();
     DB::flushQueryLog();
@@ -588,16 +588,16 @@ it('validates large arrays of relationship ids in a bounded number of queries', 
         'title' => 'Large task',
         'company_ids' => $companies->pluck('id')->all(),
         'people_ids' => $people->pluck('id')->all(),
-        'opportunity_ids' => $opportunities->pluck('id')->all(),
+        'deal_ids' => $deals->pluck('id')->all(),
     ])->assertCreated();
 
     $log = DB::getQueryLog();
 
     $companyLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "companies"') && str_contains($q['query'], 'team_id'))->count();
     $peopleLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "people"') && str_contains($q['query'], 'team_id'))->count();
-    $opportunityLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "opportunities"') && str_contains($q['query'], 'team_id'))->count();
+    $dealLookupCount = collect($log)->filter(fn (array $q): bool => str_contains($q['query'], 'from "deals"') && str_contains($q['query'], 'team_id'))->count();
 
     expect($companyLookupCount)->toBeLessThanOrEqual(3, 'company validation should not be N+1');
     expect($peopleLookupCount)->toBeLessThanOrEqual(3, 'people validation should not be N+1');
-    expect($opportunityLookupCount)->toBeLessThanOrEqual(3, 'opportunity validation should not be N+1');
+    expect($dealLookupCount)->toBeLessThanOrEqual(3, 'deal validation should not be N+1');
 });

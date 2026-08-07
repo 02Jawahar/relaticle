@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Relaticle\Chat\Services;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -257,7 +257,7 @@ final class TipTapDocumentParser
         return match ($type) {
             'company' => Company::class,
             'people' => People::class,
-            'opportunity' => Opportunity::class,
+            'deal' => Deal::class,
             'task' => Task::class,
             'note' => Note::class,
             default => null,

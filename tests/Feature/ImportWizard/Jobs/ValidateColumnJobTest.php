@@ -370,7 +370,7 @@ it('rejects invalid email format in entity link', function (): void {
     ], [
         ColumnData::toField(source: 'Name', target: 'name'),
         $column,
-    ], ImportEntityType::Opportunity);
+    ], ImportEntityType::Deal);
 
     (new ValidateColumnJob($this->import->id, $column))->handle();
 
@@ -390,7 +390,7 @@ it('accepts valid email format in entity link and creates relationship', functio
     ], [
         ColumnData::toField(source: 'Name', target: 'name'),
         $column,
-    ], ImportEntityType::Opportunity);
+    ], ImportEntityType::Deal);
 
     (new ValidateColumnJob($this->import->id, $column))->handle();
 

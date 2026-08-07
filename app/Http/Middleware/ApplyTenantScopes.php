@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Middleware;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Scopes\TeamScope;
 use App\Models\Task;
@@ -31,7 +31,7 @@ final readonly class ApplyTenantScopes
 
         Company::addGlobalScope(new TeamScope);
         People::addGlobalScope(new TeamScope);
-        Opportunity::addGlobalScope(new TeamScope);
+        Deal::addGlobalScope(new TeamScope);
         Task::addGlobalScope(new TeamScope);
         Note::addGlobalScope(new TeamScope);
 

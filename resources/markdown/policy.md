@@ -12,7 +12,7 @@ This Privacy Policy explains how Relaticle ("we", "us", "our") collects, uses, a
 
 - **Account information:** Name, email address, and password (hashed)
 - **Profile data:** Avatar, team name, and role
-- **CRM data:** Companies, people, opportunities, tasks, notes, and custom fields you create
+- **CRM data:** Companies, people, deals, tasks, notes, and custom fields you create
 - **Usage data:** Login timestamps, feature usage, and error reports
 - **Technical data:** IP address, browser type, and device information
 

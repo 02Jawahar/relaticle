@@ -6,8 +6,8 @@ namespace Relaticle\SystemAdmin\Filament\Widgets;
 
 use App\Enums\CreationSource;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -32,7 +32,7 @@ final class PlatformGrowthStatsWidget extends StatsOverviewWidget
     protected ?string $pollingInterval = null;
 
     /** @var array<int, class-string> */
-    private const array ENTITY_CLASSES = [Company::class, People::class, Task::class, Note::class, Opportunity::class];
+    private const array ENTITY_CLASSES = [Company::class, People::class, Task::class, Note::class, Deal::class];
 
     protected function getStats(): array
     {

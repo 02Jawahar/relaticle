@@ -6,7 +6,7 @@ namespace Relaticle\Chat\Tools\Task;
 
 use App\Actions\Task\UpdateTask;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -54,7 +54,7 @@ final class UpdateTaskTool extends BaseWriteUpdateTool
             'assignee_ids' => $schema->array()->description('User ULIDs to assign. Pass [] to clear assignees.'),
             'people_ids' => $schema->array()->description('People ULIDs to link. Pass [] to clear linked people.'),
             'company_ids' => $schema->array()->description('Company ULIDs to link. Pass [] to clear linked companies.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity ULIDs to link. Pass [] to clear linked opportunities.'),
+            'deal_ids' => $schema->array()->description('Deal ULIDs to link. Pass [] to clear linked deals.'),
         ];
     }
 
@@ -71,7 +71,7 @@ final class UpdateTaskTool extends BaseWriteUpdateTool
         if (array_key_exists('title', $payload)) {
             $data['title'] = $payload['title'];
         }
-        foreach (['assignee_ids', 'people_ids', 'company_ids', 'opportunity_ids'] as $key) {
+        foreach (['assignee_ids', 'people_ids', 'company_ids', 'deal_ids'] as $key) {
             if (! array_key_exists($key, $payload)) {
                 continue;
             }
@@ -104,9 +104,9 @@ final class UpdateTaskTool extends BaseWriteUpdateTool
             $fields[] = ['label' => 'Linked companies', 'value' => $this->namesForIds($companyIds, Company::class, 'name', $team)];
         }
 
-        $opportunityIds = $this->idListOrNull($request, 'opportunity_ids');
-        if ($opportunityIds !== null) {
-            $fields[] = ['label' => 'Linked opportunities', 'value' => $this->namesForIds($opportunityIds, Opportunity::class, 'name', $team)];
+        $dealIds = $this->idListOrNull($request, 'deal_ids');
+        if ($dealIds !== null) {
+            $fields[] = ['label' => 'Linked deals', 'value' => $this->namesForIds($dealIds, Deal::class, 'name', $team)];
         }
 
         $assigneeIds = $this->idListOrNull($request, 'assignee_ids');

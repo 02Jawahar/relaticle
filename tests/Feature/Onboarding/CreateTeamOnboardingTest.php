@@ -15,8 +15,8 @@ use App\Listeners\CreateTeamCustomFields;
 use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\CustomFieldValue;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -398,7 +398,7 @@ it('creates all custom fields for the first team', function (): void {
 
     expect($fields->get('company'))->toHaveCount(3)
         ->and($fields->get('people'))->toHaveCount(4)
-        ->and($fields->get('opportunity'))->toHaveCount(3)
+        ->and($fields->get('deal'))->toHaveCount(3)
         ->and($fields->get('task'))->toHaveCount(4)
         ->and($fields->get('note'))->toHaveCount(1);
 });
@@ -433,7 +433,7 @@ it('seeds people linked to their correct companies for sales', function (): void
     }
 });
 
-it('seeds tasks and opportunities with board positions', function (): void {
+it('seeds tasks and deals with board positions', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user);
@@ -454,11 +454,11 @@ it('seeds tasks and opportunities with board positions', function (): void {
         ->and($taskPositions->every(fn ($v) => $v !== null))->toBeTrue()
         ->and($taskPositions->unique())->toHaveCount(4);
 
-    $opportunities = Opportunity::where('team_id', $team->id)->get();
-    $opportunityPositions = $opportunities->pluck('order_column');
-    expect($opportunities)->toHaveCount(4)
-        ->and($opportunityPositions->every(fn ($v) => $v !== null))->toBeTrue()
-        ->and($opportunityPositions->unique())->toHaveCount(4);
+    $deals = Deal::where('team_id', $team->id)->get();
+    $dealPositions = $deals->pluck('order_column');
+    expect($deals)->toHaveCount(4)
+        ->and($dealPositions->every(fn ($v) => $v !== null))->toBeTrue()
+        ->and($dealPositions->unique())->toHaveCount(4);
 });
 
 it('seeds custom field values correctly for sales', function (): void {
@@ -709,7 +709,7 @@ it('seeds all entity types for each fixture set', function (OnboardingUseCase $u
 
     expect(Company::where('team_id', $team->id)->count())->toBe(4)
         ->and(People::where('team_id', $team->id)->count())->toBe(4)
-        ->and(Opportunity::where('team_id', $team->id)->count())->toBe(4)
+        ->and(Deal::where('team_id', $team->id)->count())->toBe(4)
         ->and(Task::where('team_id', $team->id)->count())->toBe(4)
         ->and(Note::where('team_id', $team->id)->count())->toBe(5);
 })->with([

@@ -14,7 +14,7 @@ final class ListNotesTool extends BaseReadListTool
 {
     public function description(): string
     {
-        return 'List notes with optional search, pagination, and filtering to the notes attached to a specific company, person, or opportunity.';
+        return 'List notes with optional search, pagination, and filtering to the notes attached to a specific company, person, or deal.';
     }
 
     protected function actionClass(): string
@@ -31,7 +31,7 @@ final class ListNotesTool extends BaseReadListTool
     protected function additionalSchema(JsonSchema $schema): array
     {
         return [
-            'notable_type' => $schema->string()->description('Restrict to notes attached to this record type. One of: company, people, opportunity. Always pass together with notable_id.'),
+            'notable_type' => $schema->string()->description('Restrict to notes attached to this record type. One of: company, people, deal. Always pass together with notable_id.'),
             'notable_id' => $schema->string()->description('Restrict to notes attached to this record ID. Always pass together with notable_type.'),
         ];
     }

@@ -8,14 +8,14 @@ use App\Enums\SubscriberTagEnum;
 use App\Enums\TagAction;
 use App\Jobs\Email\ModifySubscriberTagsJob;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Tags the authenticated user's Mailcoach subscriber with "has-crm-data" when
- * the first CRM entity (Company, People, or Opportunity) is created.
+ * the first CRM entity (Company, People, or Deal) is created.
  *
  * Intentionally relies on auth()->user() — tagging only applies to interactive
  * sessions. Entities created via queue workers, console commands, or seeders
@@ -44,8 +44,8 @@ trait TagsFirstCrmData
             || People::query()->whereIn('team_id', $teamIds)
                 ->when($createdModel instanceof People, fn ($q) => $q->whereKeyNot($createdModel->getKey()))
                 ->exists()
-            || Opportunity::query()->whereIn('team_id', $teamIds)
-                ->when($createdModel instanceof Opportunity, fn ($q) => $q->whereKeyNot($createdModel->getKey()))
+            || Deal::query()->whereIn('team_id', $teamIds)
+                ->when($createdModel instanceof Deal, fn ($q) => $q->whereKeyNot($createdModel->getKey()))
                 ->exists();
 
         if ($hasCrmData) {

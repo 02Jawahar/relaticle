@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -14,16 +14,16 @@ use Relaticle\ImportWizard\Enums\ImportEntityType;
 use Relaticle\ImportWizard\Enums\ImportStatus;
 use Relaticle\ImportWizard\Models\Import;
 use Relaticle\SystemAdmin\Filament\Resources\CompanyResource\Pages\ListCompanies;
+use Relaticle\SystemAdmin\Filament\Resources\DealResource\Pages\ListDeals;
 use Relaticle\SystemAdmin\Filament\Resources\ImportResource\Pages\ListImports;
 use Relaticle\SystemAdmin\Filament\Resources\NoteResource\Pages\ListNotes;
-use Relaticle\SystemAdmin\Filament\Resources\OpportunityResource\Pages\ListOpportunities;
 use Relaticle\SystemAdmin\Filament\Resources\PeopleResource\Pages\ListPeople;
 use Relaticle\SystemAdmin\Filament\Resources\TaskResource\Pages\ListTasks;
 use Relaticle\SystemAdmin\Filament\Resources\TeamResource\Pages\ListTeams;
 use Relaticle\SystemAdmin\Filament\Resources\UserResource\Pages\ListUsers;
 use Relaticle\SystemAdmin\Models\SystemAdministrator;
 
-mutates(User::class, Team::class, Company::class, People::class, Task::class, Note::class, Opportunity::class);
+mutates(User::class, Team::class, Company::class, People::class, Task::class, Note::class, Deal::class);
 
 beforeEach(function () {
     $this->admin = SystemAdministrator::factory()->create();
@@ -90,14 +90,14 @@ it('can render the notes list page', function () {
         ->assertCanSeeTableRecords($notes);
 });
 
-it('can render the opportunities list page', function () {
-    $opportunities = Opportunity::withoutEvents(fn () => Opportunity::factory(3)
+it('can render the deals list page', function () {
+    $deals = Deal::withoutEvents(fn () => Deal::factory(3)
         ->for($this->team)
         ->create());
 
-    livewire(ListOpportunities::class)
+    livewire(ListDeals::class)
         ->assertOk()
-        ->assertCanSeeTableRecords($opportunities);
+        ->assertCanSeeTableRecords($deals);
 });
 
 it('can render the imports list page', function () {
@@ -127,5 +127,5 @@ it('has trashed filter on soft-deletable resources', function (string $listPageC
     'people' => ListPeople::class,
     'tasks' => ListTasks::class,
     'notes' => ListNotes::class,
-    'opportunities' => ListOpportunities::class,
+    'deals' => ListDeals::class,
 ]);

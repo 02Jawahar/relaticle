@@ -46,10 +46,10 @@ final readonly class ListNotes
             )
             ->allowedFields('id', 'title', 'creator_id', 'created_at', 'updated_at')
             ->allowedIncludes(
-                'creator', 'companies', 'people', 'opportunities',
+                'creator', 'companies', 'people', 'deals',
                 AllowedInclude::count('companiesCount', 'companies'),
                 AllowedInclude::count('peopleCount', 'people'),
-                AllowedInclude::count('opportunitiesCount', 'opportunities'),
+                AllowedInclude::count('dealsCount', 'deals'),
             )
             ->allowedSorts(
                 'title', 'created_at', 'updated_at',

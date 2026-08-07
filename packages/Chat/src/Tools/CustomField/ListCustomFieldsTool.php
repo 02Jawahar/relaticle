@@ -27,7 +27,7 @@ final class ListCustomFieldsTool implements Tool
     {
         return [
             'entity_type' => $schema->string()
-                ->description('Optional filter by entity: company, people, opportunity, task, or note.'),
+                ->description('Optional filter by entity: company, people, deal, task, or note.'),
         ];
     }
 

@@ -10,12 +10,12 @@ use App\Actions\Company\UpdateCompany;
 use App\Actions\CustomFields\AddCustomFieldOptions;
 use App\Actions\CustomFields\CreateCustomField;
 use App\Actions\CustomFields\UpdateCustomField;
+use App\Actions\Deal\CreateDeal;
+use App\Actions\Deal\DeleteDeal;
+use App\Actions\Deal\UpdateDeal;
 use App\Actions\Note\CreateNote;
 use App\Actions\Note\DeleteNote;
 use App\Actions\Note\UpdateNote;
-use App\Actions\Opportunity\CreateOpportunity;
-use App\Actions\Opportunity\DeleteOpportunity;
-use App\Actions\Opportunity\UpdateOpportunity;
 use App\Actions\People\CreatePeople;
 use App\Actions\People\DeletePeople;
 use App\Actions\People\UpdatePeople;
@@ -25,8 +25,8 @@ use App\Actions\Task\UpdateTask;
 use App\Enums\CreationSource;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -45,7 +45,7 @@ final readonly class PendingActionService
     private const array ALLOWED_MODEL_CLASSES = [
         Company::class,
         People::class,
-        Opportunity::class,
+        Deal::class,
         Task::class,
         Note::class,
         CustomField::class,
@@ -59,9 +59,9 @@ final readonly class PendingActionService
         CreatePeople::class,
         UpdatePeople::class,
         DeletePeople::class,
-        CreateOpportunity::class,
-        UpdateOpportunity::class,
-        DeleteOpportunity::class,
+        CreateDeal::class,
+        UpdateDeal::class,
+        DeleteDeal::class,
         CreateTask::class,
         UpdateTask::class,
         DeleteTask::class,

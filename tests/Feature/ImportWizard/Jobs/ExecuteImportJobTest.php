@@ -6,8 +6,8 @@ use App\Enums\CreationSource;
 use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\CustomFieldValue;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -532,24 +532,24 @@ it('deduplicates auto-created companies across multiple rows', function (): void
 
 it('skips auto-creation for entity links with only MatchOnly matchers', function (): void {
     $relationships = json_encode([
-        ['relationship' => 'opportunities', 'action' => 'create', 'id' => null, 'name' => 'Big Deal', 'behavior' => MatchBehavior::MatchOnly->value],
+        ['relationship' => 'deals', 'action' => 'create', 'id' => null, 'name' => 'Big Deal', 'behavior' => MatchBehavior::MatchOnly->value],
     ]);
 
-    createImportReadyStore($this, ['Title', 'Opportunity'], [
-        makeRow(2, ['Title' => 'Follow up', 'Opportunity' => 'Big Deal'], [
+    createImportReadyStore($this, ['Title', 'Deal'], [
+        makeRow(2, ['Title' => 'Follow up', 'Deal' => 'Big Deal'], [
             'match_action' => RowMatchAction::Create->value,
             'relationships' => $relationships,
         ]),
     ], [
         ColumnData::toField(source: 'Title', target: 'title'),
-        ColumnData::toEntityLink(source: 'Opportunity', matcherKey: 'id', entityLinkKey: 'opportunities'),
+        ColumnData::toEntityLink(source: 'Deal', matcherKey: 'id', entityLinkKey: 'deals'),
     ], ImportEntityType::Task);
 
-    $initialOpportunityCount = Opportunity::where('team_id', $this->team->id)->count();
+    $initialDealCount = Deal::where('team_id', $this->team->id)->count();
 
     runImportJob($this);
 
-    expect(Opportunity::where('team_id', $this->team->id)->count())->toBe($initialOpportunityCount);
+    expect(Deal::where('team_id', $this->team->id)->count())->toBe($initialDealCount);
 });
 
 it('calls store() for MorphToMany entity links after record save', function (): void {
@@ -1905,7 +1905,7 @@ it('imports task with unmatched assignee email skipping silently', function (): 
         ->and($task->assignees()->count())->toBe(0);
 });
 
-it('imports opportunity with company and contact entity links', function (): void {
+it('imports deal with company and contact entity links', function (): void {
     $company = Company::factory()->create(['name' => 'Deal Corp', 'team_id' => $this->team->id]);
     $contact = People::factory()->create(['name' => 'Deal Contact', 'team_id' => $this->team->id]);
 
@@ -1923,14 +1923,14 @@ it('imports opportunity with company and contact entity links', function (): voi
         ColumnData::toField(source: 'Name', target: 'name'),
         ColumnData::toEntityLink(source: 'Company', matcherKey: 'name', entityLinkKey: 'company'),
         ColumnData::toEntityLink(source: 'Contact', matcherKey: 'name', entityLinkKey: 'contact'),
-    ], ImportEntityType::Opportunity);
+    ], ImportEntityType::Deal);
 
     runImportJob($this);
 
-    $opportunity = Opportunity::where('team_id', $this->team->id)->where('name', 'Big Deal')->first();
-    expect($opportunity)->not->toBeNull()
-        ->and((string) $opportunity->company_id)->toBe((string) $company->id)
-        ->and((string) $opportunity->contact_id)->toBe((string) $contact->id);
+    $deal = Deal::where('team_id', $this->team->id)->where('name', 'Big Deal')->first();
+    expect($deal)->not->toBeNull()
+        ->and((string) $deal->company_id)->toBe((string) $company->id)
+        ->and((string) $deal->contact_id)->toBe((string) $contact->id);
 });
 
 it('imports note with polymorphic entity links to company and person', function (): void {
@@ -2238,14 +2238,14 @@ it('populates matching custom field when auto-creating person via email MatchOrC
     ]);
 
     createImportReadyStore($this, ['Name', 'Contact'], [
-        makeRow(2, ['Name' => 'Test Opportunity', 'Contact' => 'john@example.com'], [
+        makeRow(2, ['Name' => 'Test Deal', 'Contact' => 'john@example.com'], [
             'match_action' => RowMatchAction::Create->value,
             'relationships' => $relationships,
         ]),
     ], [
         ColumnData::toField(source: 'Name', target: 'name'),
         ColumnData::toEntityLink(source: 'Contact', matcherKey: 'custom_fields_emails', entityLinkKey: 'contact'),
-    ], ImportEntityType::Opportunity);
+    ], ImportEntityType::Deal);
 
     runImportJob($this);
 
@@ -2345,7 +2345,7 @@ it('deduplicates auto-created records while still populating matching custom fie
     ], [
         ColumnData::toField(source: 'Name', target: 'name'),
         ColumnData::toEntityLink(source: 'Contact', matcherKey: 'custom_fields_emails', entityLinkKey: 'contact'),
-    ], ImportEntityType::Opportunity);
+    ], ImportEntityType::Deal);
 
     runImportJob($this);
 

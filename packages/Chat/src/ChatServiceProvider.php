@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Relaticle\Chat;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use Filament\Support\Facades\FilamentView;
@@ -115,8 +115,8 @@ final class ChatServiceProvider extends ServiceProvider
         Company::deleted($invalidate);
         People::saved($invalidate);
         People::deleted($invalidate);
-        Opportunity::saved($invalidate);
-        Opportunity::deleted($invalidate);
+        Deal::saved($invalidate);
+        Deal::deleted($invalidate);
         Task::saved($invalidate);
         Task::deleted($invalidate);
         Note::saved($invalidate);

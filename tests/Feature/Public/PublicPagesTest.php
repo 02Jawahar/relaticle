@@ -241,7 +241,7 @@ describe('Hero AI tab — app shell', function () {
         $response->assertSee('Home');
         $response->assertSee('People');
         $response->assertSee('Companies');
-        $response->assertSee('Opportunities');
+        $response->assertSee('Deals');
         $response->assertSee('Tasks');
         $response->assertSee('Notes');
     });

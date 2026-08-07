@@ -28,7 +28,7 @@ abstract class BaseReadShowTool implements Tool
 
     /**
      * Most business content in this CRM lives in custom fields (note body,
-     * task status, opportunity stage). `FormatsCustomFields` serialises an
+     * task status, deal stage). `FormatsCustomFields` serialises an
      * empty object when this chain is not loaded, so included records need
      * it as much as the parent record does.
      */

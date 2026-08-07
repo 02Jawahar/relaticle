@@ -34,12 +34,12 @@ final readonly class FollowUpService
         $chips = match ($name) {
             'list_companies' => $this->forCompanyList($last),
             'list_people' => $this->forPeopleList($last),
-            'list_opportunities' => $this->forOpportunityList(),
+            'list_deals' => $this->forDealList(),
             'list_tasks' => $this->forTaskList(),
             'list_notes' => [],
             'get_company' => $this->forCompanyShow($last),
             'get_person' => $this->forPersonShow(),
-            'get_opportunity' => $this->forOpportunityShow(),
+            'get_deal' => $this->forDealShow(),
             'get_task' => $this->forTaskShow(),
             'get_crm_summary' => $this->forCrmSummary(),
             'search_crm' => [],
@@ -121,11 +121,11 @@ final readonly class FollowUpService
     /**
      * @return array<int, array{label: string, prompt: string}>
      */
-    private function forOpportunityList(): array
+    private function forDealList(): array
     {
         return [
-            ['label' => 'Group by stage', 'prompt' => 'Group opportunities by stage'],
-            ['label' => 'Show overdue deals', 'prompt' => 'Show overdue opportunities'],
+            ['label' => 'Group by stage', 'prompt' => 'Group deals by stage'],
+            ['label' => 'Show overdue deals', 'prompt' => 'Show overdue deals'],
         ];
     }
 
@@ -151,7 +151,7 @@ final readonly class FollowUpService
 
         return [
             ['label' => "Contacts at {$reference}", 'prompt' => "Show contacts at {$reference}"],
-            ['label' => "Opportunities at {$reference}", 'prompt' => "Show opportunities at {$reference}"],
+            ['label' => "Deals at {$reference}", 'prompt' => "Show deals at {$reference}"],
             ['label' => 'Recent notes', 'prompt' => "Show recent notes for {$reference}"],
         ];
     }
@@ -163,7 +163,7 @@ final readonly class FollowUpService
     {
         return [
             ['label' => 'Show their company', 'prompt' => 'Show this person\'s company'],
-            ['label' => 'Show their opportunities', 'prompt' => 'Show this person\'s opportunities'],
+            ['label' => 'Show their deals', 'prompt' => 'Show this person\'s deals'],
             ['label' => 'Show their tasks', 'prompt' => 'Show tasks assigned to this person'],
         ];
     }
@@ -171,12 +171,12 @@ final readonly class FollowUpService
     /**
      * @return array<int, array{label: string, prompt: string}>
      */
-    private function forOpportunityShow(): array
+    private function forDealShow(): array
     {
         return [
-            ['label' => 'Show contact', 'prompt' => 'Show the contact for this opportunity'],
-            ['label' => 'Show company', 'prompt' => 'Show the company for this opportunity'],
-            ['label' => 'Show notes', 'prompt' => 'Show notes for this opportunity'],
+            ['label' => 'Show contact', 'prompt' => 'Show the contact for this deal'],
+            ['label' => 'Show company', 'prompt' => 'Show the company for this deal'],
+            ['label' => 'Show notes', 'prompt' => 'Show notes for this deal'],
         ];
     }
 

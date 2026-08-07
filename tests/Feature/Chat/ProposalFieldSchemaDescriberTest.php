@@ -134,7 +134,7 @@ it('omits deferred record-link and assignee core fields', function (): void {
         'contact_id' => '456',
         'people_ids' => ['7'],
         'company_ids' => ['8'],
-        'opportunity_ids' => ['9'],
+        'deal_ids' => ['9'],
         'assignee_ids' => ['10'],
     ];
 
@@ -146,6 +146,6 @@ it('omits deferred record-link and assignee core fields', function (): void {
         ->and($codes)->not->toContain('contact_id')
         ->and($codes)->not->toContain('people_ids')
         ->and($codes)->not->toContain('company_ids')
-        ->and($codes)->not->toContain('opportunity_ids')
+        ->and($codes)->not->toContain('deal_ids')
         ->and($codes)->not->toContain('assignee_ids');
 });

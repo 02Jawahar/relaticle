@@ -6,7 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\CustomField;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -86,11 +86,11 @@ final class LocalSeeder extends Seeder
         //            ))
         //            ->count(500)->create();
         //
-        //        // Create opportunities.
-        //        Opportunity::factory()->for($user->personalTeam(), 'team')
+        //        // Create deals.
+        //        Deal::factory()->for($user->personalTeam(), 'team')
         //            ->count(150)
-        //            ->afterCreating(function (Opportunity $opportunity) use ($customFields): void {
-        //                $opportunity->saveCustomFieldValue($customFields->get('stage'), $customFields->get('stage')->options->random()->id);
+        //            ->afterCreating(function (Deal $deal) use ($customFields): void {
+        //                $deal->saveCustomFieldValue($customFields->get('stage'), $customFields->get('stage')->options->random()->id);
         //            })
         //            ->create();
     }

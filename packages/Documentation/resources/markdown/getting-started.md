@@ -35,13 +35,13 @@ Relaticle organizes your customer data into five connected entities:
 |--------|---------|---------|
 | **Companies** | Organizations you work with | Acme Corporation |
 | **People** | Contacts at companies | John Doe, CEO at Acme |
-| **Opportunities** | Deals in your sales pipeline | Q1 Enterprise Contract |
+| **Deals** | Deals in your sales pipeline | Q1 Enterprise Contract |
 | **Tasks** | Actions to complete | Follow up on proposal |
 | **Notes** | Important information to remember | Meeting notes from call |
 
 **How they connect:**
 - People belong to Companies
-- Opportunities link to Companies and People
+- Deals link to Companies and People
 - Tasks and Notes can be attached to any record
 
 ---
@@ -64,17 +64,17 @@ Relaticle organizes your customer data into five connected entities:
 4. Add their email, phone, and title
 5. Click **Create**
 
-### Create an Opportunity
+### Create an Deal
 
-1. Click **Opportunities** in the sidebar
-2. Click **New Opportunity**
-3. Enter the opportunity name
+1. Click **Deals** in the sidebar
+2. Click **New Deal**
+3. Enter the deal name
 4. Select the **Company** and **Contact**
 5. Click **Create**
 
 ### Add a Follow-Up Task
 
-1. Open your opportunity
+1. Open your deal
 2. In the **Tasks** section, click **Create Task**
 3. Enter a title (e.g., "Send proposal")
 4. Set a due date and priority
@@ -122,7 +122,7 @@ See the **Import Guide** for detailed instructions and CSV templates.
 
 **Start of day:**
 - Check your **Tasks** for today's priorities
-- Review any new **Opportunities**
+- Review any new **Deals**
 
 **Throughout the day:**
 - Update records after customer interactions
@@ -131,7 +131,7 @@ See the **Import Guide** for detailed instructions and CSV templates.
 
 **End of day:**
 - Ensure all activities are logged
-- Update opportunity stages as needed
+- Update deal stages as needed
 
 ---
 

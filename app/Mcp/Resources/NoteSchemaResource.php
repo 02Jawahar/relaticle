@@ -47,7 +47,7 @@ final class NoteSchemaResource extends Resource
             ],
             'custom_fields' => $this->resolveCustomFields($user, 'note'),
             'filterable_fields' => $this->resolveFilterableFields($user, 'note'),
-            'relationships' => ['creator', 'companies', 'people', 'opportunities'],
+            'relationships' => ['creator', 'companies', 'people', 'deals'],
             'writable_relationships' => [
                 'company_ids' => [
                     'type' => 'array of string IDs',
@@ -57,16 +57,16 @@ final class NoteSchemaResource extends Resource
                     'type' => 'array of string IDs',
                     'description' => 'Link note to people on create/update. Omit to leave unchanged, pass [] to remove all.',
                 ],
-                'opportunity_ids' => [
+                'deal_ids' => [
                     'type' => 'array of string IDs',
-                    'description' => 'Link note to opportunities on create/update. Omit to leave unchanged, pass [] to remove all.',
+                    'description' => 'Link note to deals on create/update. Omit to leave unchanged, pass [] to remove all.',
                 ],
             ],
             'tools_hint' => 'Use attach-note-to-entities and detach-note-from-entities tools for post-creation relationship management.',
             'aggregate_includes' => [
                 'companiesCount' => 'Count of related companies',
                 'peopleCount' => 'Count of related people',
-                'opportunitiesCount' => 'Count of related opportunities',
+                'dealsCount' => 'Count of related deals',
             ],
             'usage' => 'Pass custom field values in the "custom_fields" object using field codes as keys.',
         ];

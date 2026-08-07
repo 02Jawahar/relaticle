@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Actions\Note;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\User;
 use App\Support\CustomFieldMerger;
@@ -26,7 +26,7 @@ final readonly class UpdateNote
         TenantFkValidator::assertOwnedMany($user, $data, [
             'company_ids' => Company::class,
             'people_ids' => People::class,
-            'opportunity_ids' => Opportunity::class,
+            'deal_ids' => Deal::class,
         ]);
 
         $attributes = Arr::only($data, ['title', 'custom_fields']);
@@ -42,8 +42,8 @@ final readonly class UpdateNote
             if (array_key_exists('people_ids', $data)) {
                 $note->people()->sync($data['people_ids']);
             }
-            if (array_key_exists('opportunity_ids', $data)) {
-                $note->opportunities()->sync($data['opportunity_ids']);
+            if (array_key_exists('deal_ids', $data)) {
+                $note->deals()->sync($data['deal_ids']);
             }
 
             return $note->refresh()->load('customFieldValues.customField.options');

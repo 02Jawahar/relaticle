@@ -28,7 +28,7 @@ final class CompanyResource extends JsonApiResource
             'updated_at' => $this->updated_at,
             'custom_fields' => $this->formatCustomFields($this->resource),
             'people_count' => $this->whenHas('people_count'),
-            'opportunities_count' => $this->whenHas('opportunities_count'),
+            'deals_count' => $this->whenHas('deals_count'),
             'tasks_count' => $this->whenHas('tasks_count'),
             'notes_count' => $this->whenHas('notes_count'),
         ];
@@ -43,7 +43,7 @@ final class CompanyResource extends JsonApiResource
             'creator' => UserResource::class,
             'accountOwner' => UserResource::class,
             'people' => PeopleResource::class,
-            'opportunities' => OpportunityResource::class,
+            'deals' => DealResource::class,
         ];
     }
 }

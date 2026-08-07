@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Mcp\Prompts;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\PersonalAccessToken;
 use App\Models\Task;
@@ -46,7 +46,7 @@ final class CrmOverviewPrompt extends Prompt
             $counts = [
                 'companies' => Company::query()->count(),
                 'people' => People::query()->count(),
-                'opportunities' => Opportunity::query()->count(),
+                'deals' => Deal::query()->count(),
                 'tasks' => Task::query()->count(),
                 'notes' => Note::query()->count(),
             ];

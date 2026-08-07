@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Relaticle\Chat\Support;
 
 use App\Filament\Resources\CompanyResource;
+use App\Filament\Resources\DealResource;
 use App\Filament\Resources\NoteResource;
-use App\Filament\Resources\OpportunityResource;
 use App\Filament\Resources\PeopleResource;
 use App\Filament\Resources\TaskResource;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -80,7 +80,7 @@ final readonly class RecordReferenceResolver
             return match ($entityType) {
                 'company' => CompanyResource::getUrl('view', ['record' => $recordId], panel: 'app', tenant: $team),
                 'people' => PeopleResource::getUrl('view', ['record' => $recordId], panel: 'app', tenant: $team),
-                'opportunity' => OpportunityResource::getUrl('view', ['record' => $recordId], panel: 'app', tenant: $team),
+                'deal' => DealResource::getUrl('view', ['record' => $recordId], panel: 'app', tenant: $team),
                 'task' => TaskResource::getUrl('index', [
                     'tableAction' => EditAction::getDefaultName(),
                     'tableActionRecord' => $recordId,
@@ -102,7 +102,7 @@ final readonly class RecordReferenceResolver
             $label = match ($entityType) {
                 'company' => Company::query()->whereKey($recordId)->value('name'),
                 'people' => People::query()->whereKey($recordId)->value('name'),
-                'opportunity' => Opportunity::query()->whereKey($recordId)->value('name'),
+                'deal' => Deal::query()->whereKey($recordId)->value('name'),
                 'task' => Task::query()->whereKey($recordId)->value('title'),
                 'note' => Note::query()->whereKey($recordId)->value('title'),
                 default => null,

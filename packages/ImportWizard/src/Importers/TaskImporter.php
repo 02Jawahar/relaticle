@@ -16,7 +16,7 @@ use Relaticle\ImportWizard\Enums\MatchBehavior;
 /**
  * Importer for Task entities.
  *
- * Tasks have polymorphic relationships with companies, people, opportunities,
+ * Tasks have polymorphic relationships with companies, people, deals,
  * and assignees (users). They can only be matched by ID.
  */
 final class TaskImporter extends BaseImporter
@@ -58,7 +58,7 @@ final class TaskImporter extends BaseImporter
         return [
             'companies' => EntityLink::polymorphicCompanies(),
             'people' => EntityLink::polymorphicPeople(),
-            'opportunities' => EntityLink::polymorphicOpportunities(),
+            'deals' => EntityLink::polymorphicDeals(),
             'assignees' => EntityLink::morphToMany('assignees', User::class)
                 ->matchableFields([
                     MatchableField::id(),

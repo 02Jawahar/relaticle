@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Laravel\Mcp\Server\Attributes\Description;
 
-#[Description('Detach a task from companies, people, opportunities, or unassign users. Removes specified links.')]
+#[Description('Detach a task from companies, people, deals, or unassign users. Removes specified links.')]
 final class DetachTaskFromEntitiesTool extends BaseDetachTool
 {
     protected function modelClass(): string
@@ -36,7 +36,7 @@ final class DetachTaskFromEntitiesTool extends BaseDetachTool
     /** @return array<int, string> */
     protected function relationshipsToLoad(): array
     {
-        return ['companies', 'people', 'opportunities', 'assignees'];
+        return ['companies', 'people', 'deals', 'assignees'];
     }
 
     public function relationshipSchema(JsonSchema $schema): array
@@ -44,7 +44,7 @@ final class DetachTaskFromEntitiesTool extends BaseDetachTool
         return [
             'company_ids' => $schema->array()->description('Company IDs to detach from this task.'),
             'people_ids' => $schema->array()->description('People IDs to detach from this task.'),
-            'opportunity_ids' => $schema->array()->description('Opportunity IDs to detach from this task.'),
+            'deal_ids' => $schema->array()->description('Deal IDs to detach from this task.'),
             'assignee_ids' => $schema->array()->description('User IDs to unassign from this task.'),
         ];
     }
@@ -61,8 +61,8 @@ final class DetachTaskFromEntitiesTool extends BaseDetachTool
             'company_ids.*' => ['string', new ArrayExistsForTeam('companies', 'company_ids', $teamId)],
             'people_ids' => ['sometimes', 'array'],
             'people_ids.*' => ['string', new ArrayExistsForTeam('people', 'people_ids', $teamId)],
-            'opportunity_ids' => ['sometimes', 'array'],
-            'opportunity_ids.*' => ['string', new ArrayExistsForTeam('opportunities', 'opportunity_ids', $teamId)],
+            'deal_ids' => ['sometimes', 'array'],
+            'deal_ids.*' => ['string', new ArrayExistsForTeam('deals', 'deal_ids', $teamId)],
             'assignee_ids' => ['sometimes', 'array'],
             'assignee_ids.*' => ['string', Rule::in($teamMemberIds)],
         ];
@@ -79,8 +79,8 @@ final class DetachTaskFromEntitiesTool extends BaseDetachTool
             $model->people()->detach($data['people_ids']);
         }
 
-        if (isset($data['opportunity_ids'])) {
-            $model->opportunities()->detach($data['opportunity_ids']);
+        if (isset($data['deal_ids'])) {
+            $model->deals()->detach($data['deal_ids']);
         }
 
         if (isset($data['assignee_ids'])) {

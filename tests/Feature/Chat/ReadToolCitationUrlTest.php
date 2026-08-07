@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Features\OnboardSeed;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -13,10 +13,10 @@ use Laravel\Ai\Tools\Request;
 use Laravel\Pennant\Feature;
 use Relaticle\Chat\Tools\Company\GetCompanyTool;
 use Relaticle\Chat\Tools\Company\ListCompaniesTool;
+use Relaticle\Chat\Tools\Deal\GetDealTool;
+use Relaticle\Chat\Tools\Deal\ListDealsTool;
 use Relaticle\Chat\Tools\Note\GetNoteTool;
 use Relaticle\Chat\Tools\Note\ListNotesTool;
-use Relaticle\Chat\Tools\Opportunity\GetOpportunityTool;
-use Relaticle\Chat\Tools\Opportunity\ListOpportunitiesTool;
 use Relaticle\Chat\Tools\People\GetPersonTool;
 use Relaticle\Chat\Tools\People\ListPeopleTool;
 use Relaticle\Chat\Tools\Task\GetTaskTool;
@@ -26,8 +26,8 @@ mutates(GetCompanyTool::class);
 mutates(ListCompaniesTool::class);
 mutates(GetPersonTool::class);
 mutates(ListPeopleTool::class);
-mutates(GetOpportunityTool::class);
-mutates(ListOpportunitiesTool::class);
+mutates(GetDealTool::class);
+mutates(ListDealsTool::class);
 mutates(GetTaskTool::class);
 mutates(ListTasksTool::class);
 mutates(GetNoteTool::class);
@@ -99,29 +99,29 @@ it('ListPeopleTool output items each have a url with /people/', function (): voi
     }
 });
 
-// --- GetOpportunityTool ---
+// --- GetDealTool ---
 
-it('GetOpportunityTool output contains a url with /opportunities/', function (): void {
-    $opportunity = Opportunity::factory()->for($this->user->currentTeam)->create();
+it('GetDealTool output contains a url with /deals/', function (): void {
+    $deal = Deal::factory()->for($this->user->currentTeam)->create();
 
-    $payload = json_decode(app(GetOpportunityTool::class)->handle(new Request(['id' => (string) $opportunity->getKey()])), true);
+    $payload = json_decode(app(GetDealTool::class)->handle(new Request(['id' => (string) $deal->getKey()])), true);
 
     expect($payload)->toHaveKey('url')
-        ->and($payload['url'])->toContain('/opportunities/');
+        ->and($payload['url'])->toContain('/deals/');
 });
 
-// --- ListOpportunitiesTool ---
+// --- ListDealsTool ---
 
-it('ListOpportunitiesTool output items each have a url with /opportunities/', function (): void {
-    Opportunity::factory()->count(2)->for($this->user->currentTeam)->create();
+it('ListDealsTool output items each have a url with /deals/', function (): void {
+    Deal::factory()->count(2)->for($this->user->currentTeam)->create();
 
-    $payload = json_decode(app(ListOpportunitiesTool::class)->handle(new Request([])), true);
+    $payload = json_decode(app(ListDealsTool::class)->handle(new Request([])), true);
 
     expect($payload)->toBeArray()->not->toBeEmpty();
 
     foreach ($payload as $item) {
         expect($item)->toHaveKey('url')
-            ->and($item['url'])->toContain('/opportunities/');
+            ->and($item['url'])->toContain('/deals/');
     }
 });
 

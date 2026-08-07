@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Actions\Company\UpdateCompany;
+use App\Actions\Deal\UpdateDeal;
 use App\Actions\Note\UpdateNote;
-use App\Actions\Opportunity\UpdateOpportunity;
 use App\Actions\People\UpdatePeople;
 use App\Actions\Task\UpdateTask;
 use App\Features\OnboardSeed;
 use App\Models\Company;
 use App\Models\CustomField;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -22,8 +22,8 @@ use Laravel\Ai\Tools\Request;
 use Laravel\Pennant\Feature;
 use Relaticle\Chat\Models\PendingAction;
 use Relaticle\Chat\Tools\Company\UpdateCompanyTool;
+use Relaticle\Chat\Tools\Deal\UpdateDealTool;
 use Relaticle\Chat\Tools\Note\UpdateNoteTool;
-use Relaticle\Chat\Tools\Opportunity\UpdateOpportunityTool;
 use Relaticle\Chat\Tools\People\UpdatePersonTool;
 use Relaticle\Chat\Tools\Task\UpdateTaskTool;
 
@@ -101,22 +101,22 @@ it('updates the note body via custom_fields and persists as text_value', functio
     expect(rawValueForCustomFieldsTest($note, 'body', 'text_value'))->toContain('Body text');
 });
 
-it('updates the opportunity stage by option label and persists the option id', function (): void {
-    $opportunity = Opportunity::factory()->for($this->team)->create(['name' => 'O']);
+it('updates the deal stage by option label and persists the option id', function (): void {
+    $deal = Deal::factory()->for($this->team)->create(['name' => 'O']);
 
     $stageLabel = CustomField::query()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'stage')
         ->firstOrFail()
         ->options
         ->first()
         ->name;
 
-    runUpdateToolForCustomFieldsTest(UpdateOpportunityTool::class, $opportunity, ['stage' => $stageLabel]);
-    resolve(UpdateOpportunity::class)->execute($this->user, $opportunity, latestPendingForCustomFieldsTest()->action_data);
+    runUpdateToolForCustomFieldsTest(UpdateDealTool::class, $deal, ['stage' => $stageLabel]);
+    resolve(UpdateDeal::class)->execute($this->user, $deal, latestPendingForCustomFieldsTest()->action_data);
 
-    expect(optionLabelForCustomFieldsTest($opportunity, 'stage'))->toBe($stageLabel);
+    expect(optionLabelForCustomFieldsTest($deal, 'stage'))->toBe($stageLabel);
 });
 
 it('updates person emails via custom_fields and persists as json_value', function (): void {
@@ -245,7 +245,7 @@ function morphAliasForCustomFieldsTest(Model $model): string
         Task::class => 'task',
         Company::class => 'company',
         Note::class => 'note',
-        Opportunity::class => 'opportunity',
+        Deal::class => 'deal',
         People::class => 'people',
         default => throw new RuntimeException('unsupported model'),
     };

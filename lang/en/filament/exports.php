@@ -13,8 +13,8 @@ return [
         'updated_at' => 'Updated At',
         'company_name' => 'Company Name',
         'people_count' => 'Number of People',
-        'opportunities_count' => 'Number of Opportunities',
-        'opportunity_name' => 'Opportunity Name',
+        'deals_count' => 'Number of Deals',
+        'deal_name' => 'Deal Name',
         'company' => 'Company',
         'contact_person' => 'Contact Person',
         'notes_count' => 'Number of Notes',
@@ -31,8 +31,8 @@ return [
                 'body' => 'Your note export has completed and :rows exported.',
                 'failed' => ':rows failed to export.',
             ],
-            'opportunity' => [
-                'body' => 'Your opportunity export has completed and :rows exported.',
+            'deal' => [
+                'body' => 'Your deal export has completed and :rows exported.',
                 'failed' => ':rows failed to export.',
             ],
             'people' => [

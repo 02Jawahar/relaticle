@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
  */
 trait HasPeriodComparison
 {
-    private const array ENTITY_TABLES = ['companies', 'people', 'tasks', 'notes', 'opportunities'];
+    private const array ENTITY_TABLES = ['companies', 'people', 'tasks', 'notes', 'deals'];
 
     /**
      * @return array{0: CarbonImmutable, 1: CarbonImmutable, 2: CarbonImmutable, 3: CarbonImmutable}

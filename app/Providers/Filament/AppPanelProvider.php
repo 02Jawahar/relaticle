@@ -16,7 +16,7 @@ use App\Filament\Pages\Billing;
 use App\Filament\Pages\CreateTeam;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\EditTeam;
-use App\Filament\Resources\OpportunityResource;
+use App\Filament\Resources\DealResource;
 use App\Filament\Resources\TaskResource;
 use App\Http\Middleware\ApplyTenantScopes;
 use App\Http\Middleware\CheckScheduledDeletion;
@@ -160,8 +160,8 @@ final class AppPanelProvider extends PanelProvider
 
                 Route::get('/{tenant}/tasks-board', fn (string $tenant) => redirect()->to(TaskResource::getUrl('board', ['tenant' => $tenant]), status: 301))
                     ->name('tasks-board.redirect');
-                Route::get('/{tenant}/opportunities-board', fn (string $tenant) => redirect()->to(OpportunityResource::getUrl('board', ['tenant' => $tenant]), status: 301))
-                    ->name('opportunities-board.redirect');
+                Route::get('/{tenant}/deals-board', fn (string $tenant) => redirect()->to(DealResource::getUrl('board', ['tenant' => $tenant]), status: 301))
+                    ->name('deals-board.redirect');
             })
             ->breadcrumbs(false)
             ->sidebarCollapsibleOnDesktop()

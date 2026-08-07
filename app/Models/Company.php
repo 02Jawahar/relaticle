@@ -107,11 +107,11 @@ final class Company extends Model implements HasCustomFields, HasMedia, HasTimel
     }
 
     /**
-     * @return HasMany<Opportunity, $this>
+     * @return HasMany<Deal, $this>
      */
-    public function opportunities(): HasMany
+    public function deals(): HasMany
     {
-        return $this->hasMany(Opportunity::class);
+        return $this->hasMany(Deal::class);
     }
 
     /**

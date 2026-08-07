@@ -10,14 +10,14 @@
     $icons = [
         'company' => 'heroicon-o-building-office',
         'person' => 'heroicon-o-user',
-        'opportunity' => 'heroicon-o-currency-dollar',
+        'deal' => 'heroicon-o-currency-dollar',
         'task' => 'heroicon-o-clipboard-document-check',
         'note' => 'heroicon-o-document-text',
     ];
     $colors = [
         'company' => 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30',
         'person' => 'text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-900/30',
-        'opportunity' => 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',
+        'deal' => 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30',
         'task' => 'text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-900/30',
         'note' => 'text-gray-600 bg-gray-50 dark:text-gray-400 dark:bg-gray-900/30',
     ];

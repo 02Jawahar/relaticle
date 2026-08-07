@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Relaticle\Chat\Tools;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -19,7 +19,7 @@ final class SearchCrmTool implements Tool
 {
     public function description(): string
     {
-        return 'Search across all CRM entity types (companies, people, opportunities, tasks, notes) by keyword.';
+        return 'Search across all CRM entity types (companies, people, deals, tasks, notes) by keyword.';
     }
 
     public function schema(JsonSchema $schema): array
@@ -51,7 +51,7 @@ final class SearchCrmTool implements Tool
                 ->limit($limit)
                 ->get(['id', 'name', 'company_id', 'created_at'])
                 ->toArray(),
-            'opportunities' => Opportunity::query()
+            'deals' => Deal::query()
                 ->whereBelongsTo($team)
                 ->where('name', 'ilike', "%{$query}%")
                 ->limit($limit)

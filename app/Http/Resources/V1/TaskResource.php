@@ -30,7 +30,7 @@ final class TaskResource extends JsonApiResource
             'assignees_count' => $this->whenHas('assignees_count'),
             'companies_count' => $this->whenHas('companies_count'),
             'people_count' => $this->whenHas('people_count'),
-            'opportunities_count' => $this->whenHas('opportunities_count'),
+            'deals_count' => $this->whenHas('deals_count'),
         ];
     }
 
@@ -44,7 +44,7 @@ final class TaskResource extends JsonApiResource
             'assignees' => UserResource::class,
             'companies' => CompanyResource::class,
             'people' => PeopleResource::class,
-            'opportunities' => OpportunityResource::class,
+            'deals' => DealResource::class,
         ];
     }
 }

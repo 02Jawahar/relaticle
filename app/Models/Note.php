@@ -84,11 +84,11 @@ final class Note extends Model implements HasCustomFields, HasTimeline
     }
 
     /**
-     * @return MorphToMany<Opportunity, $this>
+     * @return MorphToMany<Deal, $this>
      */
-    public function opportunities(): MorphToMany
+    public function deals(): MorphToMany
     {
-        return $this->morphedByMany(Opportunity::class, 'noteable');
+        return $this->morphedByMany(Deal::class, 'noteable');
     }
 
     /** @param Builder<self> $query */
@@ -98,7 +98,7 @@ final class Note extends Model implements HasCustomFields, HasTimeline
         $relationMap = [
             'company' => 'companies',
             'people' => 'people',
-            'opportunity' => 'opportunities',
+            'deal' => 'deals',
         ];
 
         $relation = $relationMap[$type] ?? null;
@@ -115,7 +115,7 @@ final class Note extends Model implements HasCustomFields, HasTimeline
         $query->where(function (Builder $q) use ($id): void {
             $q->whereHas('companies', fn (Builder $sub) => $sub->where('noteables.noteable_id', $id))
                 ->orWhereHas('people', fn (Builder $sub) => $sub->where('noteables.noteable_id', $id))
-                ->orWhereHas('opportunities', fn (Builder $sub) => $sub->where('noteables.noteable_id', $id));
+                ->orWhereHas('deals', fn (Builder $sub) => $sub->where('noteables.noteable_id', $id));
         });
     }
 

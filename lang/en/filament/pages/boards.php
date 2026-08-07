@@ -9,10 +9,10 @@ return [
         'board' => 'Board',
     ],
 
-    'opportunities' => [
-        'title' => 'Opportunities',
+    'deals' => [
+        'title' => 'Deals',
         'actions' => [
-            'add' => 'Add Opportunity',
+            'add' => 'Add Deal',
             'edit' => 'Edit',
             'delete' => 'Delete',
         ],
@@ -21,7 +21,7 @@ return [
             'contact' => 'Contact',
         ],
         'form' => [
-            'name_placeholder' => 'Enter opportunity title',
+            'name_placeholder' => 'Enter deal title',
         ],
     ],
 

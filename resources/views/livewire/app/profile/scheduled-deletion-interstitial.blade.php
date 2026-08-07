@@ -46,7 +46,7 @@
                         <strong class="text-gray-950 dark:text-white">{{ $deletionDate->format('F j, Y') }}</strong>.
                     </p>
                     <p>
-                        This includes {{ $teamCount }} {{ Str::plural('workspace', $teamCount) }}, contacts, companies, opportunities, and notes.
+                        This includes {{ $teamCount }} {{ Str::plural('workspace', $teamCount) }}, contacts, companies, deals, and notes.
                     </p>
                 </div>
 

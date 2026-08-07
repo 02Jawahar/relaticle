@@ -8,12 +8,12 @@ use App\Mcp\Tools\Company\CreateCompanyTool;
 use App\Mcp\Tools\Company\GetCompanyTool;
 use App\Mcp\Tools\Company\ListCompaniesTool;
 use App\Mcp\Tools\Company\UpdateCompanyTool;
+use App\Mcp\Tools\Deal\CreateDealTool;
+use App\Mcp\Tools\Deal\UpdateDealTool;
 use App\Mcp\Tools\Note\CreateNoteTool;
 use App\Mcp\Tools\Note\DetachNoteFromEntitiesTool;
 use App\Mcp\Tools\Note\ListNotesTool;
 use App\Mcp\Tools\Note\UpdateNoteTool;
-use App\Mcp\Tools\Opportunity\CreateOpportunityTool;
-use App\Mcp\Tools\Opportunity\UpdateOpportunityTool;
 use App\Mcp\Tools\People\CreatePeopleTool;
 use App\Mcp\Tools\People\UpdatePeopleTool;
 use App\Mcp\Tools\Task\CreateTaskTool;
@@ -23,8 +23,8 @@ use App\Mcp\Tools\Task\UpdateTaskTool;
 use App\Models\Company;
 use App\Models\CustomField;
 use App\Models\CustomFieldSection;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
@@ -131,13 +131,13 @@ describe('ListNotesTool notable filtering', function () {
 
     it('filters notes by notable_type and notable_id combined', function (): void {
         $company = Company::factory()->recycle([$this->user, $this->team])->create();
-        $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+        $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
         $companyNote = Note::factory()->recycle([$this->user, $this->team])->create(['title' => 'Specific Company Note']);
         $companyNote->companies()->attach($company);
 
-        $opportunityNote = Note::factory()->recycle([$this->user, $this->team])->create(['title' => 'Opportunity Note']);
-        $opportunityNote->opportunities()->attach($opportunity);
+        $dealNote = Note::factory()->recycle([$this->user, $this->team])->create(['title' => 'Deal Note']);
+        $dealNote->deals()->attach($deal);
 
         RelaticleServer::actingAs($this->user)
             ->tool(ListNotesTool::class, [
@@ -146,7 +146,7 @@ describe('ListNotesTool notable filtering', function () {
             ])
             ->assertOk()
             ->assertSee('Specific Company Note')
-            ->assertDontSee('Opportunity Note');
+            ->assertDontSee('Deal Note');
     });
 });
 
@@ -172,13 +172,13 @@ describe('creation_source is MCP', function () {
         expect($person->creation_source)->toBe(CreationSource::MCP);
     });
 
-    it('sets creation_source to MCP for opportunities', function (): void {
+    it('sets creation_source to MCP for deals', function (): void {
         RelaticleServer::actingAs($this->user)
-            ->tool(CreateOpportunityTool::class, ['name' => 'MCP Source Deal'])
+            ->tool(CreateDealTool::class, ['name' => 'MCP Source Deal'])
             ->assertOk();
 
-        $opportunity = Opportunity::query()->where('name', 'MCP Source Deal')->first();
-        expect($opportunity->creation_source)->toBe(CreationSource::MCP);
+        $deal = Deal::query()->where('name', 'MCP Source Deal')->first();
+        expect($deal->creation_source)->toBe(CreationSource::MCP);
     });
 
     it('sets creation_source to MCP for tasks', function (): void {
@@ -216,9 +216,9 @@ describe('required-field validation', function () {
             ->assertHasErrors(['name']);
     });
 
-    it('rejects empty name on opportunity create', function (): void {
+    it('rejects empty name on deal create', function (): void {
         RelaticleServer::actingAs($this->user)
-            ->tool(CreateOpportunityTool::class, [])
+            ->tool(CreateDealTool::class, [])
             ->assertHasErrors(['name']);
     });
 
@@ -240,9 +240,9 @@ describe('required-field validation', function () {
             ->assertHasErrors(['name']);
     });
 
-    it('rejects name exceeding 255 characters for opportunity', function (): void {
+    it('rejects name exceeding 255 characters for deal', function (): void {
         RelaticleServer::actingAs($this->user)
-            ->tool(CreateOpportunityTool::class, ['name' => str_repeat('a', 256)])
+            ->tool(CreateDealTool::class, ['name' => str_repeat('a', 256)])
             ->assertHasErrors(['name']);
     });
 
@@ -264,7 +264,7 @@ describe('required-field validation', function () {
 // ---------------------------------------------------------------------------
 describe('custom field create via MCP', function () {
     beforeEach(function () {
-        $entityTypes = ['company', 'people', 'opportunity', 'task', 'note'];
+        $entityTypes = ['company', 'people', 'deal', 'task', 'note'];
 
         foreach ($entityTypes as $entityType) {
             $section = CustomFieldSection::create([
@@ -317,17 +317,17 @@ describe('custom field create via MCP', function () {
         expect($person)->not->toBeNull();
     });
 
-    it('creates opportunity with custom fields', function (): void {
+    it('creates deal with custom fields', function (): void {
         RelaticleServer::actingAs($this->user)
-            ->tool(CreateOpportunityTool::class, [
+            ->tool(CreateDealTool::class, [
                 'name' => 'CF Test Deal',
                 'custom_fields' => ['cf_website' => 'https://example.com'],
             ])
             ->assertOk()
             ->assertSee('CF Test Deal');
 
-        $opportunity = Opportunity::query()->where('name', 'CF Test Deal')->first();
-        expect($opportunity)->not->toBeNull();
+        $deal = Deal::query()->where('name', 'CF Test Deal')->first();
+        expect($deal)->not->toBeNull();
     });
 
     it('creates task with custom fields', function (): void {
@@ -359,7 +359,7 @@ describe('custom field create via MCP', function () {
 
 describe('custom field update via MCP', function () {
     beforeEach(function () {
-        $entityTypes = ['company', 'people', 'opportunity', 'task', 'note'];
+        $entityTypes = ['company', 'people', 'deal', 'task', 'note'];
 
         foreach ($entityTypes as $entityType) {
             $section = CustomFieldSection::create([
@@ -408,12 +408,12 @@ describe('custom field update via MCP', function () {
             ->assertOk();
     });
 
-    it('updates opportunity with custom fields', function (): void {
-        $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+    it('updates deal with custom fields', function (): void {
+        $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
         RelaticleServer::actingAs($this->user)
-            ->tool(UpdateOpportunityTool::class, [
-                'id' => $opportunity->id,
+            ->tool(UpdateDealTool::class, [
+                'id' => $deal->id,
                 'custom_fields' => ['cf_notes' => 'Updated via MCP'],
             ])
             ->assertOk();
@@ -676,7 +676,7 @@ describe('unknown custom field key rejection', function () {
 // ---------------------------------------------------------------------------
 describe('custom field validation rejection', function () {
     beforeEach(function () {
-        $entityTypes = ['company', 'people', 'opportunity', 'task', 'note'];
+        $entityTypes = ['company', 'people', 'deal', 'task', 'note'];
 
         foreach ($entityTypes as $entityType) {
             $section = CustomFieldSection::create([
@@ -721,9 +721,9 @@ describe('custom field validation rejection', function () {
             ->assertHasErrors(['cf amount']);
     });
 
-    it('rejects non-numeric custom field value on opportunity create', function (): void {
+    it('rejects non-numeric custom field value on deal create', function (): void {
         RelaticleServer::actingAs($this->user)
-            ->tool(CreateOpportunityTool::class, [
+            ->tool(CreateDealTool::class, [
                 'name' => 'Bad CF Deal',
                 'custom_fields' => ['cf_amount' => 'not_a_number'],
             ])

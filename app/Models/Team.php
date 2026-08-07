@@ -95,9 +95,9 @@ final class Team extends JetstreamTeam implements HasAvatar
         'team-invitations', 'join',
 
         // App routes
-        'companies', 'people', 'tasks', 'opportunities', 'notes',
+        'companies', 'people', 'tasks', 'deals', 'notes',
         'api-tokens', 'import-history', 'profile', 'scheduled-deletion',
-        'opportunities-board', 'tasks-board', 'chat',
+        'deals-board', 'tasks-board', 'chat',
 
         // Content & info pages
         'about', 'blog', 'docs', 'documentation', 'faq', 'help', 'support',
@@ -275,11 +275,11 @@ final class Team extends JetstreamTeam implements HasAvatar
     }
 
     /**
-     * @return HasMany<Opportunity, $this>
+     * @return HasMany<Deal, $this>
      */
-    public function opportunities(): HasMany
+    public function deals(): HasMany
     {
-        return $this->hasMany(Opportunity::class);
+        return $this->hasMany(Deal::class);
     }
 
     /**

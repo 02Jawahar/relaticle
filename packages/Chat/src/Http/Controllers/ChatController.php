@@ -7,8 +7,8 @@ namespace Relaticle\Chat\Http\Controllers;
 use App\Enums\Plan;
 use App\Features\Billing;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -206,7 +206,7 @@ final readonly class ChatController
         $modelClass = match ($type) {
             'company' => Company::class,
             'people' => People::class,
-            'opportunity' => Opportunity::class,
+            'deal' => Deal::class,
             'task' => Task::class,
             'note' => Note::class,
             default => null,
@@ -414,7 +414,7 @@ final readonly class ChatController
         );
 
         $results = $results->merge(
-            Opportunity::query()
+            Deal::query()
                 ->whereBelongsTo($team)
                 ->where('name', 'ilike', "%{$search}%")
                 ->orderByRaw('CASE WHEN name ilike ? THEN 0 ELSE 1 END', ["{$search}%"])
@@ -422,9 +422,9 @@ final readonly class ChatController
                 ->orderBy('name')
                 ->limit($limit)
                 ->get(['id', 'name', 'team_id'])
-                ->filter(fn (Opportunity $r): bool => $user->can('view', $r))
+                ->filter(fn (Deal $r): bool => $user->can('view', $r))
                 ->values()
-                ->map(fn (Opportunity $r): array => ['id' => $r->id, 'name' => $r->name, 'type' => 'opportunity', 'url' => $resolver->urlFor('opportunity', (string) $r->id)])
+                ->map(fn (Deal $r): array => ['id' => $r->id, 'name' => $r->name, 'type' => 'deal', 'url' => $resolver->urlFor('deal', (string) $r->id)])
         );
 
         $results = $results->merge(

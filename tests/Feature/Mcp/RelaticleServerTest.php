@@ -9,10 +9,10 @@ use App\Mcp\Tools\Company\CreateCompanyTool;
 use App\Mcp\Tools\Company\DeleteCompanyTool;
 use App\Mcp\Tools\Company\ListCompaniesTool;
 use App\Mcp\Tools\Company\UpdateCompanyTool;
+use App\Mcp\Tools\Deal\CreateDealTool;
+use App\Mcp\Tools\Deal\ListDealsTool;
 use App\Mcp\Tools\Note\CreateNoteTool;
 use App\Mcp\Tools\Note\ListNotesTool;
-use App\Mcp\Tools\Opportunity\CreateOpportunityTool;
-use App\Mcp\Tools\Opportunity\ListOpportunitiesTool;
 use App\Mcp\Tools\People\CreatePeopleTool;
 use App\Mcp\Tools\People\ListPeopleTool;
 use App\Mcp\Tools\People\UpdatePeopleTool;
@@ -97,16 +97,16 @@ it('can create a person via MCP tool', function (): void {
         ->assertSee('John Doe');
 });
 
-it('can list opportunities via MCP tool', function (): void {
+it('can list deals via MCP tool', function (): void {
     $response = RelaticleServer::actingAs($this->user)
-        ->tool(ListOpportunitiesTool::class);
+        ->tool(ListDealsTool::class);
 
     $response->assertOk();
 });
 
-it('can create an opportunity via MCP tool', function (): void {
+it('can create an deal via MCP tool', function (): void {
     $response = RelaticleServer::actingAs($this->user)
-        ->tool(CreateOpportunityTool::class, [
+        ->tool(CreateDealTool::class, [
             'name' => 'Big Deal',
         ]);
 
@@ -179,9 +179,9 @@ it('validates company_id exists when updating a person via MCP', function (): vo
     $response->assertHasErrors(['company id']);
 });
 
-it('validates company_id and contact_id exist when creating opportunity via MCP', function (): void {
+it('validates company_id and contact_id exist when creating deal via MCP', function (): void {
     $response = RelaticleServer::actingAs($this->user)
-        ->tool(CreateOpportunityTool::class, [
+        ->tool(CreateDealTool::class, [
             'name' => 'Test Deal',
             'company_id' => 'non-existent-id',
             'contact_id' => 'non-existent-id',

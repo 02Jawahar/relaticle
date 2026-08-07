@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Relaticle\Chat\Services;
 
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -23,7 +23,7 @@ final readonly class ChatContextService
     private const array ENTITY_MAP = [
         'companies' => ['type' => 'company', 'class' => Company::class],
         'people' => ['type' => 'people', 'class' => People::class],
-        'opportunities' => ['type' => 'opportunity', 'class' => Opportunity::class],
+        'deals' => ['type' => 'deal', 'class' => Deal::class],
         'tasks' => ['type' => 'task', 'class' => Task::class],
         'notes' => ['type' => 'note', 'class' => Note::class],
     ];
@@ -120,7 +120,7 @@ final readonly class ChatContextService
             ['label' => 'CRM overview', 'prompt' => 'Give me a summary of my CRM data'],
             ['label' => 'Overdue tasks', 'prompt' => 'Show my overdue tasks'],
             ['label' => 'Recent companies', 'prompt' => 'List companies added this week'],
-            ['label' => 'Pipeline summary', 'prompt' => 'Show my opportunity pipeline summary'],
+            ['label' => 'Pipeline summary', 'prompt' => 'Show my deal pipeline summary'],
         ];
 
         $name = $context['record_name'];
@@ -135,8 +135,8 @@ final readonly class ChatContextService
                     ['label' => "Summarize {$name}", 'prompt' => "Summarize the contact {$name}"],
                     ['label' => 'Recent activity', 'prompt' => "What has happened recently with {$name}?"],
                 ],
-                'opportunity' => [
-                    ['label' => "Summarize {$name}", 'prompt' => "Summarize the opportunity {$name}"],
+                'deal' => [
+                    ['label' => "Summarize {$name}", 'prompt' => "Summarize the deal {$name}"],
                     ['label' => 'Next steps', 'prompt' => "What are the next steps to move {$name} forward?"],
                 ],
                 default => [],

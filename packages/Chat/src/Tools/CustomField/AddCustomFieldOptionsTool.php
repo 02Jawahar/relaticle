@@ -36,7 +36,7 @@ final class AddCustomFieldOptionsTool implements Tool
     {
         return [
             'entity_type' => $schema->string()
-                ->description('The CRM entity the field belongs to: company, people, opportunity, task, or note.')
+                ->description('The CRM entity the field belongs to: company, people, deal, task, or note.')
                 ->required(),
             'code' => $schema->string()
                 ->description('The machine code of the choice-type custom field to add options to, as shown in the custom_fields field list for that entity (e.g. "industry").')

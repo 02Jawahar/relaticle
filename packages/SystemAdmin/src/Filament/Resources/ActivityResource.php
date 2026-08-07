@@ -105,7 +105,7 @@ final class ActivityResource extends Resource
                     ->options([
                         'company' => 'Company',
                         'people' => 'People',
-                        'opportunity' => 'Opportunity',
+                        'deal' => 'Deal',
                         'task' => 'Task',
                         'note' => 'Note',
                     ]),

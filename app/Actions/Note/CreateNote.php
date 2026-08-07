@@ -6,8 +6,8 @@ namespace App\Actions\Note;
 
 use App\Enums\CreationSource;
 use App\Models\Company;
+use App\Models\Deal;
 use App\Models\Note;
-use App\Models\Opportunity;
 use App\Models\People;
 use App\Models\User;
 use App\Support\TenantFkValidator;
@@ -26,17 +26,17 @@ final readonly class CreateNote
         TenantFkValidator::assertOwnedMany($user, $data, [
             'company_ids' => Company::class,
             'people_ids' => People::class,
-            'opportunity_ids' => Opportunity::class,
+            'deal_ids' => Deal::class,
         ]);
 
         $companyIds = Arr::pull($data, 'company_ids');
         $peopleIds = Arr::pull($data, 'people_ids');
-        $opportunityIds = Arr::pull($data, 'opportunity_ids');
+        $dealIds = Arr::pull($data, 'deal_ids');
 
         $attributes = Arr::only($data, ['title', 'custom_fields']);
         $attributes['creation_source'] = $source;
 
-        $note = DB::transaction(function () use ($attributes, $companyIds, $peopleIds, $opportunityIds): Note {
+        $note = DB::transaction(function () use ($attributes, $companyIds, $peopleIds, $dealIds): Note {
             $note = Note::query()->create($attributes);
 
             if ($companyIds !== null) {
@@ -45,8 +45,8 @@ final readonly class CreateNote
             if ($peopleIds !== null) {
                 $note->people()->sync($peopleIds);
             }
-            if ($opportunityIds !== null) {
-                $note->opportunities()->sync($opportunityIds);
+            if ($dealIds !== null) {
+                $note->deals()->sync($dealIds);
             }
 
             return $note;

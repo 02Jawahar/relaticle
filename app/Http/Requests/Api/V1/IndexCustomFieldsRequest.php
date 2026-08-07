@@ -9,7 +9,7 @@ use Illuminate\Validation\Rule;
 
 final class IndexCustomFieldsRequest extends FormRequest
 {
-    private const array ENTITY_TYPES = ['company', 'people', 'opportunity', 'task', 'note'];
+    private const array ENTITY_TYPES = ['company', 'people', 'deal', 'task', 'note'];
 
     private const int MAX_PER_PAGE = 100;
 

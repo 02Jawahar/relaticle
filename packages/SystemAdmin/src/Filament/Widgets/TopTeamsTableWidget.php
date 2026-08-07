@@ -27,7 +27,7 @@ final class TopTeamsTableWidget extends BaseWidget
     protected int|string|array $columnSpan = 'full';
 
     /** @var array<int, string> */
-    private const array ENTITY_TABLES = ['companies', 'people', 'tasks', 'notes', 'opportunities'];
+    private const array ENTITY_TABLES = ['companies', 'people', 'tasks', 'notes', 'deals'];
 
     public function table(Table $table): Table
     {

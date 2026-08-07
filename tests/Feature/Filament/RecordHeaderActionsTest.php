@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Filament\Resources\CompanyResource\Pages\ViewCompany;
-use App\Filament\Resources\OpportunityResource\Pages\ViewOpportunity;
+use App\Filament\Resources\DealResource\Pages\ViewDeal;
 use App\Filament\Resources\PeopleResource\Pages\ViewPeople;
 use App\Models\Company;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\User;
 use Filament\Facades\Filament;
 
-mutates(ViewCompany::class, ViewPeople::class, ViewOpportunity::class);
+mutates(ViewCompany::class, ViewPeople::class, ViewDeal::class);
 
 beforeEach(function (): void {
     $this->user = User::factory()->withTeam()->create();
@@ -38,10 +38,10 @@ it('no longer exposes the AI summary or ask-about-this actions on a person', fun
         ->assertActionExists('edit');
 });
 
-it('no longer exposes the AI summary or ask-about-this actions on an opportunity', function (): void {
-    $opportunity = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+it('no longer exposes the AI summary or ask-about-this actions on an deal', function (): void {
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create();
 
-    livewire(ViewOpportunity::class, ['record' => $opportunity->getKey()])
+    livewire(ViewDeal::class, ['record' => $deal->getKey()])
         ->assertActionDoesNotExist('generateSummary')
         ->assertActionDoesNotExist('askAboutThis')
         ->assertActionExists('edit');

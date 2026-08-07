@@ -47,7 +47,7 @@ final class TaskSchemaResource extends Resource
             ],
             'custom_fields' => $this->resolveCustomFields($user, 'task'),
             'filterable_fields' => $this->resolveFilterableFields($user, 'task'),
-            'relationships' => ['creator', 'assignees', 'companies', 'people', 'opportunities'],
+            'relationships' => ['creator', 'assignees', 'companies', 'people', 'deals'],
             'writable_relationships' => [
                 'company_ids' => [
                     'type' => 'array of string IDs',
@@ -57,9 +57,9 @@ final class TaskSchemaResource extends Resource
                     'type' => 'array of string IDs',
                     'description' => 'Link task to people on create/update. Omit to leave unchanged, pass [] to remove all.',
                 ],
-                'opportunity_ids' => [
+                'deal_ids' => [
                     'type' => 'array of string IDs',
-                    'description' => 'Link task to opportunities on create/update. Omit to leave unchanged, pass [] to remove all.',
+                    'description' => 'Link task to deals on create/update. Omit to leave unchanged, pass [] to remove all.',
                 ],
                 'assignee_ids' => [
                     'type' => 'array of user IDs',
@@ -71,7 +71,7 @@ final class TaskSchemaResource extends Resource
                 'assigneesCount' => 'Count of assigned users',
                 'companiesCount' => 'Count of related companies',
                 'peopleCount' => 'Count of related people',
-                'opportunitiesCount' => 'Count of related opportunities',
+                'dealsCount' => 'Count of related deals',
             ],
             'usage' => 'Pass custom field values in the "custom_fields" object using field codes as keys. Use "filter" param in list tools to filter by custom field values with operators.',
         ];

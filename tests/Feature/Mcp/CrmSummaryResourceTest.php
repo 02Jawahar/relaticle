@@ -6,7 +6,7 @@ use App\Mcp\Resources\CrmSummaryResource;
 use App\Mcp\Servers\RelaticleServer;
 use App\Models\Company;
 use App\Models\CustomField;
-use App\Models\Opportunity;
+use App\Models\Deal;
 use App\Models\People;
 use App\Models\Task;
 use App\Models\User;
@@ -19,7 +19,7 @@ beforeEach(function (): void {
 it('returns CRM summary with record counts', function (): void {
     Company::factory()->recycle([$this->user, $this->team])->count(3)->create();
     People::factory()->recycle([$this->user, $this->team])->count(5)->create();
-    Opportunity::factory()->recycle([$this->user, $this->team])->count(2)->create();
+    Deal::factory()->recycle([$this->user, $this->team])->count(2)->create();
 
     $response = RelaticleServer::actingAs($this->user)
         ->resource(CrmSummaryResource::class);
@@ -27,18 +27,18 @@ it('returns CRM summary with record counts', function (): void {
     $response->assertOk()
         ->assertSee('"companies"')
         ->assertSee('"people"')
-        ->assertSee('"opportunities"')
+        ->assertSee('"deals"')
         ->assertSee('"tasks"')
         ->assertSee('"notes"');
 });
 
-it('includes opportunity pipeline breakdown', function (): void {
-    $opp = Opportunity::factory()->recycle([$this->user, $this->team])->create();
+it('includes deal pipeline breakdown', function (): void {
+    $opp = Deal::factory()->recycle([$this->user, $this->team])->create();
 
     $stageField = CustomField::query()
         ->withoutGlobalScopes()
         ->where('tenant_id', $this->team->getKey())
-        ->where('entity_type', 'opportunity')
+        ->where('entity_type', 'deal')
         ->where('code', 'stage')
         ->first();
 
