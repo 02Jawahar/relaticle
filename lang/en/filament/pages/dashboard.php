@@ -31,6 +31,36 @@ return [
         'records' => 'records',
     ],
 
+    'funnel' => [
+        'heading' => 'Pipeline funnel',
+        'subtitle' => 'Volume and drop-off across the three pipelines',
+        'leads' => 'Leads',
+        'deals' => 'Deals',
+        'orders' => 'Orders',
+        'of_previous' => 'of previous',
+    ],
+
+    'companies' => [
+        'heading' => 'Top companies',
+        'subtitle' => 'By open pipeline value',
+        'empty' => 'No deals linked to a company yet.',
+        'deals_count' => ':count deals',
+    ],
+
+    'activity' => [
+        'heading' => 'Recent activity',
+        'subtitle' => 'Latest changes across the workspace',
+        'empty' => 'Nothing has happened yet.',
+        'system' => 'System',
+    ],
+
+    'my_tasks' => [
+        'heading' => 'My tasks',
+        'subtitle' => 'Assigned to you',
+        'empty' => 'No tasks assigned to you.',
+        'view_all' => 'View all',
+    ],
+
     'tasks' => [
         'heading' => 'Tasks',
         'view_all' => 'View all',

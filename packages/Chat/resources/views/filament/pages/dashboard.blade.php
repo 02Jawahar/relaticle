@@ -1,11 +1,11 @@
 <x-filament-panels::page>
     <div
         x-data="dashboardChatInput(@js(\App\Filament\Pages\ChatConversation::getUrl()), @js(auth()->user()?->ai_preferences['default_model'] ?? 'auto'))"
-        @class(['mx-auto w-full py-16', 'max-w-3xl' => ! $this->isDashboardView(), 'max-w-7xl' => $this->isDashboardView()])
+        @class(['mx-auto w-full', 'max-w-3xl py-16' => ! $this->isDashboardView(), 'max-w-none py-4' => $this->isDashboardView()])
     >
         {{-- Greeting --}}
-        <div class="text-center">
-            <h1 class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white">
+        <div @class(['text-center', 'mb-2' => $this->isDashboardView()])>
+            <h1 @class(['font-semibold tracking-tight text-gray-950 dark:text-white', 'text-3xl' => ! $this->isDashboardView(), 'text-2xl' => $this->isDashboardView()])>
                 {{ $this->getGreeting() }}
             </h1>
 

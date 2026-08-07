@@ -10,8 +10,12 @@ use App\Contracts\Pipeline\PipelineStage;
 use App\Enums\Pipeline\DealStage;
 use App\Enums\Pipeline\LeadStage;
 use App\Enums\Pipeline\OrderStage;
+use App\Filament\Resources\DealResource;
+use App\Filament\Resources\LeadResource;
+use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\TaskResource;
 use App\Filament\Resources\TaskResource\Forms\TaskForm;
+use App\Models\ActivityLog\Activity;
 use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Order;
@@ -151,6 +155,109 @@ final class Dashboard extends Page
             'deals' => $this->stageCounts(Deal::class, DealStage::cases(), $team->getKey()),
             'orders' => $this->stageCounts(Order::class, OrderStage::cases(), $team->getKey()),
         ];
+    }
+
+    /**
+     * Counts and drop-off across the three pipelines.
+     *
+     * @return list<array{label: string, count: int, total: int, rate: int|null, color: string, url: string}>
+     */
+    #[Computed]
+    public function conversionFunnel(): array
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+        $team = $user->currentTeam;
+
+        if ($team === null) {
+            return [];
+        }
+
+        $teamId = $team->getKey();
+
+        $leads = Lead::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
+        $deals = Deal::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
+        $orders = Order::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
+
+        $steps = [
+            ['label' => __('filament/pages/dashboard.funnel.leads'), 'count' => $leads, 'color' => LeadStage::QUALIFIED->getColor(), 'url' => LeadResource::getUrl('board')],
+            ['label' => __('filament/pages/dashboard.funnel.deals'), 'count' => $deals, 'color' => DealStage::PAYMENT->getColor(), 'url' => DealResource::getUrl('board')],
+            ['label' => __('filament/pages/dashboard.funnel.orders'), 'count' => $orders, 'color' => OrderStage::DELIVERED->getColor(), 'url' => OrderResource::getUrl('board')],
+        ];
+
+        $widest = max(1, $leads, $deals, $orders);
+
+        return array_map(function (array $step, int $index) use ($steps, $widest): array {
+            $previous = $index > 0 ? $steps[$index - 1]['count'] : null;
+
+            return [
+                ...$step,
+                'total' => $widest,
+                // Share of the step before it, so the drop-off between pipelines
+                // is visible rather than each bar being relative to the largest.
+                'rate' => $previous !== null && $previous > 0
+                    ? (int) round($step['count'] / $previous * 100)
+                    : null,
+            ];
+        }, $steps, array_keys($steps));
+    }
+
+    /**
+     * Deals grouped by company, highest pipeline value first.
+     *
+     * @return list<array{label: string, count: int, total_amount: float}>
+     */
+    #[Computed]
+    public function topCompanies(): array
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+
+        if ($user->currentTeam === null) {
+            return [];
+        }
+
+        $rows = resolve(AggregateDeals::class)->execute($user, 'company')['rows'];
+
+        usort($rows, fn (array $a, array $b): int => $b['total_amount'] <=> $a['total_amount']);
+
+        return array_slice($rows, 0, 5);
+    }
+
+    /**
+     * The team's most recent activity, newest first.
+     *
+     * @return list<array{description: string, causer: string, subject: string, when: string}>
+     */
+    #[Computed]
+    public function recentActivity(): array
+    {
+        /** @var User $user */
+        $user = Filament::auth()->user();
+        $team = $user->currentTeam;
+
+        if ($team === null) {
+            return [];
+        }
+
+        // array_values, not just Collection::values(): Larastan types all() as
+        // array<int, T>, which it cannot narrow to a list on its own.
+        return array_values(Activity::query()
+            ->withoutGlobalScopes()
+            ->where('team_id', $team->getKey())
+            ->with('causer')
+            ->latest()
+            ->limit(8)
+            ->get()
+            ->map(fn (Activity $activity): array => [
+                'description' => (string) $activity->description,
+                'causer' => $activity->causer instanceof User
+                    ? (string) $activity->causer->name
+                    : (string) __('filament/pages/dashboard.activity.system'),
+                'subject' => class_basename((string) $activity->subject_type),
+                'when' => $activity->created_at?->diffForHumans(short: true) ?? '',
+            ])
+            ->all());
     }
 
     /**
