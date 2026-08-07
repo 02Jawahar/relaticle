@@ -14,6 +14,9 @@ return [
 
     'navigation_groups' => [
         'tasks' => 'Tasks',
+        'pipelines' => 'Pipelines',
+        'records' => 'Records',
+        'work' => 'Work',
     ],
 
     'tenant_menu' => [

@@ -144,6 +144,10 @@ final class AppPanelProvider extends PanelProvider
                         : url($panel->getPath())),
             ])
             ->renderHook(
+                PanelsRenderHook::TOPBAR_START,
+                fn (): View => view('filament.app.topbar-logo'),
+            )
+            ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): View => view('filament.app.help-menu', ['items' => $this->supportMenuItems()]),
             )
@@ -172,10 +176,15 @@ final class AppPanelProvider extends PanelProvider
             // icon rail with tooltips.
             ->sidebarWidth('14rem')
             ->collapsedSidebarWidth('4.5rem')
+            // Grouped so the icon rail reads in blocks: pipelines, then the
+            // records they hang off, then the work attached to them.
             ->navigationGroups([
-                NavigationGroup::make()
-                    ->label(__('filament/panel.navigation_groups.tasks'))
-                    ->icon('heroicon-o-shopping-cart'),
+                NavigationGroup::make('pipelines')
+                    ->label(__('filament/panel.navigation_groups.pipelines')),
+                NavigationGroup::make('records')
+                    ->label(__('filament/panel.navigation_groups.records')),
+                NavigationGroup::make('work')
+                    ->label(__('filament/panel.navigation_groups.work')),
             ])
             ->middleware([
                 EncryptCookies::class,

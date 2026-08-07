@@ -185,6 +185,11 @@ final class PeopleResource extends Resource
         return __('filament/resources/person.plural_label');
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/panel.navigation_groups.records');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/person.navigation_label');

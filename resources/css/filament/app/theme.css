@@ -849,7 +849,7 @@
    sidebar with `fixed inset-y-0`, so the height is reduced by the gap on both
    sides rather than adding margins that would overflow. */
 .fi-main-sidebar {
-    @apply rounded-[--shell-radius];
+    border-radius: var(--shell-radius);
 
     top: var(--shell-gap);
     bottom: var(--shell-gap);
@@ -870,7 +870,7 @@
 }
 
 .fi-topbar {
-    @apply rounded-[--shell-radius];
+    border-radius: var(--shell-radius);
 
     min-height: 3.25rem;
 }
@@ -974,5 +974,76 @@
     .fi-pipeline-column,
     .flowforge-card {
         background-color: var(--glass-bg-strong);
+    }
+}
+
+/* ===================================
+   Chrome refinements: brand mark, grouped rail
+   =================================== */
+
+/* Clip children to the rounded chrome so nothing squares off a corner. */
+.fi-topbar,
+.fi-main-sidebar {
+    overflow: hidden;
+}
+
+/* Brand mark keeps the topbar's left edge from looking empty. */
+.fi-topbar-brand {
+    @apply me-1;
+}
+
+/* --- Grouped icon rail ----------------------------------------------------- */
+
+/* Each nav group becomes its own frosted block, so Home, the pipelines, the
+   records and the work read as separate clusters rather than one long strip. */
+.fi-main-sidebar .fi-sidebar-nav-groups {
+    @apply gap-2;
+}
+
+.fi-main-sidebar .fi-sidebar-group {
+    background-color: rgb(255 255 255 / 45%);
+    border: 1px solid rgb(255 255 255 / 55%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
+
+    @apply rounded-2xl p-1.5;
+}
+
+.dark .fi-main-sidebar .fi-sidebar-group {
+    background-color: rgb(255 255 255 / 4%);
+    border-color: rgb(255 255 255 / 8%);
+    box-shadow: none;
+}
+
+/* Group labels are noise in an icon rail; the block itself is the separator. */
+.fi-main-sidebar:not(.fi-sidebar-open) .fi-sidebar-group-label {
+    @apply hidden;
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-group-label {
+    @apply px-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500;
+}
+
+/* Ungrouped items (Home) sit in their own block above the groups. */
+.fi-main-sidebar .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
+    background-color: rgb(255 255 255 / 45%);
+    border: 1px solid rgb(255 255 255 / 55%);
+
+    @apply rounded-2xl p-1.5;
+}
+
+.dark .fi-main-sidebar .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
+    background-color: rgb(255 255 255 / 4%);
+    border-color: rgb(255 255 255 / 8%);
+}
+
+/* Active item reads as a filled pill inside its block. */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: var(--color-primary-600);
+    color: white;
+
+    @apply rounded-xl shadow-sm;
+
+    & .fi-sidebar-item-icon {
+        color: white;
     }
 }

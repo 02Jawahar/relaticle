@@ -143,6 +143,11 @@ final class CompanyResource extends Resource
         return __('filament/resources/company.plural_label');
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/panel.navigation_groups.records');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/company.navigation_label');

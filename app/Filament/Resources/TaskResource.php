@@ -56,6 +56,11 @@ final class TaskResource extends Resource
         return __('filament/resources/task.plural_label');
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/panel.navigation_groups.work');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/task.navigation_label');

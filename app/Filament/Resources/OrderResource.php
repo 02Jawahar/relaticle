@@ -154,6 +154,11 @@ final class OrderResource extends Resource
         return self::getUrl('board', $parameters);
     }
 
+    public static function getNavigationGroup(): string
+    {
+        return __('filament/panel.navigation_groups.pipelines');
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('filament/resources/order.navigation_label');
