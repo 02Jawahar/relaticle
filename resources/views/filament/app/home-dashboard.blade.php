@@ -35,9 +35,24 @@
     ];
 
     $pipelines = [
-        'leads' => ['label' => __('filament/pages/dashboard.pipelines.leads'), 'url' => \App\Filament\Resources\LeadResource::getUrl('board')],
-        'deals' => ['label' => __('filament/pages/dashboard.pipelines.deals'), 'url' => \App\Filament\Resources\DealResource::getUrl('board')],
-        'orders' => ['label' => __('filament/pages/dashboard.pipelines.orders'), 'url' => \App\Filament\Resources\OrderResource::getUrl('board')],
+        'leads' => [
+            'label' => __('filament/pages/dashboard.pipelines.leads'),
+            'subtitle' => __('filament/pages/dashboard.pipelines.leads_subtitle'),
+            'centre' => __('filament/pages/dashboard.pipelines.leads_centre'),
+            'url' => \App\Filament\Resources\LeadResource::getUrl('board'),
+        ],
+        'deals' => [
+            'label' => __('filament/pages/dashboard.pipelines.deals'),
+            'subtitle' => __('filament/pages/dashboard.pipelines.deals_subtitle'),
+            'centre' => __('filament/pages/dashboard.pipelines.deals_centre'),
+            'url' => \App\Filament\Resources\DealResource::getUrl('board'),
+        ],
+        'orders' => [
+            'label' => __('filament/pages/dashboard.pipelines.orders'),
+            'subtitle' => __('filament/pages/dashboard.pipelines.orders_subtitle'),
+            'centre' => __('filament/pages/dashboard.pipelines.orders_centre'),
+            'url' => \App\Filament\Resources\OrderResource::getUrl('board'),
+        ],
     ];
 @endphp
 
@@ -68,6 +83,8 @@
         @foreach ($pipelines as $key => $pipeline)
             @include('filament.app.pipeline-donut', [
                 'title' => $pipeline['label'],
+                'subtitle' => $pipeline['subtitle'],
+                'centreLabel' => $pipeline['centre'],
                 'url' => $pipeline['url'],
                 'stages' => $breakdown[$key] ?? [],
             ])
