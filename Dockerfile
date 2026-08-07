@@ -36,6 +36,25 @@ COPY packages ./packages
 # Copy vendor for Filament theme CSS
 COPY --from=composer /app/vendor ./vendor
 
+# Vite inlines VITE_* values into the bundle at build time, so the websocket
+# endpoint has to be known here — not at runtime. Without these the compiled
+# Echo client points at localhost and chat streaming silently never connects.
+# Written to a .env file rather than only exported, so Vite picks them up
+# through its normal env loading regardless of how it treats process env.
+ARG VITE_APP_NAME="Relaticle"
+ARG VITE_REVERB_APP_KEY=""
+ARG VITE_REVERB_HOST=""
+ARG VITE_REVERB_PORT="443"
+ARG VITE_REVERB_SCHEME="https"
+
+RUN printf '%s\n' \
+    "VITE_APP_NAME=${VITE_APP_NAME}" \
+    "VITE_REVERB_APP_KEY=${VITE_REVERB_APP_KEY}" \
+    "VITE_REVERB_HOST=${VITE_REVERB_HOST}" \
+    "VITE_REVERB_PORT=${VITE_REVERB_PORT}" \
+    "VITE_REVERB_SCHEME=${VITE_REVERB_SCHEME}" \
+    > .env
+
 RUN npm run build
 
 ###########################################

@@ -1,0 +1,168 @@
+# Dokploy deployment stack.
+#
+# Differs from compose.yml in three ways that matter:
+#   1. It BUILDS this repository instead of pulling ghcr.io/relaticle/relaticle,
+#      so the Qbitio customisations are actually in the running image.
+#   2. It adds the Reverb websocket server, which compose.yml omits — the chat
+#      assistant streams over it.
+#   3. It uses `expose` and joins dokploy-network, so Traefik routes to it and
+#      nothing is published straight onto the host.
+#
+# Dokploy writes the environment variables from its UI into a .env file beside
+# this compose file but does not inject them into containers, hence env_file on
+# every service. The `environment` entries add what must differ per container.
+
+# One image, built once and reused: identical context and args mean the four
+# PHP services share the tag and the build cache.
+x-image: &image
+  image: ${DOCKER_IMAGE:-qbitio-crm:latest}
+  build:
+    context: .
+    target: production
+    args:
+      # Baked into the JS bundle — see the Dockerfile's frontend stage.
+      VITE_APP_NAME: ${APP_NAME:-Qbitio CRM}
+      VITE_REVERB_APP_KEY: ${REVERB_APP_KEY:?REVERB_APP_KEY is required}
+      VITE_REVERB_HOST: ${REVERB_HOST:?REVERB_HOST is required}
+      VITE_REVERB_PORT: ${REVERB_PORT:-443}
+      VITE_REVERB_SCHEME: ${REVERB_SCHEME:-https}
+
+x-service: &service
+  <<: *image
+  restart: unless-stopped
+  env_file:
+    - .env
+  networks:
+    - default
+    - dokploy-network
+
+# Connection details every container shares. Merged into each service's
+# environment so per-service keys can sit alongside it.
+x-connections: &connections
+  DB_CONNECTION: pgsql
+  DB_HOST: postgres
+  DB_PORT: 5432
+  REDIS_HOST: redis
+  REDIS_PORT: 6379
+  CACHE_STORE: redis
+  SESSION_DRIVER: redis
+  QUEUE_CONNECTION: redis
+  BROADCAST_CONNECTION: reverb
+  # Publish events to Reverb across the internal network rather than back out
+  # through Traefik and its certificate.
+  BROADCAST_REVERB_HOST: reverb
+  BROADCAST_REVERB_PORT: 8080
+  BROADCAST_REVERB_SCHEME: http
+  BROADCAST_REVERB_VERIFY: "false"
+  LOG_CHANNEL: ${LOG_CHANNEL:-stderr}
+
+# Workers must not migrate or rewrite caches; only the web container does.
+x-worker-env: &worker-env
+  <<: *connections
+  AUTORUN_ENABLED: "false"
+
+services:
+  app:
+    <<: *service
+    expose:
+      - "8080"
+    environment:
+      <<: *connections
+      # The only container that migrates and warms caches.
+      AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATION: "true"
+      AUTORUN_LARAVEL_MIGRATION_ISOLATION: "true"
+      AUTORUN_LARAVEL_STORAGE_LINK: "true"
+    volumes:
+      - storage:/var/www/html/storage/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+
+  reverb:
+    <<: *service
+    command: ["php", "/var/www/html/artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    stop_signal: SIGTERM
+    expose:
+      - "8080"
+    environment:
+      <<: *worker-env
+      # Bind inside the container. REVERB_HOST stays the public hostname, since
+      # Reverb reports it to clients and origins come from APP_URL.
+      REVERB_SERVER_HOST: 0.0.0.0
+      REVERB_SERVER_PORT: 8080
+    depends_on:
+      app:
+        condition: service_healthy
+
+  horizon:
+    <<: *service
+    command: ["php", "/var/www/html/artisan", "horizon"]
+    stop_signal: SIGTERM
+    environment: *worker-env
+    volumes:
+      - storage:/var/www/html/storage/app
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "healthcheck-horizon"]
+      start_period: 10s
+
+  scheduler:
+    <<: *service
+    command: ["php", "/var/www/html/artisan", "schedule:work"]
+    stop_signal: SIGTERM
+    environment: *worker-env
+    volumes:
+      - storage:/var/www/html/storage/app
+    depends_on:
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      start_period: 10s
+
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-relaticle}
+      POSTGRES_USER: ${DB_USERNAME:-relaticle}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-relaticle} -d ${DB_DATABASE:-relaticle}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres:
+  redis:
+  storage:
+
+networks:
+  dokploy-network:
+    external: true
