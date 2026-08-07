@@ -62,61 +62,15 @@
         @endforeach
     </div>
 
-    {{-- Per-stage breakdown --}}
+    {{-- Per-stage breakdown: one animated donut per pipeline, each slice linking
+         through to that pipeline's board. --}}
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
         @foreach ($pipelines as $key => $pipeline)
-            @php
-                $stages = $breakdown[$key] ?? [];
-                $total = collect($stages)->sum('count');
-            @endphp
-
-            <div class="fi-section bg-white p-5 dark:bg-gray-900">
-                <div class="mb-4 flex items-center justify-between">
-                    <h3 class="text-sm font-semibold text-gray-950 dark:text-white">{{ $pipeline['label'] }}</h3>
-                    <a
-                        href="{{ $pipeline['url'] }}"
-                        wire:navigate
-                        class="text-xs font-medium text-primary-600 hover:underline dark:text-primary-400"
-                    >
-                        {{ __('filament/pages/dashboard.pipelines.open_board') }}
-                    </a>
-                </div>
-
-                @if ($total === 0)
-                    <p class="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-                        {{ __('filament/pages/dashboard.pipelines.empty') }}
-                    </p>
-                @else
-                    <ul class="space-y-2.5">
-                        @foreach ($stages as $stage)
-                            @continue($stage['count'] === 0)
-
-                            <li class="flex items-center gap-3">
-                                <span
-                                    class="h-2 w-2 flex-shrink-0 rounded-full"
-                                    style="background-color: {{ $stage['color'] }};"
-                                    aria-hidden="true"
-                                ></span>
-
-                                <span class="flex-1 truncate text-sm text-gray-700 dark:text-gray-300">
-                                    {{ $stage['label'] }}
-                                </span>
-
-                                <span class="w-24 overflow-hidden rounded-full bg-gray-100 dark:bg-white/10" aria-hidden="true">
-                                    <span
-                                        class="block h-1.5 rounded-full"
-                                        style="width: {{ max(4, (int) round($stage['count'] / $total * 100)) }}%; background-color: {{ $stage['color'] }};"
-                                    ></span>
-                                </span>
-
-                                <span class="w-8 text-end text-sm font-medium tabular-nums text-gray-950 dark:text-white">
-                                    {{ $stage['count'] }}
-                                </span>
-                            </li>
-                        @endforeach
-                    </ul>
-                @endif
-            </div>
+            @include('filament.app.pipeline-donut', [
+                'title' => $pipeline['label'],
+                'url' => $pipeline['url'],
+                'stages' => $breakdown[$key] ?? [],
+            ])
         @endforeach
     </div>
 </div>

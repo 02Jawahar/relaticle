@@ -162,7 +162,6 @@ final class DealsBoard extends BoardResourcePage
             ->recordTitleAttribute('name')
             ->columnIdentifier('stage')
             ->positionIdentifier('order_column')
-            ->searchable(['name'])
             ->columns($this->getColumns())
             ->cardSchema(function (Schema $schema) use ($customFields): Schema {
                 $amountField = $customFields->get('custom_fields.'.DealCustomField::AMOUNT->value)

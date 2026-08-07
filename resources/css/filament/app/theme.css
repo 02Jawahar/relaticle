@@ -643,32 +643,27 @@
 
 /* Filament only grows .fi-modal-content for slide-overs and screen-width
    modals, so a plain modal leaves its content at natural height with dead space
-   beneath. The chain below stretches schema -> grid -> columns to the full
-   height, and each column scrolls internally rather than the whole sheet. */
+   beneath.
+
+   The nesting matters here: .fi-sc and .fi-grid are the SAME element (the schema
+   container IS the grid), and .fi-sc-component sits between the column and the
+   section. An earlier attempt selected `.fi-sc > .fi-grid` and matched nothing. */
 .fi-modal-window.fi-pipeline-card-panel > .fi-modal-content {
     @apply flex min-h-0 flex-1 flex-col overflow-hidden;
 
     > .fi-sc {
-        @apply min-h-0 flex-1;
-
-        > .fi-grid {
-            @apply h-full min-h-0 items-stretch;
-        }
+        @apply h-full min-h-0 flex-1 items-stretch;
     }
 
-    .fi-grid > .fi-grid-col {
-        @apply flex min-h-0 flex-col;
-    }
-
-    /* Detail card and tab panel both fill their column. */
+    .fi-grid-col,
+    .fi-sc-component,
     .fi-sc-section,
-    .fi-section,
     .fi-sc-tabs,
-    .fi-tabs-ctn {
+    .fi-section {
         @apply flex min-h-0 flex-1 flex-col;
     }
 
-    /* Scrolling belongs to the inner content, so the header and footer stay put. */
+    /* Scrolling belongs to the inner content so header and footer stay put. */
     .fi-section-content-ctn,
     .fi-sc-tabs-tab {
         @apply min-h-0 flex-1 overflow-y-auto;
@@ -706,10 +701,10 @@
     @apply bg-transparent;
 }
 
-/* One quiet page surface behind everything. */
+/* One quiet page surface behind everything, in the brand cream. */
 .fi-body,
 .fi-layout {
-    @apply bg-gray-50;
+    background-color: var(--qbitio-surface);
 }
 
 .dark .fi-body,
@@ -799,4 +794,64 @@
 .dark .fi-ta-ctn,
 .dark .fi-dropdown-panel {
     box-shadow: 0 0 0 1px rgb(255 255 255 / 6%);
+}
+
+
+/* ===================================
+   Qbitio brand layer
+   =================================== */
+
+:root {
+    /* Cream page surface and the chartreuse accent from the brand site. */
+    --qbitio-surface: oklch(0.985 0.021 116);
+    --qbitio-accent: oklch(0.884 0.204 120);
+    --qbitio-accent-hover: oklch(0.845 0.198 120.5);
+    --qbitio-ink: oklch(0.184 0.006 285);
+}
+
+.dark {
+    --qbitio-surface: oklch(0.184 0.006 285);
+}
+
+/* Primary buttons carry the accent with black type, as on the brand site.
+   Filament pairs primary-600 with white text, which is illegible on lime. */
+.fi-btn.fi-color-primary {
+    background-color: var(--qbitio-accent);
+    color: var(--qbitio-ink);
+
+    --tw-ring-color: transparent;
+}
+
+.fi-btn.fi-color-primary:hover {
+    background-color: var(--qbitio-accent-hover);
+}
+
+.fi-btn.fi-color-primary .fi-btn-label,
+.fi-btn.fi-color-primary .fi-icon {
+    color: var(--qbitio-ink);
+}
+
+/* Links, active nav and other primary text need the darker end of the ramp to
+   stay readable on cream; the bright accent is reserved for filled surfaces. */
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn .fi-sidebar-item-icon {
+    color: var(--color-primary-800);
+}
+
+.fi-topbar,
+.fi-topbar-ctn {
+    background-color: transparent;
+}
+
+/* Headings take the brand's near-black rather than Tailwind's slate. */
+.fi-header-heading,
+.fi-modal-heading,
+.fi-section-header-heading {
+    color: var(--qbitio-ink);
+}
+
+.dark .fi-header-heading,
+.dark .fi-modal-heading,
+.dark .fi-section-header-heading {
+    color: white;
 }

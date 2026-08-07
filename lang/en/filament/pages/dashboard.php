@@ -22,6 +22,7 @@ return [
         'orders' => 'Orders by stage',
         'open_board' => 'Open board',
         'empty' => 'Nothing in this pipeline yet.',
+        'records' => 'records',
     ],
 
     'tasks' => [
