@@ -19,7 +19,7 @@ trait ClearsInvalidSubStage
 {
     private function subStageBelongsToStage(PipelineStage $stage, ?PipelineSubStage $subStage): bool
     {
-        if ($subStage === null) {
+        if (! $subStage instanceof PipelineSubStage) {
             return true;
         }
 

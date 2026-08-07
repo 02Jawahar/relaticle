@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\DealResource\Pages;
 
+use App\Actions\Deal\ConvertDealToOrder;
 use App\Enums\CustomFields\DealField as DealCustomField;
 use App\Enums\Pipeline\DealStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
@@ -11,30 +12,28 @@ use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Forms\DealForm;
 use App\Models\Deal;
 use App\Models\Team;
+use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Facades\Filament;
 use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Filters\SelectFilter;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\DB;
-use League\CommonMark\Exception\InvalidArgumentException;
 use Relaticle\CustomFields\Facades\CustomFields;
 use Relaticle\Flowforge\Board;
 use Relaticle\Flowforge\BoardResourcePage;
 use Relaticle\Flowforge\Column;
 use Relaticle\Flowforge\Components\CardFlex;
-use Throwable;
 
 final class DealsBoard extends BoardResourcePage
 {
@@ -49,6 +48,8 @@ final class DealsBoard extends BoardResourcePage
 
     public function board(Board $board): Board
     {
+        $convertDealToOrder = resolve(ConvertDealToOrder::class);
+
         $customFields = CustomFields::infolist()
             ->forModel(Deal::class)
             ->only([DealCustomField::AMOUNT, DealCustomField::CLOSE_DATE])
@@ -165,9 +166,30 @@ final class DealsBoard extends BoardResourcePage
                         'name' => $record->name,
                         'company_id' => $record->company_id,
                         'contact_id' => $record->contact_id,
+                        'stage' => $record->stage->value,
+                        'sub_stage' => $record->sub_stage?->value,
                     ])
                     ->action(function (Deal $record, array $data): void {
                         $record->update($data);
+                    }),
+                Action::make('convert')
+                    ->label(__('pipelines.conversion.deal_to_order.label'))
+                    ->icon('heroicon-o-cube')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('pipelines.conversion.deal_to_order.heading'))
+                    ->modalDescription(__('pipelines.conversion.deal_to_order.description'))
+                    ->visible(fn (Deal $record): bool => $record->stage->isWon())
+                    ->action(function (Deal $record) use ($convertDealToOrder): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        $convertDealToOrder->execute($user, $record);
+
+                        Notification::make()
+                            ->title(__('pipelines.conversion.deal_to_order.success'))
+                            ->success()
+                            ->send();
                     }),
                 Action::make('delete')
                     ->label(__('filament/pages/boards.deals.actions.delete'))

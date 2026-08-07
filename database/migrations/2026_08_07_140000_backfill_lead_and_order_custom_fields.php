@@ -25,7 +25,7 @@ return new class extends Migration
     public function up(): void
     {
         /** @var CustomsFieldsMigrators $migrator */
-        $migrator = app(CustomsFieldsMigrators::class);
+        $migrator = resolve(CustomsFieldsMigrators::class);
 
         $entities = [
             Lead::class => LeadField::cases(),

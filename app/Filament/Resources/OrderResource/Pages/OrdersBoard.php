@@ -50,9 +50,9 @@ final class OrdersBoard extends BoardResourcePage
     {
         // Resolved here rather than injected: the parent fixes this
         // method's signature, and writes must still go through actions.
-        $createOrder = app(CreateOrder::class);
-        $updateOrder = app(UpdateOrder::class);
-        $deleteOrder = app(DeleteOrder::class);
+        $createOrder = resolve(CreateOrder::class);
+        $updateOrder = resolve(UpdateOrder::class);
+        $deleteOrder = resolve(DeleteOrder::class);
 
         $customFields = CustomFields::infolist()
             ->forModel(Order::class)
@@ -166,6 +166,8 @@ final class OrdersBoard extends BoardResourcePage
                         'name' => $record->name,
                         'company_id' => $record->company_id,
                         'contact_id' => $record->contact_id,
+                        'stage' => $record->stage->value,
+                        'sub_stage' => $record->sub_stage?->value,
                     ])
                     ->action(function (Order $record, array $data) use ($updateOrder): void {
                         /** @var User $user */

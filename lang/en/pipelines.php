@@ -3,6 +3,23 @@
 declare(strict_types=1);
 
 return [
+    'conversion' => [
+        'lead_to_deal' => [
+            'label' => 'Convert to Deal',
+            'heading' => 'Convert this lead into a deal?',
+            'description' => 'The lead is kept and marked Won, and a new deal starts at Opportunity carrying the company and contact across.',
+            'success' => 'Deal created from this lead.',
+        ],
+        'deal_to_order' => [
+            'label' => 'Move to Orders',
+            'heading' => 'Raise an order from this deal?',
+            'description' => 'The deal is marked Won, and a new order starts at Order Received carrying the company and contact across.',
+            'success' => 'Order raised from this deal.',
+        ],
+        'lead_already_converted' => 'Lead ":name" has already been converted to a deal.',
+        'deal_already_converted' => 'Deal ":name" has already been converted to an order.',
+    ],
+
     'fields' => [
         'stage' => [
             'label' => 'Stage',

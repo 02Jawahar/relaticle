@@ -31,6 +31,10 @@ final class PipelineStageFields
                 ->label(__('pipelines.fields.stage.label'))
                 ->options(self::stageOptions($stageEnum))
                 ->required()
+                // New records start at the top of the pipeline, matching the
+                // model and column defaults, so create forms are not blocked on
+                // picking the only sensible first value.
+                ->default(self::firstStageValue($stageEnum))
                 ->native(false)
                 ->live()
                 // Changing stage invalidates any sub-stage from the old stage.
@@ -43,9 +47,19 @@ final class PipelineStageFields
                 ->placeholder(__('pipelines.fields.sub_stage.placeholder'))
                 ->helperText(__('pipelines.fields.sub_stage.helper'))
                 ->options(fn (Get $get): array => self::subStageOptions($stageEnum, $get('stage')))
-                ->disabled(fn (Get $get): bool => self::resolveStage($stageEnum, $get('stage')) === null)
+                ->disabled(fn (Get $get): bool => ! self::resolveStage($stageEnum, $get('stage')) instanceof PipelineStage)
                 ->native(false),
         ];
+    }
+
+    /**
+     * The first declared case, which is the entry point of the pipeline.
+     *
+     * @param  class-string<BackedEnum&PipelineStage>  $stageEnum
+     */
+    private static function firstStageValue(string $stageEnum): string
+    {
+        return (string) $stageEnum::cases()[0]->value;
     }
 
     /**
@@ -71,7 +85,7 @@ final class PipelineStageFields
     {
         $stage = self::resolveStage($stageEnum, $stageValue);
 
-        if ($stage === null) {
+        if (! $stage instanceof PipelineStage) {
             return [];
         }
 

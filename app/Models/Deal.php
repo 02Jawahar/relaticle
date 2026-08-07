@@ -65,6 +65,9 @@ final class Deal extends Model implements HasCustomFields, HasTimeline
      */
     protected $attributes = [
         'creation_source' => CreationSource::WEB,
+        // Mirrors the column default so a new deal always has a stage in memory
+        // too — the sub-stage invariant needs one before the row is inserted.
+        'stage' => DealStage::OPPORTUNITY,
     ];
 
     /**

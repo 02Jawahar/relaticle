@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\LeadResource\Pages;
 
+use App\Actions\Lead\ConvertLeadToDeal;
 use App\Actions\Lead\CreateLead;
 use App\Actions\Lead\DeleteLead;
 use App\Actions\Lead\UpdateLead;
@@ -21,6 +22,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
@@ -50,9 +52,10 @@ final class LeadsBoard extends BoardResourcePage
     {
         // Resolved here rather than injected: the parent fixes this
         // method's signature, and writes must still go through actions.
-        $createLead = app(CreateLead::class);
-        $updateLead = app(UpdateLead::class);
-        $deleteLead = app(DeleteLead::class);
+        $createLead = resolve(CreateLead::class);
+        $updateLead = resolve(UpdateLead::class);
+        $deleteLead = resolve(DeleteLead::class);
+        $convertLeadToDeal = resolve(ConvertLeadToDeal::class);
 
         $customFields = CustomFields::infolist()
             ->forModel(Lead::class)
@@ -166,12 +169,33 @@ final class LeadsBoard extends BoardResourcePage
                         'name' => $record->name,
                         'company_id' => $record->company_id,
                         'contact_id' => $record->contact_id,
+                        'stage' => $record->stage->value,
+                        'sub_stage' => $record->sub_stage?->value,
                     ])
                     ->action(function (Lead $record, array $data) use ($updateLead): void {
                         /** @var User $user */
                         $user = Auth::guard('web')->user();
 
                         $updateLead->execute($user, $record, $data);
+                    }),
+                Action::make('convert')
+                    ->label(__('pipelines.conversion.lead_to_deal.label'))
+                    ->icon('heroicon-o-arrow-right-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->modalHeading(__('pipelines.conversion.lead_to_deal.heading'))
+                    ->modalDescription(__('pipelines.conversion.lead_to_deal.description'))
+                    ->visible(fn (Lead $record): bool => $record->stage->isWon())
+                    ->action(function (Lead $record) use ($convertLeadToDeal): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        $convertLeadToDeal->execute($user, $record);
+
+                        Notification::make()
+                            ->title(__('pipelines.conversion.lead_to_deal.success'))
+                            ->success()
+                            ->send();
                     }),
                 Action::make('delete')
                     ->label(__('filament/pages/boards.leads.actions.delete'))
