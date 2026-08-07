@@ -62,15 +62,20 @@
 
                     @foreach ($arcs as $i => $arc)
                         <a href="{{ $url }}" wire:navigate>
+                            {{-- Hover state is bound through SVG presentation
+                                 attributes, never :style. An Alpine :style binding
+                                 REPLACES the static style attribute, which wiped the
+                                 per-arc transform and stacked every segment at
+                                 rotation 0. --}}
                             <circle
                                 cx="60" cy="60" r="{{ $radius }}"
                                 fill="none"
                                 stroke="{{ $arc['color'] }}"
-                                stroke-width="13"
                                 stroke-dasharray="{{ $arc['dash'] }}"
                                 :stroke-dashoffset="shown ? 0 : {{ $circumference }}"
+                                :stroke-width="hovered === {{ $i }} ? 16 : 13"
+                                :opacity="hovered !== null && hovered !== {{ $i }} ? 0.35 : 1"
                                 style="transform: rotate({{ $arc['rotation'] }}deg); transform-origin: 60px 60px; transition: stroke-dashoffset 800ms cubic-bezier(0.22,1,0.36,1) {{ $i * 70 }}ms, stroke-width 150ms ease, opacity 150ms ease;"
-                                :style="hovered !== null && hovered !== {{ $i }} ? 'opacity: 0.35' : (hovered === {{ $i }} ? 'stroke-width: 16' : '')"
                                 x-on:mouseenter="hovered = {{ $i }}"
                                 x-on:mouseleave="hovered = null"
                                 class="cursor-pointer"
