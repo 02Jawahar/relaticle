@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\OrderResource\Pages;
 
+use App\Actions\Note\CreateNoteForRecord;
 use App\Actions\Order\CreateOrder;
 use App\Actions\Order\DeleteOrder;
 use App\Actions\Order\UpdateOrder;
+use App\Actions\Task\CreateTaskForRecord;
 use App\Enums\CustomFields\OrderField as OrderCustomField;
 use App\Enums\Pipeline\OrderStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
@@ -14,6 +16,7 @@ use App\Filament\Infolists\PipelineCardPanel;
 use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\OrderResource\Forms\OrderForm;
 use App\Models\Order;
+use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -22,6 +25,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
@@ -84,6 +88,60 @@ final class OrdersBoard extends BoardResourcePage
                         $user = Auth::guard('web')->user();
 
                         resolve(UpdateOrder::class)->execute($user, $record, $data);
+                    }),
+                Action::make('addNote')
+                    ->label(__('pipelines.card.add_note'))
+                    ->icon('heroicon-o-document-plus')
+                    ->color('gray')
+                    ->modalWidth(Width::Large)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('pipelines.card.note_title'))
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(CreateNoteForRecord::class)->execute($user, $record, $data);
+
+                        Notification::make()->title(__('pipelines.card.note_added'))->success()->send();
+                    }),
+                Action::make('addTask')
+                    ->label(__('pipelines.card.add_task'))
+                    ->icon('heroicon-o-check-circle')
+                    ->color('gray')
+                    ->modalWidth(Width::Large)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('pipelines.card.task_title'))
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Select::make('assignee_ids')
+                            ->label(__('pipelines.card.task_assignees'))
+                            ->multiple()
+                            ->searchable()
+                            // Plain options, not ->relationship(): the mounted
+                            // record is the pipeline record, not the task.
+                            ->options(function (): array {
+                                $tenant = Filament::getTenant();
+
+                                return $tenant instanceof Team
+                                    ? $tenant->allUsers()->pluck('name', 'id')->all()
+                                    : [];
+                            })
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (Order $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(CreateTaskForRecord::class)->execute($user, $record, $data);
+
+                        Notification::make()->title(__('pipelines.card.task_added'))->success()->send();
                     }),
                 Action::make('openFullPage')
                     ->label(__('pipelines.card.open_full_page'))

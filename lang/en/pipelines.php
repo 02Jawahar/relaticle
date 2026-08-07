@@ -11,6 +11,13 @@ return [
         'updated_at' => 'Last updated',
         'open_full_page' => 'Open full page',
         'close' => 'Close',
+        'add_note' => 'Add note',
+        'add_task' => 'Add task',
+        'note_added' => 'Note added to this record.',
+        'task_added' => 'Task added to this record.',
+        'note_title' => 'Note title',
+        'task_title' => 'Task title',
+        'task_assignees' => 'Assign to',
         'tabs' => [
             'activity' => 'Activity',
             'notes' => 'Notes',

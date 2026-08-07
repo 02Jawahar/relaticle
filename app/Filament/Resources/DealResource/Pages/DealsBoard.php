@@ -8,6 +8,8 @@ use App\Actions\Deal\ConvertDealToOrder;
 use App\Actions\Deal\CreateDeal;
 use App\Actions\Deal\DeleteDeal;
 use App\Actions\Deal\UpdateDeal;
+use App\Actions\Note\CreateNoteForRecord;
+use App\Actions\Task\CreateTaskForRecord;
 use App\Enums\CustomFields\DealField as DealCustomField;
 use App\Enums\Pipeline\DealStage;
 use App\Filament\Concerns\HasBoardViewSwitcher;
@@ -16,6 +18,7 @@ use App\Filament\Resources\DealResource;
 use App\Filament\Resources\DealResource\Forms\DealForm;
 use App\Models\Deal;
 use App\Models\Order;
+use App\Models\Team;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -108,6 +111,60 @@ final class DealsBoard extends BoardResourcePage
                             ->title(__('pipelines.conversion.deal_to_order.success'))
                             ->success()
                             ->send();
+                    }),
+                Action::make('addNote')
+                    ->label(__('pipelines.card.add_note'))
+                    ->icon('heroicon-o-document-plus')
+                    ->color('gray')
+                    ->modalWidth(Width::Large)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('pipelines.card.note_title'))
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (Deal $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(CreateNoteForRecord::class)->execute($user, $record, $data);
+
+                        Notification::make()->title(__('pipelines.card.note_added'))->success()->send();
+                    }),
+                Action::make('addTask')
+                    ->label(__('pipelines.card.add_task'))
+                    ->icon('heroicon-o-check-circle')
+                    ->color('gray')
+                    ->modalWidth(Width::Large)
+                    ->schema([
+                        TextInput::make('title')
+                            ->label(__('pipelines.card.task_title'))
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpanFull(),
+                        Select::make('assignee_ids')
+                            ->label(__('pipelines.card.task_assignees'))
+                            ->multiple()
+                            ->searchable()
+                            // Plain options, not ->relationship(): the mounted
+                            // record is the pipeline record, not the task.
+                            ->options(function (): array {
+                                $tenant = Filament::getTenant();
+
+                                return $tenant instanceof Team
+                                    ? $tenant->allUsers()->pluck('name', 'id')->all()
+                                    : [];
+                            })
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (Deal $record, array $data): void {
+                        /** @var User $user */
+                        $user = Auth::guard('web')->user();
+
+                        resolve(CreateTaskForRecord::class)->execute($user, $record, $data);
+
+                        Notification::make()->title(__('pipelines.card.task_added'))->success()->send();
                     }),
                 Action::make('openFullPage')
                     ->label(__('pipelines.card.open_full_page'))
