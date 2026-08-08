@@ -1,22 +1,36 @@
 {{--
-    The brand, in the top-left corner of the shell.
+    The brand card, fixed to the top-left corner of the shell.
 
-    Previously in the topbar, which starts to the right of the sidebar and so left
-    the corner above the rail empty. Rendering it here fills that space and gives
-    the mark a region of its own rather than competing with the search field.
+    Rendered at the body root, not inside the sidebar: the sidebar has a
+    backdrop-filter, which makes it the containing block for fixed descendants,
+    so a card placed there was positioned against the sidebar rather than the
+    viewport.
 
-    The wordmark appears only when the sidebar is expanded; the rail has no room
-    for it. `$store.sidebar` is in scope because the sidebar root carries x-data.
+    BODY_START also fires on the auth pages, which have no shell and no tenant —
+    and Dashboard::getUrl() cannot resolve a tenant route parameter there. Those
+    pages show the brand through the panel's own brandLogo, so the card is simply
+    absent, and the tenant is passed explicitly rather than resolved ambiently.
+
+    Being outside the sidebar puts it beyond the reach of `fi-sidebar-open`, so
+    the expanded state comes from the Alpine store the sidebar itself writes.
 --}}
-<a
-    href="{{ \App\Filament\Pages\Dashboard::getUrl() }}"
-    wire:navigate
-    class="fi-sidebar-brand"
-    aria-label="{{ config('app.name') }}"
->
-    <x-brand.qbitio-mark size="lg" />
+@php
+    $tenant = \Filament\Facades\Filament::getTenant();
+@endphp
 
-    <span x-show="$store.sidebar.isOpen" x-cloak class="fi-sidebar-brand-name">
-        Qbitio
-    </span>
-</a>
+@if ($tenant)
+    <a
+        href="{{ \App\Filament\Pages\Dashboard::getUrl(tenant: $tenant) }}"
+        wire:navigate
+        x-data="{}"
+        x-bind:class="{ 'fi-brand-open': $store.sidebar.isOpen }"
+        class="fi-sidebar-brand"
+        aria-label="{{ config('app.name') }}"
+    >
+        <x-brand.qbitio-mark size="md" />
+
+        <span x-show="$store.sidebar.isOpen" x-cloak class="fi-sidebar-brand-name">
+            Qbitio
+        </span>
+    </a>
+@endif

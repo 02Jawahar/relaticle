@@ -1075,7 +1075,9 @@
     box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 6%);
 }
 
-.fi-main-sidebar.fi-sidebar-open .fi-sidebar-brand {
+/* Expanded state comes from the Alpine store, since the card is not a
+   descendant of the sidebar and cannot read its `fi-sidebar-open` class. */
+.fi-sidebar-brand.fi-brand-open {
     width: var(--sidebar-width);
 
     @apply lg:justify-start lg:ps-4;
