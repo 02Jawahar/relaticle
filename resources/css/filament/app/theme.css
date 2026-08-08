@@ -841,6 +841,11 @@
 
     --shell-gap: 0.625rem;
     --shell-radius: 1.125rem;
+
+    /* Height of the brand card in the top-left corner. Matches the topbar's
+       min-height so the two align, and drives the sidebar's top offset so the
+       card and the sidebar can never disagree about where one ends. */
+    --brand-height: 3.25rem;
 }
 
 .dark {
@@ -904,10 +909,9 @@
     margin-inline-start: var(--shell-gap);
 }
 
-/* Deliberately no topbar offset on the sidebar. The topbar sits inside the main
-   wrapper, to the right of the sidebar, so pushing the sidebar down by the
-   topbar's height only carved an empty notch out of the top-left corner. The
-   sidebar runs the full height and the brand occupies that corner instead. */
+/* The sidebar's top offset lives with the brand card at the end of this file:
+   the corner is the card's, and the two are driven from one measurement so they
+   cannot disagree. Nothing to set here. */
 
 /* --- Floating topbar ------------------------------------------------------- */
 
@@ -1039,18 +1043,61 @@
     border-radius: inherit;
 }
 
-/* --- Brand in the top-left corner ------------------------------------------ */
+/* --- Brand: its own panel in the top-left corner --------------------------- */
 
+/* A third piece of chrome alongside the sidebar and the topbar, not part of
+   either. It is taken out of flow so it does not sit on the sidebar's frosted
+   surface (two layers of frost read as muddy), and it carries the same glass
+   treatment so the three panels are siblings visually.
+   Width tracks the panel's own sidebar variables, so the card's edges stay
+   flush with the rail in both states without restating those measurements.
+   Hidden below the sidebar breakpoint, where the sidebar is a full overlay and
+   a floating card would land on top of it. */
 .fi-sidebar-brand {
-    @apply flex items-center gap-2 px-2 pt-3 pb-1;
+    @apply hidden lg:flex lg:items-center lg:justify-center lg:gap-2;
+
+    position: fixed;
+    top: var(--shell-gap);
+    inset-inline-start: var(--shell-gap);
+    z-index: 31;
+    height: var(--brand-height);
+    width: var(--collapsed-sidebar-width);
+    border-radius: var(--shell-radius);
+    background-color: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 40%);
+    transition: width 150ms ease;
 }
 
-.fi-main-sidebar:not(.fi-sidebar-open) .fi-sidebar-brand {
-    @apply justify-center px-0;
+.dark .fi-sidebar-brand {
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-brand {
+    width: var(--sidebar-width);
+
+    @apply lg:justify-start lg:ps-4;
 }
 
 .fi-sidebar-brand-name {
     @apply truncate text-lg font-semibold tracking-tight text-gray-950 dark:text-white;
+}
+
+/* The sidebar starts below the brand card. A margin, not `top`: on desktop the
+   sidebar is a sticky flex item, so `top` only sets where it sticks while
+   scrolling and would leave it under the card at rest. The sticky offset is set
+   to the same line so it never slides beneath the card either. */
+@media (min-width: 1024px) {
+    .fi-body-has-topbar .fi-main-sidebar {
+        /* Card occupies gap .. gap + brand-height; the sidebar starts one more
+           gap below it, so the two left panels are separated by the same gap
+           used everywhere else in the shell. Both values must be identical or
+           the sidebar shifts by the difference the moment it sticks. */
+        margin-block-start: calc(var(--brand-height) + var(--shell-gap) * 2);
+        top: calc(var(--brand-height) + var(--shell-gap) * 2);
+    }
 }
 
 /* --- Dropdowns are opaque -------------------------------------------------- */
