@@ -639,6 +639,28 @@
         @apply mx-0 gap-y-1.5;
     }
 
+    /* Every block is the same width and centred on the rail's axis. Stated
+       explicitly because the pieces disagreed otherwise: Filament reserves
+       scrollbar space on one edge only, its nav-groups list carries a negative
+       left margin, and the Chats group hard-codes `-ml-2` to match that margin —
+       which left the chat block sitting to the left of all the others. */
+    .fi-sidebar-nav {
+        scrollbar-gutter: auto;
+    }
+
+    .fi-sidebar-nav > .fi-sidebar-nav-groups,
+    .fi-sidebar-nav > .fi-sidebar-group {
+        @apply w-full;
+
+        margin-inline: 0;
+    }
+
+    .fi-sidebar-group,
+    .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
+        width: calc(100% - var(--spacing) * 4);
+        margin-inline: auto;
+    }
+
     /* Square, evenly sized hit areas centred in the rail. */
     .fi-sidebar-item-btn {
         @apply mx-auto h-10 w-10 justify-center rounded-xl p-0;
@@ -1010,6 +1032,19 @@
 /* Brand mark keeps the topbar's left edge from looking empty. */
 .fi-topbar-brand {
     @apply me-1;
+}
+
+/* --- Dropdowns are opaque -------------------------------------------------- */
+
+/* Dropdown panels float directly over the sidebar, so the frosted 68% surface
+   let the active nav pill and the icons behind them bleed through the workspace
+   menu's labels. A blur softens a photo; it does not stop a saturated shape
+   reading through. These are the one chrome surface that must be solid. */
+.fi-dropdown-panel {
+    @apply bg-white dark:bg-gray-900;
+
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
 }
 
 /* --- Sidebar collapse control ---------------------------------------------- */

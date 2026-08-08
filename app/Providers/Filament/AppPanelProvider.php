@@ -103,6 +103,16 @@ final class AppPanelProvider extends PanelProvider
         $panel
             ->homeUrl(fn (): string => Dashboard::getUrl())
             ->brandName('Qbitio')
+            // Panel pages carry no favicon link of their own, so browsers fell
+            // back to /favicon.ico and kept serving whatever they had cached —
+            // favicons are cached far more stubbornly than ordinary assets. The
+            // file's mtime as a version means a new icon invalidates itself.
+            ->favicon(function (): string {
+                $path = public_path('favicon-96x96.png');
+                $mtime = is_file($path) ? filemtime($path) : false;
+
+                return asset('favicon-96x96.png').'?v='.($mtime === false ? '1' : (string) $mtime);
+            })
             ->brandLogo(fn (): View|Factory => Auth::user()?->hasVerifiedEmail()
                 ? view('filament.app.logo-empty')
                 : view('filament.app.logo'))

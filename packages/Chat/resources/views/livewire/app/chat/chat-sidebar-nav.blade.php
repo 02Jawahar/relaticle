@@ -64,6 +64,24 @@
         x-transition:enter-end="fi-transition-enter-end"
         class="fi-sidebar-group-items"
     >
+        {{-- Collapsed rail: every item below is gated on the sidebar being open,
+             which left this group rendering as an empty block. One icon stands in
+             for the list and opens chats, matching the other rail entries. --}}
+        <li
+            x-show="! $store.sidebar.isOpen"
+            x-cloak
+            class="fi-sidebar-item"
+        >
+            <a
+                href="{{ \App\Filament\Pages\ChatConversation::getUrl() }}"
+                wire:navigate
+                class="fi-sidebar-item-btn"
+                x-tooltip="{ content: 'Chats', placement: 'right', theme: $store.theme }"
+            >
+                <x-heroicon-o-chat-bubble-left-right class="fi-icon fi-size-lg fi-sidebar-item-icon" />
+            </a>
+        </li>
+
         @if($conversations->isEmpty())
             <li
                 x-show="$store.sidebar.isOpen"
