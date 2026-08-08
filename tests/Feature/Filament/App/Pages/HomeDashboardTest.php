@@ -2,7 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Enums\Pipeline\DealStage;
+use App\Enums\Pipeline\LeadStage;
+use App\Enums\Pipeline\OrderStage;
 use App\Filament\Pages\Dashboard;
+use App\Models\Deal;
+use App\Models\Lead;
+use App\Models\Order;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Support\Enums\Width;
@@ -60,4 +66,66 @@ it('renders the chat composer instead of the widgets on the chat view', function
     Livewire::test(Dashboard::class)
         ->assertSet('homeView', Dashboard::VIEW_CHAT)
         ->assertDontSee('Pipeline funnel');
+});
+
+it('reports counts from the CRM records rather than fixed figures', function (): void {
+    // Open records, plus one of each in a terminal stage that must be excluded
+    // from the "open" counts but still appear in the funnel totals.
+    Lead::factory()->count(3)->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => LeadStage::NEW]);
+    Lead::factory()->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => LeadStage::LOST]);
+
+    Deal::factory()->count(2)->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => DealStage::OPPORTUNITY]);
+    Deal::factory()->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => DealStage::LOST]);
+
+    Order::factory()->count(2)->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => OrderStage::PRODUCTION]);
+    Order::factory()->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => OrderStage::CLOSED]);
+
+    $page = Livewire::withQueryParams(['view' => Dashboard::VIEW_DASHBOARD])
+        ->test(Dashboard::class)
+        ->instance();
+
+    $stats = $page->pipelineStats;
+    $funnel = collect($page->conversionFunnel)->keyBy('label');
+
+    expect($stats['leads_open'])->toBe(3)
+        ->and($stats['deals_open'])->toBe(2)
+        ->and($stats['orders_active'])->toBe(2)
+        // The funnel counts everything, including the terminal stages.
+        ->and($funnel['Leads']['count'])->toBe(4)
+        ->and($funnel['Deals']['count'])->toBe(3)
+        ->and($funnel['Orders']['count'])->toBe(3);
+});
+
+it('counts only the current team\'s records', function (): void {
+    Lead::factory()->count(2)->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => LeadStage::NEW]);
+
+    $outsider = User::factory()->withPersonalTeam()->create();
+    Lead::factory()->count(5)->for($outsider->currentTeam)->create([
+        'creator_id' => $outsider->getKey(),
+        'stage' => LeadStage::NEW,
+    ]);
+
+    $page = Livewire::test(Dashboard::class)->instance();
+
+    expect($page->pipelineStats['leads_open'])->toBe(2);
+});
+
+it('shows each stage of every pipeline in the breakdown', function (): void {
+    Lead::factory()->recycle([$this->user, $this->user->currentTeam])
+        ->create(['stage' => LeadStage::QUALIFIED]);
+
+    $breakdown = Livewire::test(Dashboard::class)->instance()->pipelineBreakdown;
+
+    $qualified = collect($breakdown['leads'])->firstWhere('label', LeadStage::QUALIFIED->getLabel());
+
+    expect($breakdown)->toHaveKeys(['leads', 'deals', 'orders'])
+        ->and($breakdown['leads'])->toHaveCount(count(LeadStage::cases()))
+        ->and($qualified['count'])->toBe(1);
 });
