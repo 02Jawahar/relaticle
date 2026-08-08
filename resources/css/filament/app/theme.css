@@ -936,6 +936,43 @@
     padding-inline: var(--shell-gap);
 }
 
+/* --- Topbar as floating islands -------------------------------------------
+   The bar is just a transparent rail; the search and each right-hand control
+   carry their own frosted island, so there is no wide empty bar between them. */
+.fi-topbar,
+.dark .fi-topbar {
+    background-color: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border: 0;
+    box-shadow: none;
+}
+
+/* Space the right-hand controls so each island stands on its own. */
+.fi-topbar-end {
+    @apply gap-2;
+}
+
+/* Frosted island primitive shared by the search field and the right controls. */
+.fi-topbar-end .fi-global-search-ctn .fi-input-wrp,
+.fi-topbar-end .fi-btn,
+.fi-topbar-end .fi-icon-btn,
+.fi-topbar-end .fi-user-menu .fi-dropdown-trigger {
+    background-color: var(--glass-bg-strong);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 40%);
+    border-radius: 9999px;
+}
+
+.dark .fi-topbar-end .fi-global-search-ctn .fi-input-wrp,
+.dark .fi-topbar-end .fi-btn,
+.dark .fi-topbar-end .fi-icon-btn,
+.dark .fi-topbar-end .fi-user-menu .fi-dropdown-trigger {
+    box-shadow: var(--glass-shadow), inset 0 1px 0 rgb(255 255 255 / 6%);
+}
+
 /* --- Panels --------------------------------------------------------------- */
 
 .fi-section,
@@ -1253,7 +1290,10 @@
 
     @apply rounded-xl shadow-sm;
 
-    & .fi-sidebar-item-icon {
+    /* The label carries Filament's own text colour, which stays dark in light
+       mode and is invisible on the filled pill unless we override it here. */
+    & .fi-sidebar-item-icon,
+    & .fi-sidebar-item-label {
         color: white;
     }
 }
