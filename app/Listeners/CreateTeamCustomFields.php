@@ -11,6 +11,7 @@ use App\Enums\CustomFields\NoteField as NoteCustomField;
 use App\Enums\CustomFields\OrderField as OrderCustomField;
 use App\Enums\CustomFields\PeopleField as PeopleCustomField;
 use App\Enums\CustomFields\TaskField as TaskCustomField;
+use App\Enums\CustomFieldType;
 use App\Enums\OnboardingUseCase;
 use App\Features\OnboardSeed;
 use App\Models\Company;
@@ -83,6 +84,8 @@ final readonly class CreateTeamCustomFields
     /** @param class-string $model */
     private function createCustomField(string $model, CompanyCustomField|LeadCustomField|DealCustomField|OrderCustomField|PeopleCustomField|TaskCustomField|NoteCustomField $enum): void
     {
+        $isCurrency = $enum->getFieldType() === CustomFieldType::CURRENCY->value;
+
         $fieldData = new CustomFieldData(
             name: $enum->getDisplayName(),
             code: $enum->value,
@@ -100,6 +103,11 @@ final readonly class CreateTeamCustomFields
                 allow_multiple: $enum->allowsMultipleValues(),
                 max_values: $enum->getMaxValues(),
                 unique_per_entity_type: $enum->isUniquePerEntityType(),
+                additional: $isCurrency ? [
+                    'currency_code' => config('custom-fields.currency.default_code', 'INR'),
+                    'display_type' => 'symbol',
+                    'decimal_places' => 2,
+                ] : [],
             )
         );
 

@@ -20,6 +20,21 @@ use Relaticle\CustomFields\FieldTypeSystem\FieldTypeConfigurator;
 return [
     /*
     |--------------------------------------------------------------------------
+    | Currency
+    |--------------------------------------------------------------------------
+    |
+    | The default currency for new currency custom fields (Deal amount, Lead
+    | estimated value, Order value, and any admin-created currency field). The
+    | package reads currency.default_code; CreateTeamCustomFields stamps it onto
+    | each tenant's currency fields at creation.
+    |
+    */
+    'currency' => [
+        'default_code' => env('CUSTOM_FIELDS_DEFAULT_CURRENCY', 'INR'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Entity Configuration
     |--------------------------------------------------------------------------
     |

@@ -21,6 +21,7 @@ use App\Models\People;
 use App\Models\Task;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Laravel\Pennant\Feature;
@@ -74,6 +75,36 @@ it('creates a team with onboarding fields', function (): void {
     expect($team)->not->toBeNull()
         ->and($team->slug)->toBe('acme-corp')
         ->and($team->onboarding_use_case)->toBe(OnboardingUseCase::Sales);
+});
+
+it('defaults a new team\'s currency custom fields to INR', function (): void {
+    $user = User::factory()->create();
+
+    $this->actingAs($user);
+
+    livewire(CreateTeam::class)
+        ->fillForm([
+            'onboarding_use_case' => OnboardingUseCase::Sales->value,
+            'onboarding_context' => ['product_led'],
+            'name' => 'Rupee Corp',
+        ])
+        ->call('register')
+        ->assertHasNoFormErrors();
+
+    $team = Team::query()->where('name', 'Rupee Corp')->sole();
+
+    $settings = DB::table('custom_fields')
+        ->where('tenant_id', $team->getKey())
+        ->where('type', 'currency')
+        ->pluck('settings');
+
+    // Deal amount, Lead estimated value and Order value are all currency fields.
+    expect($settings)->toHaveCount(3);
+
+    $settings->each(function (string $json): void {
+        $decoded = json_decode($json, true);
+        expect($decoded['additional']['currency_code'] ?? null)->toBe('INR');
+    });
 });
 
 it('automatically starts one 14-day Cloud Pro trial after hosted onboarding', function (): void {

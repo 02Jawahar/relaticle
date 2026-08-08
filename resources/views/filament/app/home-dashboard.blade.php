@@ -21,7 +21,7 @@
     $cards = [
         ['label' => __('filament/pages/dashboard.stats.leads_open'), 'value' => number_format($stats['leads_open']), 'icon' => 'heroicon-o-funnel', 'url' => LeadResource::getUrl('board')],
         ['label' => __('filament/pages/dashboard.stats.deals_open'), 'value' => number_format($stats['deals_open']), 'icon' => 'heroicon-o-trophy', 'url' => DealResource::getUrl('board')],
-        ['label' => __('filament/pages/dashboard.stats.pipeline_value'), 'value' => Number::currency($stats['pipeline_value']), 'icon' => 'heroicon-o-banknotes', 'url' => DealResource::getUrl('index')],
+        ['label' => __('filament/pages/dashboard.stats.pipeline_value'), 'value' => Number::currency($stats['pipeline_value'], in: config('custom-fields.currency.default_code', 'INR')), 'icon' => 'heroicon-o-banknotes', 'url' => DealResource::getUrl('index')],
         ['label' => __('filament/pages/dashboard.stats.orders_active'), 'value' => number_format($stats['orders_active']), 'icon' => 'heroicon-o-cube', 'url' => OrderResource::getUrl('board')],
     ];
 
@@ -197,7 +197,7 @@
                         </span>
 
                         <span class="w-24 flex-shrink-0 text-end text-sm font-semibold tabular-nums text-gray-950 dark:text-white">
-                            {{ Number::currency((float) $company['total_amount']) }}
+                            {{ Number::currency((float) $company['total_amount'], in: config('custom-fields.currency.default_code', 'INR')) }}
                         </span>
                     </li>
                 @endforeach

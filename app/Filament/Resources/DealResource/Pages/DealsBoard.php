@@ -227,7 +227,7 @@ final class DealsBoard extends BoardResourcePage
                     ?->visible(fn (?string $state): bool => filled($state))
                     ->badge()
                     ->color('success')
-                    ->icon(Heroicon::OutlinedCurrencyDollar)
+                    ->icon(Heroicon::OutlinedCurrencyRupee)
                     ->grow(false)
                     ->hiddenLabel();
 
