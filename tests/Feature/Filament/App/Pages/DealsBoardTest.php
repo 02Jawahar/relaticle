@@ -11,6 +11,7 @@ use App\Models\Deal;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Relaticle\Flowforge\Board;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 mutates(DealsBoard::class);
 
@@ -111,4 +112,64 @@ it('clears a sub-stage that does not belong to the new stage', function (): void
 
     expect($deal->stage)->toBe(DealStage::INVOICE)
         ->and($deal->sub_stage)->toBeNull();
+});
+
+it('records a non-final sub-stage without advancing the stage', function (): void {
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create([
+        'stage' => DealStage::SOLUTION_FINALIZED,
+        'sub_stage' => null,
+    ]);
+
+    $firstSubStage = DealStage::SOLUTION_FINALIZED->subStages()[0];
+
+    livewire(DealsBoard::class)
+        ->call('setSubStage', (string) $deal->id, $firstSubStage->value)
+        ->assertNotDispatched('kanban-card-moved');
+
+    $deal->refresh();
+
+    expect($deal->stage)->toBe(DealStage::SOLUTION_FINALIZED)
+        ->and($deal->sub_stage)->toBe($firstSubStage);
+});
+
+it('advances a card to the next stage when its last sub-stage is chosen', function (): void {
+    $deal = Deal::factory()->recycle([$this->user, $this->team])->create([
+        'stage' => DealStage::OPPORTUNITY,
+        'sub_stage' => null,
+    ]);
+
+    $subStages = DealStage::OPPORTUNITY->subStages();
+    $lastSubStage = $subStages[array_key_last($subStages)];
+
+    livewire(DealsBoard::class)
+        ->call('setSubStage', (string) $deal->id, $lastSubStage->value)
+        ->assertDispatched('kanban-card-moved');
+
+    $deal->refresh();
+    $nextStage = DealStage::OPPORTUNITY->nextStage();
+
+    expect($deal->stage)->toBe($nextStage)
+        ->and($deal->sub_stage)->toBe($nextStage?->firstSubStage());
+});
+
+it('leaves a deal owned by another team untouched via setSubStage', function (): void {
+    $otherUser = User::factory()->withTeam()->create();
+    $otherDeal = Deal::factory()->for($otherUser->currentTeam)->create([
+        'stage' => DealStage::OPPORTUNITY,
+        'sub_stage' => null,
+    ]);
+
+    try {
+        // The tenant-scoped lookup finds nothing and aborts 404. Depending on the
+        // Livewire version the abort either surfaces here or is swallowed into the
+        // component response, so the security guarantee is asserted on the record.
+        livewire(DealsBoard::class)
+            ->call('setSubStage', (string) $otherDeal->id, DealSubStage::ASSIGNED_SALESPERSON->value);
+    } catch (NotFoundHttpException) {
+    }
+
+    $otherDeal->refresh();
+
+    expect($otherDeal->stage)->toBe(DealStage::OPPORTUNITY)
+        ->and($otherDeal->sub_stage)->toBeNull();
 });

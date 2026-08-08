@@ -12,9 +12,10 @@ use Filament\Support\Contracts\HasLabel;
  * A stage in one of the CRM pipelines (Lead, Deal, Order).
  *
  * Declaration order of the enum cases is the pipeline order: it drives both the
- * left-to-right kanban column order and the order of options in select fields.
+ * left-to-right kanban column order and the order of options in select fields,
+ * and is what {@see self::nextStage()} walks when a card advances.
  */
-interface PipelineStage extends HasColor, HasLabel
+interface PipelineStage extends BackedEnum, HasColor, HasLabel
 {
     /**
      * Narrowed from Filament's HasLabel: a stage always has a label.
@@ -44,4 +45,16 @@ interface PipelineStage extends HasColor, HasLabel
      * Whether this stage is an unsuccessful terminal state.
      */
     public function isLost(): bool;
+
+    /**
+     * The stage a card advances to when it completes this stage, or null when
+     * this stage is terminal (won/lost) or the pipeline has no further stage.
+     */
+    public function nextStage(): ?PipelineStage;
+
+    /**
+     * The first sub-stage of this stage, used as the entry sub-stage when a card
+     * advances into it. Null when the stage declares no sub-stages.
+     */
+    public function firstSubStage(): ?PipelineSubStage;
 }

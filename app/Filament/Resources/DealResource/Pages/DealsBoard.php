@@ -20,6 +20,7 @@ use App\Models\Deal;
 use App\Models\Order;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\Pipeline\SubStageSelection;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -348,6 +349,35 @@ final class DealsBoard extends BoardResourcePage
             $date->isTomorrow() => 'Closes Tomorrow',
             default => $date->format('M j'),
         };
+    }
+
+    /**
+     * Change a card's sub-stage from the pipeline card panel. Picking the last
+     * sub-stage of the current stage advances the card to the next stage column
+     * (landing on that stage's first sub-stage); any other pick just records it.
+     *
+     * Invoked from resources/views/filament/pipeline/sub-stage-select.blade.php.
+     */
+    public function setSubStage(int|string $recordKey, ?string $subStageValue): void
+    {
+        $deal = Deal::query()
+            ->whereBelongsTo(Filament::getTenant(), 'team')
+            ->find($recordKey);
+
+        abort_unless($deal instanceof Deal, 404);
+
+        /** @var User $user */
+        $user = Auth::guard('web')->user();
+
+        $selection = SubStageSelection::resolve($deal->stage, $subStageValue);
+
+        resolve(UpdateDeal::class)->execute($user, $deal, $selection->data);
+
+        if ($selection->advanced) {
+            $this->dispatch('kanban-card-moved');
+        }
+
+        $this->unmountAction();
     }
 
     /**

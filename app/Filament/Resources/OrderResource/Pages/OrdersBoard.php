@@ -18,6 +18,7 @@ use App\Filament\Resources\OrderResource\Forms\OrderForm;
 use App\Models\Order;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\Pipeline\SubStageSelection;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -331,6 +332,35 @@ final class OrdersBoard extends BoardResourcePage
             $date->isTomorrow() => 'Closes Tomorrow',
             default => $date->format('M j'),
         };
+    }
+
+    /**
+     * Change a card's sub-stage from the pipeline card panel. Picking the last
+     * sub-stage of the current stage advances the card to the next stage column
+     * (landing on that stage's first sub-stage); any other pick just records it.
+     *
+     * Invoked from resources/views/filament/pipeline/sub-stage-select.blade.php.
+     */
+    public function setSubStage(int|string $recordKey, ?string $subStageValue): void
+    {
+        $order = Order::query()
+            ->whereBelongsTo(Filament::getTenant(), 'team')
+            ->find($recordKey);
+
+        abort_unless($order instanceof Order, 404);
+
+        /** @var User $user */
+        $user = Auth::guard('web')->user();
+
+        $selection = SubStageSelection::resolve($order->stage, $subStageValue);
+
+        resolve(UpdateOrder::class)->execute($user, $order, $selection->data);
+
+        if ($selection->advanced) {
+            $this->dispatch('kanban-card-moved');
+        }
+
+        $this->unmountAction();
     }
 
     /**

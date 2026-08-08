@@ -14,6 +14,7 @@ use App\Models\Order;
 use App\Models\People;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
@@ -51,9 +52,9 @@ final class PipelineCardPanel
                     ->label(__('pipelines.fields.stage.label'))
                     ->badge()
                     ->color(fn (Lead|Deal|Order $record): array => Color::hex(self::stage($record)->getColor())),
-                TextEntry::make('sub_stage')
+                ViewEntry::make('sub_stage')
                     ->label(__('pipelines.fields.sub_stage.label'))
-                    ->placeholder(__('pipelines.fields.sub_stage.empty')),
+                    ->view('filament.pipeline.sub-stage-select'),
                 TextEntry::make('company.name')
                     ->label(__('pipelines.card.company'))
                     ->placeholder(__('pipelines.fields.sub_stage.empty'))

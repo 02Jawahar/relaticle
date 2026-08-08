@@ -19,6 +19,7 @@ use App\Filament\Resources\LeadResource\Forms\LeadForm;
 use App\Models\Lead;
 use App\Models\Team;
 use App\Models\User;
+use App\Support\Pipeline\SubStageSelection;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
@@ -358,6 +359,35 @@ final class LeadsBoard extends BoardResourcePage
     /**
      * Columns come from the LeadStage enum, in declaration order.
      *
+     * Change a card's sub-stage from the pipeline card panel. Picking the last
+     * sub-stage of the current stage advances the card to the next stage column
+     * (landing on that stage's first sub-stage); any other pick just records it.
+     *
+     * Invoked from resources/views/filament/pipeline/sub-stage-select.blade.php.
+     */
+    public function setSubStage(int|string $recordKey, ?string $subStageValue): void
+    {
+        $lead = Lead::query()
+            ->whereBelongsTo(Filament::getTenant(), 'team')
+            ->find($recordKey);
+
+        abort_unless($lead instanceof Lead, 404);
+
+        /** @var User $user */
+        $user = Auth::guard('web')->user();
+
+        $selection = SubStageSelection::resolve($lead->stage, $subStageValue);
+
+        resolve(UpdateLead::class)->execute($user, $lead, $selection->data);
+
+        if ($selection->advanced) {
+            $this->dispatch('kanban-card-moved');
+        }
+
+        $this->unmountAction();
+    }
+
+    /**
      * @return Collection<int, array{id: string, name: string, color: string}>
      */
     private function stages(): Collection

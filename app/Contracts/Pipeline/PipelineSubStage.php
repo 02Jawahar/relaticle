@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Contracts\Pipeline;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasLabel;
 
 /**
@@ -13,7 +14,7 @@ use Filament\Support\Contracts\HasLabel;
  * returned by the currently selected stage, and writes are validated against
  * the same mapping so the API and chat paths cannot persist a mismatched pair.
  */
-interface PipelineSubStage extends HasLabel
+interface PipelineSubStage extends BackedEnum, HasLabel
 {
     /**
      * Narrowed from Filament's HasLabel: a sub-stage always has a label.

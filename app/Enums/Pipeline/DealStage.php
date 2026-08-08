@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Enums\Pipeline;
 
 use App\Contracts\Pipeline\PipelineStage;
+use App\Enums\Pipeline\Concerns\ProgressesThroughStages;
 
 enum DealStage: string implements PipelineStage
 {
+    use ProgressesThroughStages;
+
     case OPPORTUNITY = 'opportunity';
     case SOLUTION_FINALIZED = 'solution_finalized';
     case COMMERCIAL_DISCUSSION = 'commercial_discussion';
