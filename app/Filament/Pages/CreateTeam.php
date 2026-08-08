@@ -123,7 +123,7 @@ final class CreateTeam extends RegisterTenant
                     ->hiddenLabel()
                     ->content(new HtmlString(
                         '<h3 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">How did you hear about us?</h3>'
-                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Please select below where you found out about Relaticle. This step is optional.</p>'
+                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Please select below where you found out about Qbitio. This step is optional.</p>'
                     ))
                     ->dehydrated(false),
 
@@ -156,7 +156,7 @@ final class CreateTeam extends RegisterTenant
                     ->hiddenLabel()
                     ->content(new HtmlString(
                         '<h3 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">Help us customize your workspace</h3>'
-                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Relaticle is all about empowering you to build the exact CRM you need, no matter how complex.</p>'
+                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Qbitio is all about empowering you to build the exact CRM you need, no matter how complex.</p>'
                         .'<p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Tell us about your use case to get started with templates, or start with a blank canvas.</p>'
                     ))
                     ->dehydrated(false),
@@ -211,7 +211,7 @@ final class CreateTeam extends RegisterTenant
                     ->hiddenLabel()
                     ->content(new HtmlString(
                         '<h3 class="text-xl font-bold tracking-tight text-gray-950 dark:text-white">Collaborate with your team</h3>'
-                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The more your teammates use Relaticle, the more powerful it becomes.</p>'
+                        .'<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The more your teammates use Qbitio, the more powerful it becomes.</p>'
                     ))
                     ->dehydrated(false),
 

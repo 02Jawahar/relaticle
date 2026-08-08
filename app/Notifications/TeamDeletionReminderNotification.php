@@ -34,6 +34,6 @@ final class TeamDeletionReminderNotification extends Notification implements Sho
             ->line("{$this->team->name} is scheduled for permanent deletion on {$this->team->scheduled_deletion_at->format('F j, Y')}.")
             ->line('This is your final reminder. All data will be permanently removed after this date.')
             ->line('You can cancel the deletion from your team settings at any time before that date.')
-            ->salutation('Thank you for using Relaticle.');
+            ->salutation('Thank you for using Qbitio.');
     }
 }

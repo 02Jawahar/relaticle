@@ -30,6 +30,6 @@ final class TeamMemberRemovedNotification extends Notification implements Should
             ->subject("You've been removed from {$this->team->name}")
             ->line("You have been removed from the {$this->team->name} team.")
             ->line('You will no longer have access to this team\'s data.')
-            ->salutation('Thank you for using Relaticle.');
+            ->salutation('Thank you for using Qbitio.');
     }
 }

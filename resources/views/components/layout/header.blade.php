@@ -6,7 +6,7 @@
             <div class="flex items-center justify-between h-16">
 
                 <div class="flex flex-1 items-center">
-                    <a href="{{ url('/') }}" class="transition-opacity" aria-label="Relaticle Home">
+                    <a href="{{ url('/') }}" class="transition-opacity" aria-label="Qbitio Home">
                         <x-brand.logo-lockup size="md" class="text-black dark:text-white" />
                     </a>
                 </div>

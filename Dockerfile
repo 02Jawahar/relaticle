@@ -41,7 +41,7 @@ COPY --from=composer /app/vendor ./vendor
 # Echo client points at localhost and chat streaming silently never connects.
 # Written to a .env file rather than only exported, so Vite picks them up
 # through its normal env loading regardless of how it treats process env.
-ARG VITE_APP_NAME="Relaticle"
+ARG VITE_APP_NAME="Qbitio"
 ARG VITE_REVERB_APP_KEY=""
 ARG VITE_REVERB_HOST=""
 ARG VITE_REVERB_PORT="443"
@@ -62,7 +62,7 @@ RUN npm run build
 ###########################################
 FROM serversideup/php:8.4-fpm-nginx AS production
 
-LABEL org.opencontainers.image.title="Relaticle CRM"
+LABEL org.opencontainers.image.title="Qbitio CRM"
 LABEL org.opencontainers.image.description="Modern, open-source CRM platform"
 LABEL org.opencontainers.image.source="https://github.com/Relaticle/relaticle"
 

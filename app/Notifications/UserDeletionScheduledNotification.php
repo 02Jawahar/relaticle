@@ -32,6 +32,6 @@ final class UserDeletionScheduledNotification extends Notification implements Sh
             ->line("Your account is scheduled for permanent deletion on {$this->user->scheduled_deletion_at->format('F j, Y')}.")
             ->line('All your data will be permanently removed after this date.')
             ->line('If you changed your mind, simply log in anytime before that date to cancel the deletion.')
-            ->salutation('Thank you for using Relaticle.');
+            ->salutation('Thank you for using Qbitio.');
     }
 }

@@ -85,8 +85,8 @@
 
 <nav class="relaticle-nav">
     <div class="relaticle-nav-left">
-        <a href="/" aria-label="Relaticle Home">
-            <img src="/brand/logomark.svg" alt="Relaticle" style="height:1.25rem;width:1.25rem;"/>
+        <a href="/" aria-label="Qbitio Home">
+            <img src="/images/qbitio-mark.png" alt="Qbitio" style="height:1.25rem;width:1.25rem;"/>
         </a>
         <div class="relaticle-nav-sep"></div>
         <span class="relaticle-nav-title">API Reference</span>

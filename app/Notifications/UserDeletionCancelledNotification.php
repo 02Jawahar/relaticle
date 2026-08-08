@@ -31,6 +31,6 @@ final class UserDeletionCancelledNotification extends Notification implements Sh
             ->greeting("Welcome back, {$this->user->name}!")
             ->line('Your account deletion has been cancelled. Your account and data are safe.')
             ->line('No further action is needed.')
-            ->salutation('Thank you for staying with Relaticle.');
+            ->salutation('Thank you for staying with Qbitio.');
     }
 }

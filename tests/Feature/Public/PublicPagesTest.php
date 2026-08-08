@@ -22,15 +22,16 @@ beforeEach(function () {
 });
 
 describe('Home page', function () {
-    it('returns a successful response', function () {
-        $response = $this->get('/');
-
-        $response->assertStatus(200);
-        $response->assertSee('Relaticle');
+    // This deployment is the CRM, not the marketing site: the root sends
+    // visitors to the panel, which shows them login or their workspace.
+    it('redirects to the CRM panel', function () {
+        $this->get('/')->assertRedirect(url()->getAppUrl());
     });
 
-    it('displays the GitHub stars count', function () {
-        $response = $this->get('/');
+    // The stars count is composed into the marketing header, which every
+    // remaining public page renders.
+    it('displays the GitHub stars count in the marketing header', function () {
+        $response = $this->get('/pricing');
 
         $response->assertStatus(200);
         $response->assertSee('42');
@@ -43,7 +44,7 @@ describe('Legal pages', function () {
 
         $response->assertStatus(200);
         $response->assertSee('Terms of Service');
-        $response->assertSee('Relaticle');
+        $response->assertSee('Qbitio');
         $response->assertDontSee('word usage');
         $response->assertDontSee('Basic" plan');
     });
@@ -53,7 +54,7 @@ describe('Legal pages', function () {
 
         $response->assertStatus(200);
         $response->assertSee('Privacy Policy');
-        $response->assertSee('Relaticle');
+        $response->assertSee('Qbitio');
         $response->assertDontSee('registered mail');
     });
 });
@@ -204,7 +205,7 @@ describe('Social authentication routes', function () {
 
 describe('Hero AI tab — conversation', function () {
     it('renders the three exchanges in initial DOM', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         $response->assertSee("What's overdue this week?", false);
@@ -220,7 +221,7 @@ describe('Hero AI tab — conversation', function () {
     });
 
     it('places all message content in the initial HTML so reduced-motion users see it', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         // Exchange 1
@@ -235,7 +236,7 @@ describe('Hero AI tab — conversation', function () {
 
 describe('Hero AI tab — app shell', function () {
     it('renders the sidebar navigation items', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         $response->assertSee('Home');
@@ -247,7 +248,7 @@ describe('Hero AI tab — app shell', function () {
     });
 
     it('marks Home as the active navigation item', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         $response->assertSee('hero-shell-nav-home', false);
@@ -255,7 +256,7 @@ describe('Hero AI tab — app shell', function () {
     });
 
     it('renders recent conversation examples and the All chats trigger', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         $response->assertSee('Overdue tasks this week');
@@ -265,7 +266,7 @@ describe('Hero AI tab — app shell', function () {
     });
 
     it('renders the composer with model picker and send button affordance', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         $response->assertSee('Ask anything');
@@ -274,7 +275,7 @@ describe('Hero AI tab — app shell', function () {
     });
 
     it('renders the non-interactive overlay above panel content', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertStatus(200);
         // Overlay is an absolutely-positioned aria-hidden div with z-30
@@ -291,7 +292,7 @@ describe('Hero AI tab — demo CTA', function () {
         }
 
         try {
-            $response = $this->get('/');
+            $response = $this->get('/welcome');
 
             $response->assertStatus(200);
             $response->assertDontSee('Watch 30s demo');
@@ -311,7 +312,7 @@ describe('Hero AI tab — demo CTA', function () {
         }
 
         try {
-            $response = $this->get('/');
+            $response = $this->get('/welcome');
 
             $response->assertStatus(200);
             $response->assertSee('Watch 30s demo');
@@ -498,7 +499,7 @@ describe('Blog pages', function () {
     });
 
     it('includes blog link in navigation', function () {
-        $this->get('/')
+        $this->get('/welcome')
             ->assertStatus(200)
             ->assertSee(route('blog.index'));
     });
@@ -624,7 +625,7 @@ describe('Error handling', function () {
 
 describe('Response meta', function () {
     it('returns proper content type', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
 
         $response->assertHeader('Content-Type');
         $response->assertSuccessful();
@@ -633,7 +634,7 @@ describe('Response meta', function () {
 
 describe('Hero AI tab — animation timeline', function () {
     it('hides the data-table outer container at cycle start', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
 
         // The exchange 1 tool-result table container must be opacity-controlled
@@ -644,7 +645,7 @@ describe('Hero AI tab — animation timeline', function () {
     });
 
     it('keeps the post-exchange hold window at ~1.5s', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -656,7 +657,7 @@ describe('Hero AI tab — animation timeline', function () {
     });
 
     it('does not restart the AI demo on hover or focus changes', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -672,7 +673,7 @@ describe('Hero AI tab — animation timeline', function () {
     });
 
     it('uses a unified Y-slide for assistant content', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -683,7 +684,7 @@ describe('Hero AI tab — animation timeline', function () {
     });
 
     it('reveals new messages at the bottom so earlier ones stay visible', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -702,7 +703,7 @@ describe('Hero AI tab — animation timeline', function () {
     });
 
     it('animates the 3 task rows as a single staggered group with 120ms spacing', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -716,7 +717,7 @@ describe('Hero AI tab — animation timeline', function () {
 
 describe('Hero AI tab — entry phase', function () {
     it('renders the dashboard greeting mirroring app /', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
 
         // Mirrors packages/Chat/resources/views/filament/pages/dashboard.blade.php
@@ -728,7 +729,7 @@ describe('Hero AI tab — entry phase', function () {
     });
 
     it('shows three example prompt chips to anchor the demo', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
 
         $response->assertSee("What's overdue this week?", false);
@@ -737,7 +738,7 @@ describe('Hero AI tab — entry phase', function () {
     });
 
     it('renders the empty My Tasks section mirroring the dashboard', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
 
         $response->assertSee(__('filament/pages/dashboard.tasks.empty.title'));
@@ -746,7 +747,7 @@ describe('Hero AI tab — entry phase', function () {
     });
 
     it('renders a second composer scoped with entry IDs', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 
@@ -758,7 +759,7 @@ describe('Hero AI tab — entry phase', function () {
     });
 
     it('wires the entry → conversation transition in the heroChat factory', function () {
-        $response = $this->get('/');
+        $response = $this->get('/welcome');
         $response->assertSuccessful();
         $body = $response->getContent();
 

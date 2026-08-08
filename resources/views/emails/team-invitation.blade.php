@@ -1,5 +1,5 @@
 @component('mail::message')
-{{ __('You\'ve been invited to join the :workspace workspace on Relaticle.', ['workspace' => $invitation->team->name]) }}
+{{ __('You\'ve been invited to join the :workspace workspace on Qbitio.', ['workspace' => $invitation->team->name]) }}
 
 @component('mail::button', ['url' => $acceptUrl])
 {{ __('Accept Invitation') }}

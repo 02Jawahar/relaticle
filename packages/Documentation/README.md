@@ -1,6 +1,6 @@
 # Documentation Package
 
-A dedicated documentation package for the Relaticle application with a modern, customized frontend architecture.
+A dedicated documentation package for the Qbitio application with a modern, customized frontend architecture.
 
 ## Features
 
@@ -16,7 +16,7 @@ A dedicated documentation package for the Relaticle application with a modern, c
 
 ## Installation
 
-The Documentation package is included in the Relaticle application by default. If you need to install it manually:
+The Documentation package is included in the Qbitio application by default. If you need to install it manually:
 
 ```bash
 # Publish the package's resources

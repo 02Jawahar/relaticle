@@ -2,13 +2,13 @@
 
 **Effective date:** March 20, 2026
 
-These Terms of Service ("Terms") govern your use of Relaticle, an open-source CRM platform provided by Relaticle ("we", "us", "our"). By accessing or using our services, you agree to these Terms.
+These Terms of Service ("Terms") govern your use of Qbitio, an open-source CRM platform provided by Qbitio ("we", "us", "our"). By accessing or using our services, you agree to these Terms.
 
 ---
 
 ## 1. Services
 
-Relaticle provides a customer relationship management (CRM) platform available in two forms:
+Qbitio provides a customer relationship management (CRM) platform available in two forms:
 
 - **Cloud (Managed Hosting):** We host and maintain the application at app.relaticle.com. You access it through your web browser.
 - **Self-Hosted:** You download and run the open-source software on your own infrastructure under the AGPL-3.0 license.
@@ -23,7 +23,7 @@ You must be at least 16 years old to use our services.
 
 ## 3. Your Data
 
-You own your data. We do not claim any intellectual property rights over the data you store in Relaticle.
+You own your data. We do not claim any intellectual property rights over the data you store in Qbitio.
 
 - **Cloud users:** Your data is stored on our servers. You can export your data at any time via the application or the REST API. If you delete your account, we will delete your data within 30 days.
 - **Self-hosted users:** Your data never touches our servers. You have full control.
@@ -46,7 +46,7 @@ Access to the REST API and MCP server is governed by API tokens scoped to specif
 
 ## 6. Pricing
 
-Relaticle is free to use. Both the Cloud and Self-Hosted options are available at no cost. We may introduce paid features in the future, but existing free functionality will remain free.
+Qbitio is free to use. Both the Cloud and Self-Hosted options are available at no cost. We may introduce paid features in the future, but existing free functionality will remain free.
 
 ## 7. Availability
 

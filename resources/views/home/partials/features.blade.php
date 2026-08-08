@@ -15,7 +15,7 @@
                 One CRM. Three ways to work: UI, chat, and agents.
             </h2>
             <p class="mt-5 text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                Manage records by hand, ask Relaticle in the app, or connect Claude, ChatGPT, Gemini, and custom agents through MCP. Every path works from the same permissions, schema, and customer data.
+                Manage records by hand, ask Qbitio in the app, or connect Claude, ChatGPT, Gemini, and custom agents through MCP. Every path works from the same permissions, schema, and customer data.
             </p>
         </div>
 

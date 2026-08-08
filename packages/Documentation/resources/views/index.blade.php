@@ -7,7 +7,7 @@
                 Documentation
             </h1>
             <p class="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                Guides and resources to help you get the most out of Relaticle CRM.
+                Guides and resources to help you get the most out of Qbitio CRM.
             </p>
         </div>
 

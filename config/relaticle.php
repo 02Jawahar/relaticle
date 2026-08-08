@@ -9,7 +9,7 @@ return [
     ],
 
     'company' => [
-        'name' => env('RELATICLE_COMPANY_NAME', 'Relaticle'),
+        'name' => env('RELATICLE_COMPANY_NAME', 'Qbitio'),
         'address' => env('RELATICLE_COMPANY_ADDRESS', ''),
     ],
 
@@ -18,7 +18,7 @@ return [
     | Feature Flags
     |--------------------------------------------------------------------------
     |
-    | Toggle Relaticle features on or off. Useful for forks and custom
+    | Toggle Qbitio features on or off. Useful for forks and custom
     | deployments that want to disable specific functionality without
     | modifying upstream code. All features are enabled by default.
     |

@@ -45,8 +45,15 @@ Route::middleware('guest')->group(function () {
     Route::get('/forgot-password', fn () => redirect()->to(url()->getAppUrl('forgot-password')))->name('password.request');
 });
 
+// This deployment is the CRM itself, not the marketing site, so the root goes
+// straight to the panel: Filament sends a signed-out visitor to the login page
+// and an already signed-in one to their workspace.
+Route::get('/', fn () => redirect()->to(url()->getAppUrl()))->name('home');
+
 Route::middleware(ProvideMarkdownResponse::class)->group(function (): void {
-    Route::get('/', HomeController::class);
+    // The marketing landing page, kept reachable now that the root belongs to
+    // the panel.
+    Route::get('/welcome', HomeController::class)->name('marketing.home');
     Route::get('/terms-of-service', TermsOfServiceController::class)->name('terms.show');
     Route::get('/privacy-policy', PrivacyPolicyController::class)->name('policy.show');
     Route::get('/pricing', fn () => view('pricing'))->name('pricing');

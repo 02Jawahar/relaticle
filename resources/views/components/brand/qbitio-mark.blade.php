@@ -1,10 +1,14 @@
 {{--
-    Qbitio mark — a blocky "Q": a square ring with a stepped opening on the
-    right and a detached tail block at the bottom-right.
+    The Qbitio mark.
 
-    PLACEHOLDER: hand-drawn from the supplied image, not the original asset. Drop
-    the real file in and point this component at it when you have it; every call
-    site goes through <x-brand.qbitio-mark /> so nothing else needs touching.
+    Renders the supplied asset rather than a traced SVG, so the brand is exactly
+    what was handed over. The source is a small raster (37x40), which is fine at
+    the sizes used here but will soften on a high-DPI display above `lg` — swap
+    in an SVG or a 2x export at public/images/qbitio-mark.png and nothing else
+    needs to change.
+
+    The mark is solid black on transparency, so it is inverted in dark mode to
+    read as white instead of disappearing into the surface.
 --}}
 @props([
     'size' => 'md',
@@ -20,21 +24,8 @@
     $sizeClass = $sizeMap[$size] ?? $sizeMap['md'];
 @endphp
 
-<svg
-    viewBox="0 0 32 32"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    role="img"
-    aria-label="Qbitio"
-    {{ $attributes->class($sizeClass) }}
->
-    {{-- Square ring with the top-right and bottom-right steps cut out --}}
-    <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
-        d="M4 4h18v5H9v14h9v5H4V4Zm18 5h5v9h-5V9Z"
-        fill="currentColor"
-    />
-    {{-- Tail block --}}
-    <rect x="21" y="20" width="7" height="7" rx="1" fill="currentColor" />
-</svg>
+<img
+    src="{{ asset('images/qbitio-mark.png') }}"
+    alt="{{ config('app.name') }}"
+    {{ $attributes->class("object-contain dark:invert {$sizeClass}") }}
+/>

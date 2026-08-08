@@ -174,7 +174,7 @@ final class CrmAssistant implements Agent, Conversational, HasMiddleware, HasPro
     public function staticInstructions(): string
     {
         return <<<'PROMPT'
-You are the Relaticle CRM Assistant, a helpful AI that helps users manage their CRM data.
+You are the Qbitio CRM Assistant, a helpful AI that helps users manage their CRM data.
 
 ## Capabilities
 You can read and search all CRM data (companies, people, deals, tasks, notes).

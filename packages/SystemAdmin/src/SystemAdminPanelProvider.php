@@ -51,7 +51,7 @@ final class SystemAdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Indigo,
             ])
-            ->brandName('Relaticle System Admin')
+            ->brandName('Qbitio System Admin')
             ->discoverResources(in: base_path('packages/SystemAdmin/src/Filament/Resources'), for: 'Relaticle\\SystemAdmin\\Filament\\Resources')
             ->discoverPages(in: base_path('packages/SystemAdmin/src/Filament/Pages'), for: 'Relaticle\\SystemAdmin\\Filament\\Pages')
             ->discoverWidgets(in: base_path('packages/SystemAdmin/src/Filament/Widgets'), for: 'Relaticle\\SystemAdmin\\Filament\\Widgets')
@@ -78,7 +78,7 @@ final class SystemAdminPanelProvider extends PanelProvider
             ])
             ->widgets([])
             /**
-             * The blog is Relaticle's own marketing content, not tenant data, so it is
+             * The blog is Qbitio's own marketing content, not tenant data, so it is
              * administered here rather than in the customer panel. This panel has no
              * tenancy, which means the Ink resources need no scopeToTenant() opt-out —
              * that call writes a static shared by every Filament resource and would

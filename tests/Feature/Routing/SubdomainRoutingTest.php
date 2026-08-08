@@ -37,7 +37,7 @@ describe('API routing - subdomain mode', function () {
 
         $json = $response->json();
         expect($json)->toHaveKeys(['name', 'version', 'docs']);
-        expect($json['name'])->toBe('Relaticle API');
+        expect($json['name'])->toBe('Qbitio API');
         expect($json['version'])->toBe('v1');
     });
 
@@ -86,7 +86,7 @@ describe('MCP routing - subdomain mode', function () {
 
         Route::domain('mcp.example.com')->group(function (): void {
             Route::get('/', fn () => response()->json([
-                'name' => 'Relaticle MCP Server',
+                'name' => 'Qbitio MCP Server',
                 'version' => '1.0.0',
                 'docs' => url('/docs/mcp'),
             ]));
@@ -97,6 +97,6 @@ describe('MCP routing - subdomain mode', function () {
 
         $json = $response->json();
         expect($json)->toHaveKeys(['name', 'version', 'docs']);
-        expect($json['name'])->toBe('Relaticle MCP Server');
+        expect($json['name'])->toBe('Qbitio MCP Server');
     });
 });

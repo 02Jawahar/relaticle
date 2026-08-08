@@ -1,12 +1,12 @@
 # Self-Hosting Guide
 
-Deploy Relaticle on your own infrastructure with Docker or manually.
+Deploy Qbitio on your own infrastructure with Docker or manually.
 
 ---
 
 ## Quick Start
 
-Get Relaticle running in 5 steps:
+Get Qbitio running in 5 steps:
 
 1. Download the compose file:
 
@@ -71,11 +71,11 @@ These must be set or the containers will refuse to start.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `APP_NAME` | `Relaticle` | Displayed in the browser tab and emails. |
+| `APP_NAME` | `Qbitio` | Displayed in the browser tab and emails. |
 | `APP_ENV` | `production` | Set to `production` for self-hosting. |
 | `APP_DEBUG` | `false` | Set to `true` only for debugging. Never in production. |
 | `APP_TIMEZONE` | `UTC` | Application timezone. |
-| `APP_URL` | `http://localhost` | Full URL where Relaticle is accessible. Include the scheme. |
+| `APP_URL` | `http://localhost` | Full URL where Qbitio is accessible. Include the scheme. |
 | `APP_PORT` | `80` | Host port the app container binds to. |
 | `APP_PANEL_DOMAIN` | (empty) | Set for subdomain routing (e.g., `app.example.com`). Leave empty for path mode (`/app`). |
 | `REQUIRE_EMAIL_VERIFICATION` | `true` | When `false`, users sign in without verifying their email — useful for self-hosters who haven't configured SMTP yet. The admin you create via `make:filament-user` is auto-verified regardless, so the default of `true` is safe for fresh Docker installs. Only set to `false` if your panel is on a private network: with verification disabled, anyone who can reach `/app/register` can create a working account. |
@@ -93,7 +93,7 @@ These must be set or the containers will refuse to start.
 | `MAIL_PASSWORD` | (empty) | SMTP password. |
 | `MAIL_ENCRYPTION` | `tls` | `tls` or `ssl`. |
 | `MAIL_FROM_ADDRESS` | `hello@example.com` | Sender email address. |
-| `MAIL_FROM_NAME` | `Relaticle` | Sender display name. |
+| `MAIL_FROM_NAME` | `Qbitio` | Sender display name. |
 
 ### Database and Redis
 
@@ -261,11 +261,11 @@ labels:
 
 ## Deploying on Dokploy
 
-[Dokploy](https://dokploy.com/) is an open-source deployment platform. Here's how to deploy Relaticle on it.
+[Dokploy](https://dokploy.com/) is an open-source deployment platform. Here's how to deploy Qbitio on it.
 
 ### 1. Create a Project
 
-In the Dokploy dashboard, click **Create Project** and give it a name (e.g., "Relaticle").
+In the Dokploy dashboard, click **Create Project** and give it a name (e.g., "Qbitio").
 
 ### 2. Add a Compose Service
 
@@ -311,7 +311,7 @@ Open the Dokploy terminal for the `app` container and run:
 php artisan make:filament-user
 ```
 
-Your Relaticle instance is now live at `https://crm.yourdomain.com/app`.
+Your Qbitio instance is now live at `https://crm.yourdomain.com/app`.
 
 ---
 
@@ -419,7 +419,7 @@ Add a cron job to back up daily:
 
 ## Manual Deployment
 
-If you prefer not to use Docker, you can deploy Relaticle directly on a server.
+If you prefer not to use Docker, you can deploy Qbitio directly on a server.
 
 ### Requirements
 

@@ -43,7 +43,7 @@ it('completes installation without demo data and system admin', function (): voi
         ->expectsOutputToContain('System Requirements completed')
         ->expectsOutputToContain('Environment Setup completed')
         ->expectsOutputToContain('Database completed')
-        ->expectsOutputToContain('Relaticle installed successfully!')
+        ->expectsOutputToContain('Qbitio installed successfully!')
         ->assertSuccessful();
 
     // Verify .env was modified in temp file
@@ -73,7 +73,7 @@ it('completes installation with demo data but no system admin', function (): voi
         ->expectsConfirmation('Create system administrator account?', 'no')
         ->expectsOutputToContain('Starting installation process')
         ->expectsOutputToContain('Demo Data completed')
-        ->expectsOutputToContain('Relaticle installed successfully!')
+        ->expectsOutputToContain('Qbitio installed successfully!')
         ->assertExitCode(0);
 
     File::delete($tempEnv);
@@ -100,7 +100,7 @@ it('creates system administrator when requested', function (): void {
         ->expectsQuestion('System Administrator password (min. 8 characters)', 'password123')
         ->expectsOutputToContain('Creating System Administrator account')
         ->expectsOutputToContain('System Administrator created')
-        ->expectsOutputToContain('Relaticle installed successfully!')
+        ->expectsOutputToContain('Qbitio installed successfully!')
         ->assertSuccessful();
 
     // Verify the system administrator was created
@@ -136,7 +136,7 @@ it('skips system admin creation if one already exists', function (): void {
         ->expectsConfirmation('Do you want to create another one?', 'no')
         ->expectsOutputToContain('A System Administrator already exists')
         ->expectsOutputToContain('System Administrator created')
-        ->expectsOutputToContain('Relaticle installed successfully!')
+        ->expectsOutputToContain('Qbitio installed successfully!')
         ->assertSuccessful();
 
     File::delete($tempEnv);

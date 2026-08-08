@@ -7,7 +7,7 @@
                 Built in the Open
             </h2>
             <p class="mt-5 text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-lg mx-auto leading-relaxed">
-                Relaticle is AGPL-3.0 open source. Star the repo, join Discord, and help shape the future of agent-native CRM.
+                Qbitio is AGPL-3.0 open source. Star the repo, join Discord, and help shape the future of agent-native CRM.
             </p>
         </div>
 
@@ -19,7 +19,7 @@
                 ];
 
                 if (\Laravel\Pennant\Feature::active(\App\Features\Documentation::class)) {
-                    $cards[] = ['url' => route('documentation.index'), 'icon' => 'ri-book-open-line', 'iconClass' => 'text-primary dark:text-primary-400', 'title' => 'Documentation', 'desc' => 'Learn how to use Relaticle. Comprehensive guides for users and developers alike.', 'cta' => 'Read the Docs', 'external' => false];
+                    $cards[] = ['url' => route('documentation.index'), 'icon' => 'ri-book-open-line', 'iconClass' => 'text-primary dark:text-primary-400', 'title' => 'Documentation', 'desc' => 'Learn how to use Qbitio. Comprehensive guides for users and developers alike.', 'cta' => 'Read the Docs', 'external' => false];
                 }
             @endphp
             @foreach($cards as $card)

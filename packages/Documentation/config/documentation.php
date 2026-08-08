@@ -57,7 +57,7 @@ return [
         'self-hosting' => [
             'title' => 'Self-Hosting Guide',
             'file' => 'self-hosting-guide.md',
-            'description' => 'Deploy Relaticle with Docker or manually.',
+            'description' => 'Deploy Qbitio with Docker or manually.',
         ],
         'mcp' => [
             'title' => 'MCP Server',

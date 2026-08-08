@@ -23,10 +23,10 @@
         size="sm"
         icon="heroicon-o-chat-bubble-left-right"
         x-on:click="window.Livewire.dispatch('chat:toggle-panel')"
-        x-bind:aria-label="isMac ? 'Ask Relaticle (Cmd+J)' : 'Ask Relaticle (Ctrl+J)'"
-        x-bind:title="isMac ? 'Ask Relaticle (Cmd+J)' : 'Ask Relaticle (Ctrl+J)'"
+        x-bind:aria-label="isMac ? 'Ask Qbitio (Cmd+J)' : 'Ask Qbitio (Ctrl+J)'"
+        x-bind:title="isMac ? 'Ask Qbitio (Cmd+J)' : 'Ask Qbitio (Ctrl+J)'"
     >
-        <span class="hidden sm:inline">Ask Relaticle</span>
+        <span class="hidden sm:inline">Ask Qbitio</span>
 
         <kbd class="hidden font-mono text-[11px] opacity-60 sm:inline" aria-hidden="true">
             <span x-text="isMac ? '⌘J' : 'Ctrl+J'"></span>

@@ -18,16 +18,16 @@ if (! class_exists(AuthIn::class)) {
 
 return [
     // The HTML <title> for the generated documentation.
-    'title' => 'Relaticle API',
+    'title' => 'Qbitio API',
 
     // A short description of your API. Will be included in the docs webpage, Postman collection and OpenAPI spec.
     'description' => 'REST API for managing CRM entities including companies, people, deals, tasks, and notes.',
 
     // Text to place in the "Introduction" section, right after the `description`. Markdown and HTML are supported.
     'intro_text' => <<<'INTRO'
-    Welcome to the Relaticle API documentation. This API follows the [JSON:API](https://jsonapi.org/) specification.
+    Welcome to the Qbitio API documentation. This API follows the [JSON:API](https://jsonapi.org/) specification.
 
-    All endpoints require authentication via Bearer token. Generate an access token from **Settings > Access Tokens** in the Relaticle app.
+    All endpoints require authentication via Bearer token. Generate an access token from **Settings > Access Tokens** in the Qbitio app.
     INTRO
     ,
     // The base URL displayed in the docs.
@@ -132,7 +132,7 @@ return [
         'placeholder' => '{YOUR_API_TOKEN}',
 
         // Any extra authentication-related info for your users. Markdown and HTML are supported.
-        'extra_info' => 'Generate an access token from **Settings > Access Tokens** in the Relaticle app.',
+        'extra_info' => 'Generate an access token from **Settings > Access Tokens** in the Qbitio app.',
     ],
 
     // Example requests for each endpoint will be shown in each of these languages.

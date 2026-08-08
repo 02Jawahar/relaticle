@@ -2,7 +2,7 @@
 
 **Effective date:** March 20, 2026
 
-This Privacy Policy explains how Relaticle ("we", "us", "our") collects, uses, and protects your personal data when you use our services.
+This Privacy Policy explains how Qbitio ("we", "us", "our") collects, uses, and protects your personal data when you use our services.
 
 ---
 

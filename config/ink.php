@@ -41,13 +41,13 @@ return [
     'middleware' => ['web', ProvideMarkdownResponse::class],
 
     'feed' => [
-        'title' => 'Relaticle Engineering Blog',
+        'title' => 'Qbitio Engineering Blog',
         'description' => 'Deep dives into building an open-source CRM for AI agents.',
         'author_email' => 'hello@relaticle.com',
     ],
 
     'publisher' => [
-        'name' => 'Relaticle',
+        'name' => 'Qbitio',
         'url' => 'https://relaticle.com',
         // Must resolve to a real, fetchable raster image: Google drops the whole
         // Article rich result when the publisher logo 404s.

@@ -1,12 +1,12 @@
 # MCP Server
 
-MCP (Model Context Protocol) lets AI assistants like Claude work directly with your Relaticle CRM data. Instead of copy-pasting between tools, your AI assistant can list companies, create tasks, update contacts, and more -- all from a natural conversation.
+MCP (Model Context Protocol) lets AI assistants like Claude work directly with your Qbitio CRM data. Instead of copy-pasting between tools, your AI assistant can list companies, create tasks, update contacts, and more -- all from a natural conversation.
 
 ---
 
 ## What You Can Do
 
-With the Relaticle MCP server, your AI assistant can:
+With the Qbitio MCP server, your AI assistant can:
 
 - **List and search** companies, people, deals, tasks, and notes
 - **Get a single record** with full details and relationships
@@ -23,7 +23,7 @@ With the Relaticle MCP server, your AI assistant can:
 
 Before connecting an AI assistant, you need an access token:
 
-1. Log in to Relaticle
+1. Log in to Qbitio
 2. Click your avatar in the top-right corner
 3. Select **Access Tokens**
 4. Click **Create** and give your token a name

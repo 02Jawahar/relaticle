@@ -132,7 +132,7 @@ php artisan test --filter="test_method_name"
 
 ## Custom Fields
 
-Relaticle includes a custom fields system for extending entities without migrations.
+Qbitio includes a custom fields system for extending entities without migrations.
 
 - **License**: AGPL-3.0 (free for open source) or Commercial
 - **Docs**: [Custom Fields Documentation](https://relaticle.github.io/custom-fields/)

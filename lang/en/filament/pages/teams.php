@@ -27,7 +27,7 @@ return [
                 'label' => 'Workspace handle',
                 'helper_text' => 'Only lowercase letters, numbers, and hyphens are allowed.',
             ],
-            'use_case_label' => 'What will you be using Relaticle for?',
+            'use_case_label' => 'What will you be using Qbitio for?',
             'use_case_context_label' => 'Please tell us more about your use case.',
             'invite_email_placeholder' => 'colleague@company.com',
             'invite_role_member' => 'Member',

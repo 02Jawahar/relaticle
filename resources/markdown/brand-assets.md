@@ -1,4 +1,4 @@
-# Relaticle Brand Assets
+# Qbitio Brand Assets
 
 ## Asset Map
 

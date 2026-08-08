@@ -5,7 +5,7 @@
             class="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-10 border-b border-gray-100 dark:border-gray-900">
             <!-- Company Info -->
             <div class="md:col-span-5 space-y-5">
-                <a href="{{ url('/') }}" class="inline-flex w-fit" aria-label="Relaticle Home">
+                <a href="{{ url('/') }}" class="inline-flex w-fit" aria-label="Qbitio Home">
                     <x-brand.logo-lockup size="md" class="text-black dark:text-white" />
                 </a>
                 <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-md">
@@ -103,7 +103,7 @@
 
         <!-- Copyright section -->
         <div class="mt-8 flex flex-col md:flex-row md:justify-between items-center gap-4">
-            <p class="text-gray-500 dark:text-gray-400 text-xs">&copy; {{ date('Y') }} Relaticle. All rights
+            <p class="text-gray-500 dark:text-gray-400 text-xs">&copy; {{ date('Y') }} Qbitio. All rights
                 reserved.</p>
 
             <x-theme-switcher />

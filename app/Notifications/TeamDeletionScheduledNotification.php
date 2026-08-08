@@ -31,6 +31,6 @@ final class TeamDeletionScheduledNotification extends Notification implements Sh
             ->line("{$this->team->name} has been scheduled for deletion on {$this->team->scheduled_deletion_at->format('F j, Y')}.")
             ->line('All team data, including contacts, companies, tasks, deals, and notes, will be permanently removed after this date.')
             ->line('You can cancel the deletion from your team settings at any time before that date.')
-            ->salutation('Thank you for using Relaticle.');
+            ->salutation('Thank you for using Qbitio.');
     }
 }

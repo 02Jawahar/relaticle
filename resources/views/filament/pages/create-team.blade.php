@@ -1,6 +1,6 @@
 <div class="flex min-h-full flex-col">
 
-    {{-- Centered Relaticle logo --}}
+    {{-- Centered Qbitio logo --}}
     <div class="flex justify-center py-6">
         <x-brand.logo-lockup size="md" class="text-gray-900 dark:text-white" />
     </div>
@@ -28,7 +28,7 @@
 
     {{-- Footer --}}
     <div class="flex items-center justify-center gap-x-1 py-6 text-xs text-gray-400 dark:text-gray-500">
-        <span>&copy; {{ date('Y') }} Relaticle</span>
+        <span>&copy; {{ date('Y') }} Qbitio</span>
         <span>&middot;</span>
         <a href="{{ url('/privacy-policy') }}" class="hover:text-gray-600 dark:hover:text-gray-300">Privacy Policy</a>
         <span>&middot;</span>

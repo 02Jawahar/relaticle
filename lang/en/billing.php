@@ -83,7 +83,7 @@ return [
     ],
     'enterprise' => [
         'title' => 'Enterprise plan',
-        'body' => 'Your plan is managed by Relaticle. Contact us for changes.',
+        'body' => 'Your plan is managed by Qbitio. Contact us for changes.',
     ],
     'member' => [
         'ask_owner' => 'Billing is managed by :owner, the workspace owner.',
