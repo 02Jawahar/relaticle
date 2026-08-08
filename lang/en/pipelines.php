@@ -54,6 +54,7 @@ return [
         'sub_stage' => [
             'label' => 'Sub-stage',
             'placeholder' => 'Select a stage first',
+            'unset' => 'Select sub-stage',
             'helper' => 'Options depend on the selected stage.',
             'empty' => '—',
         ],
