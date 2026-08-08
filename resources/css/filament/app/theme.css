@@ -655,10 +655,19 @@
         margin-inline: 0;
     }
 
+    /* Blocks span the nav's content box exactly. The nav's own padding is the
+       only gutter — subtracting it again here made each block 40px in a 56px
+       box, and the 40px active pill then overflowed its 28px content area by
+       6px a side, which is also why `margin-inline: auto` threw the icons
+       off-centre. The sums, at --spacing 0.25rem and a 4.5rem rail:
+         72 rail - 16 nav padding      = 56 block
+         56 block - 8 block padding    = 48 content
+         48 content - 40 pill          =  4 either side */
     .fi-sidebar-group,
     .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
-        width: calc(100% - var(--spacing) * 4);
-        margin-inline: auto;
+        @apply w-full p-1;
+
+        margin-inline: 0;
     }
 
     /* Square, evenly sized hit areas centred in the rail. */
@@ -1084,12 +1093,20 @@
     @apply gap-2;
 }
 
+/* Surface only. Padding belongs to the state rules, which size the block against
+   the pill it has to contain — setting it here too made the two fight, and for
+   the ungrouped block the specificities tied so this one silently won. */
 .fi-main-sidebar .fi-sidebar-group {
     background-color: rgb(255 255 255 / 45%);
     border: 1px solid rgb(255 255 255 / 55%);
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 45%);
 
-    @apply rounded-2xl p-1.5;
+    @apply rounded-2xl;
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-group,
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
+    @apply p-1.5;
 }
 
 .dark .fi-main-sidebar .fi-sidebar-group {
@@ -1112,7 +1129,7 @@
     background-color: rgb(255 255 255 / 45%);
     border: 1px solid rgb(255 255 255 / 55%);
 
-    @apply rounded-2xl p-1.5;
+    @apply rounded-2xl;
 }
 
 .dark .fi-main-sidebar .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
