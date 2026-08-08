@@ -1032,8 +1032,9 @@
     @apply justify-center;
 }
 
+/* Gutter comes from the shared rule further down. */
 .fi-main-sidebar.fi-sidebar-open .fi-sidebar-toggle-ctn {
-    @apply justify-end pe-2;
+    @apply justify-end;
 }
 
 .fi-sidebar-toggle-btn {
@@ -1082,6 +1083,56 @@
 .dark .fi-main-sidebar .fi-sidebar-nav > .fi-sidebar-nav-groups > .fi-sidebar-item {
     background-color: rgb(255 255 255 / 4%);
     border-color: rgb(255 255 255 / 8%);
+}
+
+/* --- Record pages fill the viewport --------------------------------------- */
+
+/* People, Companies, Tasks and Notes are tables in a card. At content height a
+   short table left most of the page empty below it, so the card stretches to the
+   bottom and the rows scroll inside it while the header and pagination stay put.
+   `:has()` is needed because the page-type class sits on .fi-page, inside the
+   element that has to become the flex parent.
+
+   All four pages carry `fi-resource-list-records-page`: Filament emits it for
+   ManageRecords pages (Tasks, Notes) as well as ListRecords, so there is no
+   separate manage-records class to match. */
+.fi-main:has(> .fi-resource-list-records-page) {
+    @apply flex flex-col;
+}
+
+.fi-page.fi-resource-list-records-page {
+    @apply flex min-h-0 flex-1 flex-col;
+
+    .fi-page-header-main-ctn,
+    .fi-page-main,
+    .fi-page-content,
+    .fi-ta-ctn,
+    .fi-ta-main {
+        @apply flex min-h-0 flex-1 flex-col;
+    }
+
+    /* Only the rows scroll. */
+    .fi-ta-content {
+        @apply min-h-0 flex-1 overflow-y-auto;
+    }
+}
+
+/* --- One vertical gutter -------------------------------------------------- */
+
+/* Filament insets the workspace switcher by its own 1rem while the nav uses a
+   different padding in each state, so the switcher sat on a different edge from
+   the nav blocks beneath it. Both states now share a single gutter: whatever the
+   nav uses, the switcher and the collapse control use too. */
+.fi-main-sidebar:not(.fi-sidebar-open) .fi-tenant-menu {
+    margin-inline: calc(var(--spacing) * 2);
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-tenant-menu {
+    margin-inline: calc(var(--spacing) * 6);
+}
+
+.fi-main-sidebar.fi-sidebar-open .fi-sidebar-toggle-ctn {
+    padding-inline: calc(var(--spacing) * 6);
 }
 
 /* Active item reads as a filled pill inside its block. */

@@ -13,6 +13,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\ExportAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\Size;
+use Filament\Support\Enums\Width;
 use Livewire\Attributes\On;
 use Override;
 use Relaticle\CustomFields\Concerns\InteractsWithCustomFields;
@@ -25,6 +26,15 @@ final class ListCompanies extends ListRecords
 
     /** @var class-string<CompanyResource> */
     protected static string $resource = CompanyResource::class;
+
+    /**
+     * The table is the page, so it uses the full width rather than sitting in a
+     * column with empty gutters either side.
+     */
+    public function getMaxContentWidth(): Width
+    {
+        return Width::Full;
+    }
 
     /**
      * Get the actions available on the resource index header.
