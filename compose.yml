@@ -9,7 +9,7 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_KEY: ${APP_KEY:?APP_KEY is required}
       APP_DEBUG: ${APP_DEBUG:-false}
-      APP_TIMEZONE: ${APP_TIMEZONE:-UTC}
+      APP_TIMEZONE: ${APP_TIMEZONE:-Asia/Kolkata}
       APP_URL: ${APP_URL:-http://localhost}
       APP_PANEL_DOMAIN: ${APP_PANEL_DOMAIN:-}
       REQUIRE_EMAIL_VERIFICATION: ${REQUIRE_EMAIL_VERIFICATION:-true}
