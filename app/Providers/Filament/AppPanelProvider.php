@@ -153,9 +153,12 @@ final class AppPanelProvider extends PanelProvider
                         ? url(Settings::getUrl())
                         : url($panel->getPath())),
             ])
+            // The brand owns the top-left corner. The topbar begins to the right
+            // of the sidebar, so a mark placed there left that corner empty.
+            // Registration order is render order: brand first, then the toggle.
             ->renderHook(
-                PanelsRenderHook::TOPBAR_START,
-                fn (): View => view('filament.app.topbar-logo'),
+                PanelsRenderHook::SIDEBAR_START,
+                fn (): View => view('filament.app.sidebar-brand'),
             )
             // The collapse control belongs on the rail it collapses; Filament
             // puts it in the topbar whenever a panel has one.

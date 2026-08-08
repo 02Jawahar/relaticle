@@ -904,9 +904,10 @@
     margin-inline-start: var(--shell-gap);
 }
 
-.fi-body-has-topbar .fi-main-sidebar {
-    top: calc(3.5rem + var(--shell-gap) * 2);
-}
+/* Deliberately no topbar offset on the sidebar. The topbar sits inside the main
+   wrapper, to the right of the sidebar, so pushing the sidebar down by the
+   topbar's height only carved an empty notch out of the top-left corner. The
+   sidebar runs the full height and the brand occupies that corner instead. */
 
 /* --- Floating topbar ------------------------------------------------------- */
 
@@ -1038,9 +1039,18 @@
     border-radius: inherit;
 }
 
-/* Brand mark keeps the topbar's left edge from looking empty. */
-.fi-topbar-brand {
-    @apply me-1;
+/* --- Brand in the top-left corner ------------------------------------------ */
+
+.fi-sidebar-brand {
+    @apply flex items-center gap-2 px-2 pt-3 pb-1;
+}
+
+.fi-main-sidebar:not(.fi-sidebar-open) .fi-sidebar-brand {
+    @apply justify-center px-0;
+}
+
+.fi-sidebar-brand-name {
+    @apply truncate text-lg font-semibold tracking-tight text-gray-950 dark:text-white;
 }
 
 /* --- Dropdowns are opaque -------------------------------------------------- */

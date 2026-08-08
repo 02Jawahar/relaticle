@@ -94,16 +94,21 @@ final class Dashboard extends Page
     }
 
     /**
-     * The dashboard's widgets tile the viewport, so the panel's default content
-     * width only left a dead band down either side. The chat half is a single
-     * centred column and keeps the panel default, where a full-width line
-     * length would be unreadable.
+     * Full width for both halves of the home page, deliberately not conditional
+     * on the active view.
+     *
+     * This class lands on <main>, which belongs to the layout — and switching
+     * view is a Livewire update, which re-renders the component but not the
+     * layout around it. A conditional width therefore kept whatever the initial
+     * page load produced, so toggling to the dashboard left it capped at the
+     * panel width with a dead band down either side until a full reload.
+     *
+     * The chat half needs no help from here: it constrains itself to a centred
+     * max-w-3xl column, so a full-width <main> does not stretch its line length.
      */
-    public function getMaxContentWidth(): Width|string|null
+    public function getMaxContentWidth(): Width
     {
-        return $this->isDashboardView()
-            ? Width::Full
-            : parent::getMaxContentWidth();
+        return Width::Full;
     }
 
     /**

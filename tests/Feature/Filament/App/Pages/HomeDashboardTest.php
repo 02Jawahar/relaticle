@@ -25,15 +25,24 @@ it('gives the dashboard view the full content width', function (): void {
     expect($page->getMaxContentWidth())->toBe(Width::Full);
 });
 
-it('leaves the chat view at the panel width so the column stays readable', function (): void {
+// The width cannot depend on the active view: it lands on <main>, in the layout,
+// which a Livewire view switch does not re-render. The chat half keeps its own
+// readable line length instead, so full width costs it nothing.
+it('keeps the full content width on the chat view too', function (): void {
     $page = Livewire::test(Dashboard::class)
         ->assertSet('homeView', Dashboard::VIEW_CHAT)
         ->instance();
 
-    expect($page->getMaxContentWidth())->not->toBe(Width::Full);
+    expect($page->getMaxContentWidth())->toBe(Width::Full);
 });
 
-it('widens the page as soon as the view is switched to the dashboard', function (): void {
+it('constrains the chat column itself rather than relying on the page width', function (): void {
+    Livewire::test(Dashboard::class)
+        ->assertSet('homeView', Dashboard::VIEW_CHAT)
+        ->assertSee('max-w-3xl', escape: false);
+});
+
+it('stays full width after switching view without a page reload', function (): void {
     $component = Livewire::test(Dashboard::class)->call('setHomeView', Dashboard::VIEW_DASHBOARD);
 
     expect($component->instance()->getMaxContentWidth())->toBe(Width::Full);
