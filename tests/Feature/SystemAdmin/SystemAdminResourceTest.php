@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enums\TeamRole;
 use App\Models\Company;
 use App\Models\Deal;
 use App\Models\Note;
@@ -20,10 +21,12 @@ use Relaticle\SystemAdmin\Filament\Resources\NoteResource\Pages\ListNotes;
 use Relaticle\SystemAdmin\Filament\Resources\PeopleResource\Pages\ListPeople;
 use Relaticle\SystemAdmin\Filament\Resources\TaskResource\Pages\ListTasks;
 use Relaticle\SystemAdmin\Filament\Resources\TeamResource\Pages\ListTeams;
+use Relaticle\SystemAdmin\Filament\Resources\UserResource\Pages\CreateUser;
+use Relaticle\SystemAdmin\Filament\Resources\UserResource\Pages\EditUser;
 use Relaticle\SystemAdmin\Filament\Resources\UserResource\Pages\ListUsers;
 use Relaticle\SystemAdmin\Models\SystemAdministrator;
 
-mutates(User::class, Team::class, Company::class, People::class, Task::class, Note::class, Deal::class);
+mutates(User::class, Team::class, Company::class, People::class, Task::class, Note::class, Deal::class, CreateUser::class, EditUser::class);
 
 beforeEach(function () {
     $this->admin = SystemAdministrator::factory()->create();
@@ -129,3 +132,52 @@ it('has trashed filter on soft-deletable resources', function (string $listPageC
     'notes' => ListNotes::class,
     'deals' => ListDeals::class,
 ]);
+
+it('grants team membership when creating a user with a current team', function () {
+    $team = Team::factory()->create();
+
+    livewire(CreateUser::class)
+        ->fillForm([
+            'name' => 'New Member',
+            'email' => 'new-member@example.com',
+            'password' => 'password',
+            'current_team_id' => $team->id,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    // Membership — not just current_team_id — is what Filament's tenant access
+    // check requires; without it the user 404s on /app/{slug} after login.
+    $this->assertDatabaseHas('team_user', [
+        'team_id' => $team->id,
+        'user_id' => User::query()->where('email', 'new-member@example.com')->value('id'),
+        'role' => TeamRole::Editor->value,
+    ]);
+
+    $user = User::query()->where('email', 'new-member@example.com')->firstOrFail()
+        ->load(['ownedTeams', 'teams']);
+
+    expect($user->canAccessTenant($team))->toBeTrue();
+});
+
+it('backfills membership when a user assigned a current team without one is re-saved', function () {
+    $team = Team::factory()->create();
+    $user = User::factory()->create(['current_team_id' => $team->id]);
+
+    // Reproduces the original bug: current team set, but no membership row.
+    expect($user->load(['ownedTeams', 'teams'])->canAccessTenant($team))->toBeFalse();
+
+    livewire(EditUser::class, ['record' => $user->id])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $this->assertDatabaseHas('team_user', [
+        'team_id' => $team->id,
+        'user_id' => $user->id,
+        'role' => TeamRole::Editor->value,
+    ]);
+
+    $fresh = User::query()->findOrFail($user->id)->load(['ownedTeams', 'teams']);
+
+    expect($fresh->canAccessTenant($team))->toBeTrue();
+});
