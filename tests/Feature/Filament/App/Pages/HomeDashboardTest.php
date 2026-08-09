@@ -22,6 +22,24 @@ beforeEach(function (): void {
     Filament::setTenant($this->user->currentTeam);
 });
 
+it('excludes soft-deleted records from the dashboard counts', function (): void {
+    $team = $this->user->currentTeam;
+
+    Deal::factory()->recycle([$this->user, $team])->create(['stage' => DealStage::OPPORTUNITY]);
+    $trashed = Deal::factory()->recycle([$this->user, $team])->create(['stage' => DealStage::OPPORTUNITY]);
+    $trashed->delete();
+
+    $dashboard = Livewire::test(Dashboard::class)->instance();
+
+    $opportunity = collect($dashboard->pipelineBreakdown()['deals'])
+        ->firstWhere('label', DealStage::OPPORTUNITY->getLabel());
+
+    // Only the kept deal is counted, not the trashed one.
+    expect($opportunity['count'])->toBe(1)
+        ->and($dashboard->pipelineStats()['deals_open'])->toBe(1)
+        ->and($dashboard->conversionFunnel()[1]['count'])->toBe(1);
+});
+
 it('gives the dashboard view the full content width', function (): void {
     $page = Livewire::withQueryParams(['view' => Dashboard::VIEW_DASHBOARD])
         ->test(Dashboard::class)

@@ -19,6 +19,7 @@ use App\Models\ActivityLog\Activity;
 use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Order;
+use App\Models\Scopes\TeamScope;
 use App\Models\Task;
 use App\Models\User;
 use BackedEnum;
@@ -130,19 +131,19 @@ final class Dashboard extends Page
         $teamId = $team->getKey();
 
         return [
-            'leads_open' => Lead::query()->withoutGlobalScopes()
+            'leads_open' => Lead::query()->withoutGlobalScope(TeamScope::class)
                 ->where('team_id', $teamId)
                 ->whereNotIn('stage', [LeadStage::WON->value, LeadStage::LOST->value])
                 ->count(),
-            'deals_open' => Deal::query()->withoutGlobalScopes()
+            'deals_open' => Deal::query()->withoutGlobalScope(TeamScope::class)
                 ->where('team_id', $teamId)
                 ->whereNotIn('stage', [DealStage::WON->value, DealStage::LOST->value])
                 ->count(),
-            'deals_won' => Deal::query()->withoutGlobalScopes()
+            'deals_won' => Deal::query()->withoutGlobalScope(TeamScope::class)
                 ->where('team_id', $teamId)
                 ->where('stage', DealStage::WON->value)
                 ->count(),
-            'orders_active' => Order::query()->withoutGlobalScopes()
+            'orders_active' => Order::query()->withoutGlobalScope(TeamScope::class)
                 ->where('team_id', $teamId)
                 ->where('stage', '!=', OrderStage::CLOSED->value)
                 ->count(),
@@ -194,9 +195,9 @@ final class Dashboard extends Page
 
         $teamId = $team->getKey();
 
-        $leads = Lead::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
-        $deals = Deal::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
-        $orders = Order::query()->withoutGlobalScopes()->where('team_id', $teamId)->count();
+        $leads = Lead::query()->withoutGlobalScope(TeamScope::class)->where('team_id', $teamId)->count();
+        $deals = Deal::query()->withoutGlobalScope(TeamScope::class)->where('team_id', $teamId)->count();
+        $orders = Order::query()->withoutGlobalScope(TeamScope::class)->where('team_id', $teamId)->count();
 
         $steps = [
             ['label' => __('filament/pages/dashboard.funnel.leads'), 'count' => $leads, 'color' => LeadStage::QUALIFIED->getColor(), 'url' => LeadResource::getUrl('board')],
@@ -287,7 +288,7 @@ final class Dashboard extends Page
     private function stageCounts(string $model, array $stages, mixed $teamId): array
     {
         /** @var array<string, int> $counts */
-        $counts = $model::query()->withoutGlobalScopes()
+        $counts = $model::query()->withoutGlobalScope(TeamScope::class)
             ->where('team_id', $teamId)
             ->selectRaw('stage, count(*) as aggregate')
             ->groupBy('stage')
