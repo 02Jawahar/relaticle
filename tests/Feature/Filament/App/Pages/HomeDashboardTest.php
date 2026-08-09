@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Actions\Deal\CreateDeal;
+use App\Actions\Order\CreateOrder;
 use App\Enums\Pipeline\DealStage;
 use App\Enums\Pipeline\LeadStage;
 use App\Enums\Pipeline\OrderStage;
@@ -13,6 +15,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Support\Enums\Width;
 use Livewire\Livewire;
+use Relaticle\CustomFields\Services\TenantContextService;
 
 mutates(Dashboard::class);
 
@@ -20,6 +23,28 @@ beforeEach(function (): void {
     $this->user = User::factory()->withPersonalTeam()->create();
     $this->actingAs($this->user);
     Filament::setTenant($this->user->currentTeam);
+});
+
+it('sums both deal amounts and order values into the pipeline value', function (): void {
+    $team = $this->user->currentTeam;
+    TenantContextService::setTenantId($team->getKey());
+
+    try {
+        resolve(CreateDeal::class)->execute($this->user, [
+            'name' => 'Pipeline deal',
+            'custom_fields' => ['amount' => 100000],
+        ]);
+        resolve(CreateOrder::class)->execute($this->user, [
+            'name' => 'Pipeline order',
+            'custom_fields' => ['order_value' => 50000],
+        ]);
+
+        $dashboard = Livewire::test(Dashboard::class)->instance();
+
+        expect($dashboard->pipelineStats()['pipeline_value'])->toBe(150000.0);
+    } finally {
+        TenantContextService::setTenantId(null);
+    }
 });
 
 it('excludes soft-deleted records from the dashboard counts', function (): void {

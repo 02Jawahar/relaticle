@@ -7,6 +7,7 @@ namespace App\Filament\Pages;
 use App\Actions\Deal\AggregateDeals;
 use App\Actions\Task\NotifyTaskAssignees;
 use App\Contracts\Pipeline\PipelineStage;
+use App\Enums\CustomFields\OrderField;
 use App\Enums\Pipeline\DealStage;
 use App\Enums\Pipeline\LeadStage;
 use App\Enums\Pipeline\OrderStage;
@@ -16,6 +17,7 @@ use App\Filament\Resources\OrderResource;
 use App\Filament\Resources\TaskResource;
 use App\Filament\Resources\TaskResource\Forms\TaskForm;
 use App\Models\ActivityLog\Activity;
+use App\Models\CustomField;
 use App\Models\Deal;
 use App\Models\Lead;
 use App\Models\Order;
@@ -30,8 +32,10 @@ use Filament\Panel;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Relaticle\Chat\Actions\ListConversations;
@@ -147,10 +151,12 @@ final class Dashboard extends Page
                 ->where('team_id', $teamId)
                 ->where('stage', '!=', OrderStage::CLOSED->value)
                 ->count(),
-            // Reuses the same aggregate the chat and MCP surfaces report from,
-            // so the dashboard cannot drift from those numbers.
+            // Deal amounts come from the shared AggregateDeals total (so the
+            // dashboard cannot drift from the chat/MCP figures); order values are
+            // added on top so the pipeline value spans deals and orders.
             'pipeline_value' => (float) resolve(AggregateDeals::class)
-                ->execute($user, 'stage')['total_amount'],
+                ->execute($user, 'stage')['total_amount']
+                + $this->sumCurrencyCustomField('orders', 'order', OrderField::ORDER_VALUE->value, $teamId),
         ];
     }
 
@@ -300,6 +306,38 @@ final class Dashboard extends Page
             'color' => $stage->getColor(),
             'count' => (int) ($counts[$stage->value] ?? 0),
         ], $stages);
+    }
+
+    /**
+     * Sum a currency custom field's values across a team's non-trashed records of
+     * the given entity type. Mirrors how {@see AggregateDeals} totals deal amounts
+     * so the pipeline value can span orders too, and returns 0 when the field is
+     * not present for the tenant.
+     */
+    private function sumCurrencyCustomField(string $table, string $entityType, string $fieldCode, mixed $teamId): float
+    {
+        $fieldId = CustomField::query()->withoutGlobalScopes()
+            ->where('tenant_id', $teamId)
+            ->where('entity_type', $entityType)
+            ->where('code', $fieldCode)
+            ->active()
+            ->value('id');
+
+        if ($fieldId === null) {
+            return 0.0;
+        }
+
+        $sum = DB::table("{$table} as e")
+            ->leftJoin('custom_field_values as v', function (JoinClause $join) use ($entityType, $fieldId): void {
+                $join->on('v.entity_id', '=', 'e.id')
+                    ->where('v.entity_type', '=', $entityType)
+                    ->where('v.custom_field_id', '=', $fieldId);
+            })
+            ->where('e.team_id', $teamId)
+            ->whereNull('e.deleted_at')
+            ->sum('v.float_value');
+
+        return (float) $sum;
     }
 
     public function mount(): void
