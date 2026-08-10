@@ -75,21 +75,25 @@ describe('OnboardSeed', function (): void {
 });
 
 describe('SocialAuth', function (): void {
-    it('registers social auth routes when feature is active', function (): void {
-        $this->get(route('auth.socialite.redirect', 'google'))
-            ->assertRedirect();
+    it('is off by default', function (): void {
+        expect(Feature::active(SocialAuth::class))->toBeFalse();
     });
 
-    it('does not register social auth routes when feature is inactive', function (): void {
-        putenv('RELATICLE_FEATURE_SOCIAL_AUTH=false');
+    it('does not register social auth routes by default', function (): void {
+        $this->get('/auth/redirect/google')
+            ->assertNotFound();
+    });
+
+    it('registers social auth routes when the feature is activated', function (): void {
+        putenv('RELATICLE_FEATURE_SOCIAL_AUTH=true');
         CachedState::$cachedRoutes = null;
         CachedState::$cachedConfig = null;
         RouteServiceProvider::loadCachedRoutesUsing(null);
         LoadConfiguration::alwaysUse(null);
         $this->refreshApplication();
 
-        $this->get('/auth/redirect/google')
-            ->assertNotFound();
+        $this->get(route('auth.socialite.redirect', 'google'))
+            ->assertRedirect();
 
         putenv('RELATICLE_FEATURE_SOCIAL_AUTH');
         CachedState::$cachedRoutes = null;

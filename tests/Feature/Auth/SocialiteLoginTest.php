@@ -7,10 +7,39 @@ use App\Http\Controllers\Auth\CallbackController;
 use App\Http\Controllers\Auth\RedirectController;
 use App\Models\User;
 use App\Models\UserSocialAccount;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Testing\CachedState;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Laravel\Socialite\Facades\Socialite;
 use Laravel\Socialite\Two\User as SocialiteUser;
 
 mutates(CallbackController::class, RedirectController::class);
+
+/**
+ * Social auth ships disabled, so the socialite routes are not registered by
+ * default — turn the feature on and rebuild the application for these tests.
+ */
+beforeEach(function (): void {
+    putenv('RELATICLE_FEATURE_SOCIAL_AUTH=true');
+    CachedState::$cachedRoutes = null;
+    CachedState::$cachedConfig = null;
+    RouteServiceProvider::loadCachedRoutesUsing(null);
+    LoadConfiguration::alwaysUse(null);
+    $this->refreshApplication();
+
+    // The rebuilt container's database connections carry none of
+    // LazilyRefreshDatabase's hooks, so re-arm them — otherwise writes in these
+    // tests commit for real and leak into the next test.
+    RefreshDatabaseState::$lazilyRefreshed = false;
+    $this->refreshDatabase();
+});
+
+afterEach(function (): void {
+    putenv('RELATICLE_FEATURE_SOCIAL_AUTH');
+    CachedState::$cachedRoutes = null;
+    CachedState::$cachedConfig = null;
+});
 
 function makeSocialiteUser(string $id, string $name, string $email): SocialiteUser
 {

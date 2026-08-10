@@ -59,9 +59,9 @@ test('guest clicking invitation link sees team name and sign-up link on login pa
         ->assertSee('sign up', escape: false);
 });
 
-test('login page without invitation shows default subheading unchanged', function () {
+test('login page without invitation offers no self-service sign-up', function () {
     $this->get(route('filament.app.auth.login'))
-        ->assertSee('sign up', escape: false)
+        ->assertDontSee('sign up', escape: false)
         ->assertDontSee('invited to join');
 });
 

@@ -7,6 +7,10 @@ use App\Http\Controllers\PrivacyPolicyController;
 use App\Http\Controllers\TermsOfServiceController;
 use App\Models\User;
 use App\Support\DetectsPublicMarkdownRequest;
+use Illuminate\Foundation\Bootstrap\LoadConfiguration;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
+use Illuminate\Foundation\Testing\CachedState;
+use Illuminate\Foundation\Testing\RefreshDatabaseState;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
 use Relaticle\Ink\Models\Category;
@@ -178,6 +182,29 @@ describe('Community redirects', function () {
 });
 
 describe('Social authentication routes', function () {
+    /**
+     * Social auth ships disabled, so these routes are not registered by default —
+     * turn the feature on and rebuild the application, then re-arm
+     * LazilyRefreshDatabase's hooks, which the rebuilt container does not carry.
+     */
+    beforeEach(function (): void {
+        putenv('RELATICLE_FEATURE_SOCIAL_AUTH=true');
+        CachedState::$cachedRoutes = null;
+        CachedState::$cachedConfig = null;
+        RouteServiceProvider::loadCachedRoutesUsing(null);
+        LoadConfiguration::alwaysUse(null);
+        $this->refreshApplication();
+
+        RefreshDatabaseState::$lazilyRefreshed = false;
+        $this->refreshDatabase();
+    });
+
+    afterEach(function (): void {
+        putenv('RELATICLE_FEATURE_SOCIAL_AUTH');
+        CachedState::$cachedRoutes = null;
+        CachedState::$cachedConfig = null;
+    });
+
     it('throttles authentication redirect attempts', function () {
         // Make 10 requests (the limit)
         for ($i = 0; $i < 10; $i++) {

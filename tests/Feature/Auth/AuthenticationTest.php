@@ -13,6 +13,15 @@ test('login screen can be rendered', function () {
     $response->assertStatus(200);
 });
 
+test('login screen offers no social sign-in or self-service registration', function () {
+    $response = $this->get(url()->getAppUrl('login'));
+
+    $response->assertStatus(200)
+        ->assertDontSee('Continue with Google')
+        ->assertDontSee('Continue with GitHub')
+        ->assertDontSee(__('filament-panels::auth/pages/login.actions.register.label'));
+});
+
 test('users can authenticate using the login screen', function () {
     $user = User::factory()->withTeam()->create();
     $team = $user->ownedTeams()->first();
