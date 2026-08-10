@@ -1283,6 +1283,315 @@
     padding-inline: calc(var(--spacing) * 6);
 }
 
+/* ===================================
+   Sign-in page
+   Scoped to `.fi-auth-login` (set by App\Filament\Pages\Auth\Login via
+   $extraBodyAttributes) so register, password reset, email verification and
+   workspace creation — which share every `fi-simple-*` class — are untouched.
+   =================================== */
+
+/* --- Canvas: a slow aurora over the shell wash ----------------------------- */
+
+/* Two primary-tinted fields drift behind the card. They are painted on a fixed
+   pseudo-element rather than the body background so the existing shell wash
+   underneath survives, and so the blur never costs a repaint on scroll. */
+.fi-auth-login::before {
+    content: '';
+    position: fixed;
+    inset: -20%;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(38rem 34rem at 18% 22%, color-mix(in srgb, var(--color-primary-500) 55%, transparent), transparent 64%),
+        radial-gradient(34rem 30rem at 84% 74%, color-mix(in srgb, var(--color-primary-400) 45%, transparent), transparent 62%),
+        radial-gradient(26rem 26rem at 70% 12%, color-mix(in srgb, var(--color-primary-300) 34%, transparent), transparent 60%);
+    filter: blur(28px);
+    opacity: 0.85;
+    animation: auth-aurora 26s ease-in-out infinite alternate;
+}
+
+.dark .fi-auth-login::before {
+    opacity: 0.5;
+}
+
+@keyframes auth-aurora {
+    from {
+        transform: translate3d(-3%, -2%, 0) scale(1);
+    }
+
+    to {
+        transform: translate3d(3%, 2%, 0) scale(1.08);
+    }
+}
+
+/* The card and its contents sit above the aurora. */
+.fi-auth-login .fi-simple-layout {
+    position: relative;
+    z-index: 1;
+}
+
+/* The AUTH_LOGIN_FORM_BEFORE render hook always emits a schema slot, even when
+   nothing renders into it (social sign-in is off). A zero-height column still
+   claims one 24px grid gap, which read as dead space under the heading — so the
+   empty slot is collapsed. Written structurally rather than as `:empty` (which
+   the whitespace in the slot defeats): the column is hidden only while its
+   component has no element children, so re-enabling social sign-in brings it
+   straight back. */
+.fi-auth-login .fi-simple-page-content > .fi-grid > .fi-grid-col:has(> .fi-sc-component):not(:has(> .fi-sc-component > *)) {
+    display: none;
+}
+
+/* --- The card -------------------------------------------------------------- */
+
+.fi-auth-login .fi-simple-main {
+    border-radius: calc(var(--shell-radius) * 1.4);
+    background-color: var(--glass-bg-strong);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+        var(--glass-shadow),
+        0 24px 64px -24px color-mix(in srgb, var(--color-primary-700) 28%, transparent),
+        inset 0 1px 0 rgb(255 255 255 / 55%);
+    padding-block: calc(var(--spacing) * 10);
+    padding-inline: calc(var(--spacing) * 8);
+    animation: auth-card-in var(--duration-base) var(--ease-out-expo) both;
+}
+
+.dark .fi-auth-login .fi-simple-main {
+    box-shadow:
+        var(--glass-shadow),
+        0 24px 64px -24px rgb(0 0 0 / 55%),
+        inset 0 1px 0 rgb(255 255 255 / 8%);
+}
+
+/* A hairline of primary light along the top edge, so the card reads as lit
+   rather than flat. Sits above the card's own background, below its content. */
+.fi-auth-login .fi-simple-main::before {
+    content: '';
+    position: absolute;
+    inset-inline: 12%;
+    top: 0;
+    height: 1px;
+    pointer-events: none;
+    background-image: linear-gradient(
+        to right,
+        transparent,
+        color-mix(in srgb, var(--color-primary-400) 70%, transparent),
+        transparent
+    );
+}
+
+.fi-auth-login .fi-simple-main {
+    position: relative;
+}
+
+@keyframes auth-card-in {
+    from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* --- Staggered content ----------------------------------------------------- */
+
+/* One keyframe, many delays — the cascade comes from nth-child on each row's own
+   parent, which survives Filament reordering the schema. */
+@keyframes auth-rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fi-auth-login .fi-simple-header,
+.fi-auth-login .fi-sc-form .fi-grid-col {
+    animation: auth-rise var(--duration-base) var(--ease-out-expo) both;
+}
+
+.fi-auth-login .fi-simple-header {
+    animation-delay: 90ms;
+}
+
+.fi-auth-login .fi-sc-form .fi-grid-col:nth-child(1) {
+    animation-delay: 180ms;
+}
+
+.fi-auth-login .fi-sc-form .fi-grid-col:nth-child(2) {
+    animation-delay: 250ms;
+}
+
+.fi-auth-login .fi-sc-form .fi-grid-col:nth-child(3) {
+    animation-delay: 320ms;
+}
+
+.fi-auth-login .fi-sc-form .fi-grid-col:nth-child(n + 4) {
+    animation-delay: 390ms;
+}
+
+/* --- Header ---------------------------------------------------------------- */
+
+.fi-auth-login .fi-simple-header {
+    @apply flex flex-col items-center gap-y-3;
+}
+
+.fi-auth-login .fi-logo {
+    animation: auth-logo-in var(--duration-slow) var(--ease-out-expo) both;
+    animation-delay: 60ms;
+}
+
+@keyframes auth-logo-in {
+    from {
+        opacity: 0;
+        transform: scale(0.82) rotate(-6deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.fi-auth-login .fi-simple-header-heading {
+    @apply text-center text-3xl font-semibold tracking-tight;
+
+    font-family: var(--font-display), var(--font-sans);
+}
+
+/* --- Fields ---------------------------------------------------------------- */
+
+.fi-auth-login .fi-input-wrp {
+    border-radius: 0.75rem;
+    background-color: var(--surface-input-bg);
+    transition:
+        box-shadow var(--duration-fast) var(--ease-out-expo),
+        transform var(--duration-fast) var(--ease-out-expo),
+        background-color var(--duration-fast) ease;
+}
+
+/* Filament draws the focus state as a ring on the wrapper; deepen it and let the
+   field lift a hair so focus is felt as well as seen. */
+.fi-auth-login .fi-input-wrp:focus-within {
+    transform: translateY(-1px);
+    box-shadow:
+        0 0 0 3px color-mix(in srgb, var(--color-primary-500) 22%, transparent),
+        0 8px 20px -12px color-mix(in srgb, var(--color-primary-700) 45%, transparent);
+}
+
+.fi-auth-login .fi-input {
+    padding-block: calc(var(--spacing) * 2.5);
+}
+
+/* --- Submit ---------------------------------------------------------------- */
+
+.fi-auth-login .fi-sc-form .fi-btn {
+    border-radius: 0.75rem;
+    padding-block: calc(var(--spacing) * 3);
+    background-image: linear-gradient(
+        to bottom right,
+        var(--color-primary-500),
+        var(--color-primary-600) 55%,
+        var(--color-primary-700)
+    );
+    box-shadow:
+        0 10px 24px -10px color-mix(in srgb, var(--color-primary-600) 65%, transparent),
+        inset 0 1px 0 rgb(255 255 255 / 25%);
+    transition:
+        box-shadow var(--duration-fast) var(--ease-out-expo),
+        transform var(--duration-fast) var(--ease-out-expo);
+}
+
+.fi-auth-login .fi-sc-form .fi-btn:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 16px 32px -12px color-mix(in srgb, var(--color-primary-600) 80%, transparent),
+        inset 0 1px 0 rgb(255 255 255 / 30%);
+}
+
+.fi-auth-login .fi-sc-form .fi-btn:active {
+    transform: translateY(0);
+}
+
+/* A light sweep across the button on hover. `.fi-btn` is already
+   `relative overflow-hidden`, so the sheen is clipped to the pill. */
+.fi-auth-login .fi-sc-form .fi-btn::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: -60%;
+    width: 40%;
+    pointer-events: none;
+    background-image: linear-gradient(
+        75deg,
+        transparent,
+        rgb(255 255 255 / 38%),
+        transparent
+    );
+    transform: translateX(0);
+}
+
+.fi-auth-login .fi-sc-form .fi-btn:hover::after {
+    animation: auth-sheen 900ms var(--ease-out-expo);
+}
+
+@keyframes auth-sheen {
+    to {
+        transform: translateX(420%);
+    }
+}
+
+/* --- Reduced motion -------------------------------------------------------- */
+
+/* Everything above is decoration; none of it carries meaning. Under the OS
+   setting the page simply appears, fully styled and static. */
+@media (prefers-reduced-motion: reduce) {
+    .fi-auth-login::before,
+    .fi-auth-login .fi-simple-main,
+    .fi-auth-login .fi-simple-header,
+    .fi-auth-login .fi-logo,
+    .fi-auth-login .fi-sc-form .fi-grid-col,
+    .fi-auth-login .fi-sc-form .fi-btn::after,
+    .fi-auth-login .fi-sc-form .fi-btn:hover::after {
+        animation: none;
+    }
+
+    .fi-auth-login .fi-input-wrp,
+    .fi-auth-login .fi-sc-form .fi-btn,
+    .fi-auth-login .fi-input-wrp:focus-within,
+    .fi-auth-login .fi-sc-form .fi-btn:hover {
+        transform: none;
+        transition: none;
+    }
+}
+
+/* Without backdrop-filter the frosted card would read as a flat translucent
+   panel over the aurora; make it solid instead. */
+@supports not (backdrop-filter: blur(1px)) {
+    .fi-auth-login .fi-simple-main {
+        background-color: var(--glass-bg-strong);
+    }
+}
+
+/* Filament runs the simple card edge-to-edge on phones, which hides the corners
+   and the aurora behind them. Inset it so it reads as the same floating card. */
+@media (max-width: 639px) {
+    .fi-auth-login .fi-simple-main {
+        margin-inline: calc(var(--spacing) * 4);
+        padding-inline: calc(var(--spacing) * 6);
+        padding-block: calc(var(--spacing) * 8);
+    }
+}
+
 /* Active item reads as a filled pill inside its block. */
 .fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
     background-color: var(--color-primary-600);
