@@ -113,6 +113,21 @@ services:
     depends_on:
       app:
         condition: service_healthy
+    # The base image (serversideup/php:8.4-fpm-nginx) ships a HEALTHCHECK for
+    # its nginx/php-fpm stack, but `command` replaces that stack with Reverb, so
+    # the inherited probe can never pass and the container sits Unhealthy
+    # forever. Traefik refuses to publish a router for an unhealthy container,
+    # which took ws.qbitio.com off the air entirely: no route, so TLS fell back
+    # to Traefik's self-signed default cert and every browser WebSocket was
+    # rejected at the handshake. Reverb serves its own /up endpoint
+    # (Laravel\Reverb\Servers\Reverb\Factory), so probe that instead — the same
+    # override horizon and scheduler already carry for their own commands.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   horizon:
     <<: *service
